@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('网格单位--检查组应用')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+    <div class="ui-layout-west">
+        <div class="box box-main">
+            <div class="box-header">
+                <div class="box-title">
+                    <i class="fa icon-grid"></i> 村社网格
+                </div>
+                <div class="box-tools pull-right">
+                    <a type="button" class="btn btn-box-tool" href="#" onclick="region()" title="管理网格"><i class="fa fa-edit"></i></a>
+                    <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                    <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                    <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新网格"><i class="fa fa-refresh"></i></button>
+                </div>
+            </div>
+            <div class="ui-layout-content">
+                <div id="tree" class="ztree"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ui-layout-center">
+        <div class="container-div">
+            <div class="row">
+                <div class="col-sm-12 search-collapse">
+                    <form id="user-form">
+                        <input type="hidden" id="regionId" name="regionId">
+                        <input type="hidden" id="parentId" name="parentId">
+                        <div class="select-list">
+                            <ul>
+                                <li>
+                                    <label>企业名称：</label>
+                                    <input type="text" name="enterpriseName"/>
+                                </li>
+                                <li>
+                                    <label>经营状态：</label>
+                                    <select name="enterpriseStatus" th:with="type=${@dict.getType('enterprise_status')}">
+                                        <option value="">所有</option>
+                                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <label>公司类型：</label>
+                                    <select name="enterpriseType" th:with="type=${@dict.getType('enterprise_type')}">
+                                        <option value="">所有</option>
+                                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <div class="btn-group-sm" id="toolbar" role="group">
+                    <a class="btn btn-primary" onclick="apply()">
+                        <i class="fa fa-xing"></i> 应用
+                    </a>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var teamId = [[${teamId}]];
+    // var prefix = ctx + "system/inspectionTeam";
+    var datastatus = [[${@dict.getType('enterprise_status')}]];
+    var datatype = [[${@dict.getType('enterprise_type')}]];
+    var dataInforStatus = [[${@dict.getType('information_status')}]];
+
+    var prefix = ctx + "system/enterpriseInfo";
+
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 288 });
+        queryEnterpriseList();
+        queryRegionTree();
+    });
+
+    function queryEnterpriseList() {
+        var options = {
+            url: prefix + "/list",
+            rememberSelected: true,
+            modalName: "单位信息",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'enterpriseName',
+                    title: '企业名称',
+                    sortable: true,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value,10,"open");
+                    }
+                },
+                {
+                    field: 'enterpriseAdress',
+                    title: '企业地址',
+                    sortable: true,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value,12,"open");
+                    }
+                },
+                {
+                    field: 'enterpriseStatus',
+                    title: '经营状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(datastatus, value);
+                    }
+                },
+                {
+                    field: 'enterpriseType',
+                    title: '公司类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(datatype, value);
+                    }
+                },
+                {
+                    field: 'establishDate',
+                    title: '成立日期',
+                    width: '110px',
+                    formatter: function(value, row, index) {
+                        return dateFormat(value, "yyyy-MM-dd");
+                    },
+                },
+                {
+                    field: 'establishPerson',
+                    title: '法人代表'
+                },
+                {
+                    field: 'informationStatus',
+                    title: '信息状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(dataInforStatus, value);
+                    }
+                },
+                ]
+        };
+        $.table.init(options);
+    }
+
+    function queryRegionTree()
+    {
+        var url = ctx + "system/region/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            if(treeNode.pId){
+                $("#regionId").val(treeNode.id);
+                $("#parentId").val(treeNode.pId);
+            }
+            $.table.search();
+        }
+    }
+
+    $('#btnExpand').click(function() {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function() {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+
+    $('#btnRefresh').click(function() {
+        queryRegionTree();
+    });
+
+
+    /* 用户管理-部门 */
+    function region() {
+        var url = ctx + "system/region";
+        $.modal.openTab("网格管理", url);
+    }
+
+    //应用按钮
+    function apply(){
+        //把所有选中的单位id 和 检查组id 传到后台
+        var arrays = $.table.selectColumns("id");
+        // alert(typeof(arrays));
+        if ($.isEmptyObject(arrays)) {
+            alert("请至少选择一个单位!")
+            return false;
+        }
+        // alert(arrays);
+        // debugger
+        $.ajax({
+            url: ctx + "system/applyInspection/add",
+            type: "post",
+            dataType: "json",
+            data: {
+                'inspectionId': teamId,//检查组id
+                'ids':arrays,//选中单位id
+                'status':1,//单位状态
+            },
+            success: function(res){
+                if(res.code =="0"){
+                    $.modal.alertSuccess("操作成功")
+                }else {
+                    $.modal.alertError("操作失败,请重试")
+                }
+
+            },
+            error:function (res) {
+                $.modal.alertError("服务器故障,请尝试重新操作")
+            }
+        });
+
+        //可能还有网格区域的id
+    }
+
+
+    // 日期格式化 时间戳  -> yyyy-MM-dd HH-mm-ss
+    function dateFormat(date, format) {
+        if ($.common.isEmpty(date)) return "";
+        if (!date) return;
+        if (!format) format = "yyyy-MM-dd";
+        switch (typeof date) {
+            case "string":
+                date = new Date(date.replace(/-/, "/"));
+                break;
+            case "number":
+                date = new Date(date);
+                break;
+        }
+        if (!date instanceof Date) return;
+        var dict = {
+            "yyyy": date.getFullYear(),
+            "M": date.getMonth() + 1,
+            "d": date.getDate(),
+            "H": date.getHours(),
+            "m": date.getMinutes(),
+            "s": date.getSeconds(),
+            "MM": ("" + (date.getMonth() + 101)).substr(1),
+            "dd": ("" + (date.getDate() + 100)).substr(1),
+            "HH": ("" + (date.getHours() + 100)).substr(1),
+            "mm": ("" + (date.getMinutes() + 100)).substr(1),
+            "ss": ("" + (date.getSeconds() + 100)).substr(1)
+        };
+        return format.replace(/(yyyy|MM?|dd?|HH?|ss?|mm?)/g,
+            function() {
+                return dict[arguments[0]];
+            });
+    };
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkActionProcessMapper">
+    <resultMap type="HkActionProcess" id="HkActionProcessResult">
+        <result property="id"    column="id"    />
+        <result property="actionChainId"    column="action_chain_id"    />
+        <result property="eventId"    column="event_id"    />
+        <result property="handlerUserId"    column="handler_user_id"    />
+        <result property="postId"    column="post_id"    />
+        <result property="actionStandardId"    column="action_standard_id"    />
+        <result property="handlerOrder"    column="handler_order"    />
+        <result property="isComplete"    column="is_complete"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="returnFlag"    column="return_flag"    />
+    </resultMap>
+
+    <insert id="insertBatchHkActionProcess">
+        insert into hk_action_process (action_chain_id,event_id,handler_user_id,action_standard_id,handler_order,create_user,create_time,post_id)
+        values
+        <foreach collection="list" item="item"  separator=",">
+            (#{item.actionChainId},#{item.eventId},#{item.handlerUserId},#{item.actionStandardId},#{item.handlerOrder},#{item.createUser},#{item.createTime},#{item.postId})
+        </foreach>
+    </insert>
+
+    <!--流程转换修改流程信息
+       1.is_complete
+       2.update_user
+       3.return_flag
+      5.事件id       eventId
+      6.行动链id     chainId
+      7.处理顺序    handler_order
+      -->
+    <update id="updateAppHkActionProcess" parameterType="List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update hk_action_process
+                <set>
+                    <if test="item.userId != null">handler_user_id =#{item.userId},</if>
+                    <if test="item.isComplete != null">is_complete=#{item.isComplete},</if>
+                    <if test="item.updateUser != null">update_user=#{item.updateUser},</if>
+                    <if test="item.returnFlag != null">return_flag=#{item.returnFlag},</if>
+                    update_time=NOW()
+                </set>
+            where
+                event_id = #{item.eventId} and action_chain_id = #{item.chainId}
+                <if test="item.handlerOrder != null">and handler_order=#{item.handlerOrder}</if>
+        </foreach>
+    </update>
+
+</mapper>

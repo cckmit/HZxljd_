@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <th:block th:include="include :: header('事件档案')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+  <div class="row">
+    <div class="col-sm-12 search-collapse">
+      <form id="product-form">
+        <div class="select-list">
+          <ul>
+            <li>
+              事件标题：<input type="text" id="eventTitle" name="eventTitle"/>
+            </li>
+            <li>
+              事件类型：<input type="text" id="eventType" name="eventType"/>
+            </li>
+            <li>
+              事件类型名称：<input type="text" id="eventTypeName" name="eventTypeName"/>
+            </li>
+            <li class="select-time">
+              <label>创建时间： </label>
+              <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="startTime"/>
+              <span>-</span>
+              <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime"/>
+            </li>
+            <li>
+              <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()" ><i class="fa fa-search"></i>&nbsp;搜索</a>
+              <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+    <div class="btn-group-sm" id="toolbar" role="group">
+<!--      <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system/eventFile:add">-->
+<!--        <i class="fa fa-plus"></i> 新增-->
+<!--      </a>-->
+<!--      <a class="btn btn-primary single disabled" onclick="$.operate.editFull()" shiro:hasPermission="system/eventFile:edit">-->
+<!--        <i class="fa fa-edit"></i> 修改-->
+<!--      </a>-->
+<!--      <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system/eventFile:remove">-->
+<!--        <i class="fa fa-remove"></i> 删除-->
+<!--      </a>-->
+    </div>
+
+    <div class="col-sm-12 select-table table-striped">
+      <table id="bootstrap-table"></table>
+    </div>
+  </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+  var editFlag = [[${@permission.hasPermi('system:eventFile:edit')}]];
+  var removeFlag = [[${@permission.hasPermi('system:eventFile:remove')}]];
+  var detailFlag = [[${@permission.hasPermi('system:eventFile:detail')}]];
+  var datas = [[${@dict.getType('sys_normal_disable')}]];
+  var prefix = ctx + "system/eventFile";
+
+
+  $(function() {
+    var options = {
+      url: prefix + "/list",
+      createUrl: prefix + "/add",
+      updateUrl: prefix + "/edit/{id}",
+      detailUrl: prefix + "/detail/{id}",
+      removeUrl: prefix + "/remove",
+      modalName: "一事一档",
+      columns: [{
+        checkbox: true
+      },
+
+        {
+          field: 'id',
+          title: '事件编号',
+          visible: false
+        },
+        {
+          field: 'eventId',
+          title: '事件编号',
+          visible: false
+        },
+        {
+          field: 'eventTitle',
+          title: '事件标题',
+          sortable: true
+        },
+        {
+          field: 'eventType',
+          title: '事件类型',
+          sortable: true
+        },
+        {
+          field: 'eventTypeName',
+          title: '事件类型名称',
+          sortable: true
+        },
+        /*{
+          field: 'eventCategoryName',
+          title: '事件预警类别名称' ,
+          sortable: true
+        },*/
+        {
+          field: 'placeName',
+          title: '场所名称' ,
+          sortable: true
+        },
+        {
+          field: 'companyLegalPerson',
+          title: '单位法人' ,
+          sortable: true
+        },
+        {
+          field: 'eventAddress',
+          title: '事件单位地址' ,
+          sortable: true
+        },
+        {
+          field: 'eventAlertStatus',
+          title: '状态' ,
+          sortable: true,
+          formatter:function (value,row,index) {
+            if(row['eventAlertStatus'] == 6){
+              return '完结';
+            }
+            if(row['eventAlertStatus'] == 7){
+              return '已忽略';
+            }
+            if(row['eventAlertStatus'] == 8){
+              return '已关闭';
+            }
+          }
+        },
+        {
+          field: 'createTime',
+          title: '创建时间' ,
+          sortable: true
+        },
+        /*{
+          field: 'creditUnionCode',
+          title: '统一信用社代码' ,
+          sortable: true
+        },*/
+        /*{
+          field: 'companyContactInformation',
+          title: '联系方式' ,
+          sortable: true
+        },*/
+        // {
+        //   field: 'sourceStatus',
+        //   title: '状态',
+        //   align: 'center',
+        //   formatter: function(value, row, index) {
+        //     return $.table.selectDictLabel(datas, value);
+        //   }
+        // },
+        {
+          title: '操作',
+          align: 'center',
+          formatter: function(value, row, index) {
+            var actions = [];
+            actions.push('<a class="btn btn-danger btn-xs ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-detail"></i>详情</a>');
+            return actions.join('');
+          }
+        }]
+    };
+    $.table.init(options);
+  });
+</script>
+<!--<script>
+  function detail(eventId) {
+    location.href="/system/eventFile/detail?eventId="+eventId;
+     /* $.ajax({
+        url:"/system/eventFile/detail",
+        type:"get",
+        data:{
+          "eventId":eventId
+        },
+        success:function (data) {
+
+        }
+      })*/
+  }
+</script>-->
+</body>
+</html>

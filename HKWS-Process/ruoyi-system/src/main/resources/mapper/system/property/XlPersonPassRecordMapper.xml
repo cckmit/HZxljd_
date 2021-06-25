@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPersonPassRecordMapper">
+
+    <resultMap type="XlPersonPassRecord" id="XlPersonPassRecordResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="personName"    column="person_name"    />
+        <result property="personSex"    column="person_sex"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="passType"    column="pass_type"    />
+        <result property="recordPhoto"    column="record_photo"    />
+        <result property="accessTime"    column="access_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlPersonPassRecordVo">
+        select record_id, person_name, person_sex, device_id, device_name, pass_type, record_photo, access_time, del_flag, create_by, create_time, update_by, update_time from xl_person_pass_record
+    </sql>
+
+    <select id="selectXlPersonPassRecordList" parameterType="XlPersonPassRecord" resultMap="XlPersonPassRecordResult">
+        <include refid="selectXlPersonPassRecordVo"/>
+        <where>
+            <if test="personName != null  and personName != ''"> and person_name like concat('%', #{personName}, '%')</if>
+            <if test="personSex != null "> and person_sex = #{personSex}</if>
+            <if test="deviceId != null "> and device_id = #{deviceId}</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="passType != null "> and pass_type = #{passType}</if>
+            <if test="recordPhoto != null  and recordPhoto != ''"> and record_photo = #{recordPhoto}</if>
+            <if test="params.beginAccessTime != null and params.beginAccessTime != ''"><!-- 开始时间检索 -->
+                AND date_format(access_time,'%y%m%d') &gt;= date_format(#{params.beginAccessTime},'%y%m%d')
+            </if>
+            <if test="params.endAccessTime != null and params.endAccessTime != ''"><!-- 结束时间检索 -->
+                AND date_format(access_time,'%y%m%d') &lt;= date_format(#{params.endAccessTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectXlPersonPassRecordById" parameterType="Long" resultMap="XlPersonPassRecordResult">
+        <include refid="selectXlPersonPassRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertXlPersonPassRecord" parameterType="XlPersonPassRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into xl_person_pass_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="personName != null  and personName != ''">person_name,</if>
+            <if test="personSex != null ">person_sex,</if>
+            <if test="deviceId != null ">device_id,</if>
+            <if test="deviceName != null  and deviceName != ''">device_name,</if>
+            <if test="passType != null ">pass_type,</if>
+            <if test="recordPhoto != null  and recordPhoto != ''">record_photo,</if>
+            <if test="accessTime != null ">access_time,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="personName != null  and personName != ''">#{personName},</if>
+            <if test="personSex != null ">#{personSex},</if>
+            <if test="deviceId != null ">#{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="passType != null ">#{passType},</if>
+            <if test="recordPhoto != null  and recordPhoto != ''">#{recordPhoto},</if>
+            <if test="accessTime != null ">#{accessTime},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPersonPassRecord" parameterType="XlPersonPassRecord">
+        update xl_person_pass_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personName != null  and personName != ''">person_name = #{personName},</if>
+            <if test="personSex != null ">person_sex = #{personSex},</if>
+            <if test="deviceId != null ">device_id = #{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="passType != null ">pass_type = #{passType},</if>
+            <if test="recordPhoto != null  and recordPhoto != ''">record_photo = #{recordPhoto},</if>
+            <if test="accessTime != null ">access_time = #{accessTime},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteXlPersonPassRecordById" parameterType="Long">
+        delete from xl_person_pass_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteXlPersonPassRecordByIds" parameterType="String">
+        delete from xl_person_pass_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>

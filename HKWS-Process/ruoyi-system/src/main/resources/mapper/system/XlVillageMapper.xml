@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlVillageMapper">
+
+    <resultMap type="com.ruoyi.system.domain.XlVillageModel" id="XlVillageResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="propertyId"    column="property_id"    />
+        <result property="propertyName"    column="property_name"    />
+        <result property="propertyPhone"    column="property_phone"    />
+        <result property="propertyPerson"    column="property_person"    />
+        <result property="quartersCommitteePerson"    column="quarters_committee_person"    />
+        <result property="quartersCommitteePhone"    column="quarters_committee_phone"    />
+        <result property="neighborhoodPerson"    column="neighborhood_person"    />
+        <result property="neighborhoodPhone"    column="neighborhood_phone"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlVillageVo">
+        select xv.id, xv.code, xv.name, xv.dept_id, xv.dept_name, xv.property_id,xv.property_person,xv.property_name, xv.create_by, xv.create_time, xv.update_time, sr.region_name as regionName ,sr2.region_name as regionParentName from xl_village xv
+        LEFT JOIN sys_region  sr ON xv.`dept_id`=sr.`region_id`
+        LEFT JOIN sys_region sr2 ON sr.parent_id=sr2.region_id
+    </sql>
+
+    <select id="selectXlVillageList" parameterType="XlVillageModel" resultMap="XlVillageResult">
+        <include refid="selectXlVillageVo"/>
+        <where>
+            <if test="code != null  and code != ''"> and xv.code = #{code}</if>
+            <if test="name != null  and name != ''"> and xv.name like concat('%', #{name}, '%')</if>
+            <if test="deptId != null  and deptId != ''"> and (xv.dept_id = #{deptId} or xv.dept_id
+                in (select region_id from sys_region where parent_id = #{deptId}) )</if>
+            <if test="deptName != null  and deptName != ''"> and xv.dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="propertyId != null  and propertyId != ''"> and xv.property_id = #{propertyId}</if>
+            <if test="propertyName != null  and propertyName != ''"> and xv.property_name like concat('%', #{propertyName}, '%')</if>
+            <if test="createTime != null "> and xv.create_time = #{createTime}</if>
+            <if test="updateTime != null "> and xv.update_time = #{updateTime}</if>
+        </where>
+    </select>
+
+    <select id="selectXlVillageById" parameterType="Long" resultMap="XlVillageResult">
+        <include refid="selectXlVillageVo"/>
+        where xv.id = #{id}
+    </select>
+    <select id="selectXlVillageLists" resultType="com.ruoyi.system.domain.XlVillageModel" parameterType="com.ruoyi.system.domain.XlVillageModel">
+        SELECT a.`id` AS `id`,a.`code` AS `code`,
+        a.`name` AS `name`,
+        a.`dept_name` AS `deptName`,
+        a.property_name AS `propertyName`,
+        a.property_person  AS `propertyPerson`,
+        a.property_phone  AS `propertyPhone`,
+        (SELECT `region_name` FROM `sys_region`
+        WHERE  b.`parent_id`=`region_id` ) AS `regionName`
+        FROM `xl_village` a
+        LEFT JOIN `sys_region` b
+        ON a.`dept_id`=b.`region_id`
+        <where>
+            <if test="name != null  and name != ''"> and a.`name` like concat('%', #{name}, '%')</if>
+        </where>
+     </select>
+
+    <insert id="insertXlVillage" parameterType="XlVillageModel" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_village
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null  and code != ''">code,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="deptName != null  and deptName != ''">dept_name,</if>
+            <if test="propertyId != null  and propertyId != ''">property_id,</if>
+            <if test="propertyName != null  and propertyName != ''">property_name,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            create_time,
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null  and code != ''">#{code},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="deptName != null  and deptName != ''">#{deptName},</if>
+            <if test="propertyId != null  and propertyId != ''">#{propertyId},</if>
+            <if test="propertyName != null  and propertyName != ''">#{propertyName},</if>
+             <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            sysdate(),
+         </trim>
+    </insert>
+
+    <update id="updateXlVillage" parameterType="XlVillageModel">
+        update xl_village
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null  and code != ''">code = #{code},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
+            <if test="deptName != null  and deptName != ''">dept_name = #{deptName},</if>
+            <if test="propertyId != null  and propertyId != ''">property_id = #{propertyId},</if>
+            <if test="propertyName != null  and propertyName != ''">property_name = #{propertyName},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlVillageById" parameterType="Long">
+        delete from xl_village where id = #{id}
+    </delete>
+
+    <delete id="deleteXlVillageByIds" parameterType="String">
+        delete from xl_village where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="checkVillageCodeUnique" resultType="int" parameterType="String">
+		select count(1) from xl_village where code=#{xlVillageModelCode}
+</select>
+    <select id="checkVillageNameUnique" resultType="int" parameterType="String">
+        select count(1) from xl_village where name=#{xlVillageModelName}
+    </select>
+    <select id="selectdeptNames" resultType="com.ruoyi.system.domain.XlVillageModel">
+SELECT `dept_name` as deptName ,`dept_id` as deptId  FROM `xl_village` GROUP BY `dept_name`
+</select>
+    <select id="queryVillageCount" resultType="java.lang.Integer">
+        select count(*) from xl_village
+    </select>
+    <select id="selectXlVillageByPropertyName" resultMap="XlVillageResult">
+     SELECT `id`,`code`,`name`,`dept_id`,`dept_name`,`property_id`,`property_name`,`property_phone`,`property_person`,`quarters_committee_person`,`quarters_committee_phone`,`neighborhood_person`,`neighborhood_phone`,
+ `create_by`,`create_time`,`update_by`,`update_time`
+  FROM `xl_village` WHERE  `property_name` like concat('%', #{propertyName}, '%')
+</select>
+<select id="selectNames" resultType="com.ruoyi.system.domain.XlVillageModel">
+SELECT `id` as id ,`name` as name  FROM `xl_village` GROUP BY `id`
+</select>
+<select id="selectVillageId" resultType="java.lang.Integer" parameterType="String">
+	SELECT id FROM xl_village where 1=1
+     <choose>
+            <when test="propertyId != null and propertyId!= ''">
+              and property_id = #{propertyId}
+            </when>
+            <when test="propertyName != null and propertyName!= ''">
+              and property_name = #{propertyName}
+            </when>
+            <otherwise>
+                and property_id = null
+            </otherwise>
+        </choose>
+</select>
+    <select id="queryVillageList" resultMap="XlVillageResult" >
+        select s.name,s.neighborhood_person,s.neighborhood_phone from xl_village s
+    </select>
+
+    <select id="queryVillageComList" resultMap="XlVillageResult">
+        select s.name,s.quarters_committee_person,s.quarters_committee_phone from xl_village s
+    </select>
+
+    <select id="queryPropertyList" resultMap="XlVillageResult">
+        select s.name,s.property_name,s.property_person,s.property_phone from xl_village s
+    </select>
+
+    <select id="queryVillageId" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from xl_village where name = #{name}
+    </select>
+
+    <select id="queryvillageName" resultMap="XlVillageResult" parameterType="XlVillageModel">
+        select * from xl_village v
+        <where>
+            <if test="name != null  and name != ''"> and v.name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    <select id="findVillageIdsNames" resultType="java.util.Map" parameterType="integer">
+        SELECT `id` as `villageId`,`name` as `villageName` FROM xl_village
+        where 1=1
+        <choose>
+            <when test="deptId != null and deptId!= ''">
+              and dept_id = #{deptId}
+            </when>
+            <otherwise>
+                and dept_id = null
+            </otherwise>
+        </choose>
+        GROUP BY `id`
+    </select>
+
+
+</mapper>

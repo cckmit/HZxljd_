@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改物业--事件信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-event-edit" th:object="${xlPropertyEvent}">
+        <input name="eventId" th:field="*{eventId}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">小区id：</label>
+            <div class="col-sm-8">
+                <input name="villageId" th:field="*{villageId}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件标题：</label>
+            <div class="col-sm-8">
+                <input name="eventTitle" th:field="*{eventTitle}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件来源：</label>
+            <div class="col-sm-8">
+                <input name="eventSource" th:field="*{eventSource}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件类型：</label>
+            <div class="col-sm-8">
+                <select name="eventType" class="form-control m-b">
+                    <option value="">所有</option>
+                </select>
+                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件状态：</label>
+            <div class="col-sm-8">
+                <div class="radio-box">
+                    <input type="radio" name="eventStatus" value="">
+                    <label th:for="eventStatus" th:text="未知"></label>
+                </div>
+                <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件发生位置：</label>
+            <div class="col-sm-8">
+                <input name="eventAddress" th:field="*{eventAddress}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件上报人：</label>
+            <div class="col-sm-8">
+                <input name="reporter" th:field="*{reporter}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件上报人手机号码：</label>
+            <div class="col-sm-8">
+                <input name="reporterPhone" th:field="*{reporterPhone}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件上报时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="reportTime" th:value="${#dates.format(xlPropertyEvent.reportTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件上报内容：</label>
+            <div class="col-sm-8">
+                <input name="reportContent" th:field="*{reportContent}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件上报图片：</label>
+            <div class="col-sm-8">
+                <textarea name="reportImage" class="form-control">[[*{reportImage}]]</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件处理人：</label>
+            <div class="col-sm-8">
+                <input name="handler" th:field="*{handler}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件处理人id：</label>
+            <div class="col-sm-8">
+                <input name="handlerId" th:field="*{handlerId}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件处理人手机号码：</label>
+            <div class="col-sm-8">
+                <input name="handlerPhone" th:field="*{handlerPhone}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件处理时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="handleTime" th:value="${#dates.format(xlPropertyEvent.handleTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件处理内容：</label>
+            <div class="col-sm-8">
+                <input name="handleContent" th:field="*{handleContent}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件处理图片：</label>
+            <div class="col-sm-8">
+                <textarea name="handleImage" class="form-control">[[*{handleImage}]]</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件完成时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="finishTime" th:value="${#dates.format(xlPropertyEvent.finishTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件完成内容：</label>
+            <div class="col-sm-8">
+                <input name="finishContent" th:field="*{finishContent}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件完成图片：</label>
+            <div class="col-sm-8">
+                <textarea name="finishImage" class="form-control">[[*{finishImage}]]</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">预计完成时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="expectedFinishTime" th:value="${#dates.format(xlPropertyEvent.expectedFinishTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/event";
+    $("#form-event-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-event-edit').serialize());
+        }
+    }
+
+    $("input[name='reportTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='handleTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='finishTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='expectedFinishTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+</script>
+</body>
+</html>

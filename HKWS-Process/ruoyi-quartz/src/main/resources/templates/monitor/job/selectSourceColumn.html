@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="include :: header('选择数据源字段')" />
+	<th:block th:include="include :: bootstrap-editable-css" />
+</head>
+
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-10 search-collapse">
+				<form id="role-form">
+					<input type="hidden" name="sourceId" th:value="${sourceId}"/>
+					<div class="select-list">
+						<ul>
+							<li>列名称：<input type="text" name="sourceColumnName" maxlength="50"/>
+							</li>
+							<li>列描述：<input type="text" name="sourceColumnComment" maxlength="50"/>
+							</li>
+							<li><a class="btn btn-primary btn-rounded btn-sm"
+								onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm"
+								onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-table-editable-js" />
+	<script th:inline="javascript">
+		var columnId=[[${columnId}]];
+	    var prefix = ctx + "monitor/source/";
+	    
+	    $(function() {
+	        var options = {
+	            url: prefix + "/ajaxSourceColumnList",
+	            pagination: false,
+		        showSearch: false,
+		        showRefresh: false,
+		        showToggle: false,
+		        showColumns: false,
+		        clickToSelect: true,
+	            modalName: "数据源字段",
+	            columns: [{
+	            	radio: true
+	            },
+	            {
+                    field: 'sourceColumnName', 
+                    title: '来源列名称'
+                },
+                {
+                    field: 'sourceColumnComment', 
+                    title: '来源列描述'
+                },
+                {
+                    field: 'sourceColumnType', 
+                    title: '来源列类型',
+                    visible:false
+                }
+                ]
+	        };
+	        $.table.init(options);
+	    });
+		
+		//订单选择产品
+		function submitHandler() {
+			var productId = $.table.selectFirstColumns();
+			if (productId.length == 0) {
+       			$.modal.alertWarning("请选择一条记录");
+       			return;
+       		}
+			$.modal.close();
+			parent.$('#sourceColumnName_'+columnId).val($.table.selectColumns("sourceColumnName"));
+            parent.$('#sourceColumnComment_'+columnId).val($.table.selectColumns("sourceColumnComment"));
+		}
+	</script>
+</body>
+</html>

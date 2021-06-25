@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlUserPlanRelMapper">
+
+    <resultMap type="XlUserPlanRel" id="XlUserPlanRelResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="planId"    column="plan_id"    />
+    </resultMap>
+
+    <sql id="selectXlUserPlanRelVo">
+        select id, user_id, plan_id from xl_user_plan_rel
+    </sql>
+
+    <select id="selectXlUserPlanRelList" parameterType="XlUserPlanRel" resultMap="XlUserPlanRelResult">
+        <include refid="selectXlUserPlanRelVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="planId != null "> and plan_id = #{planId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlUserPlanRelById" parameterType="Long" resultMap="XlUserPlanRelResult">
+        <include refid="selectXlUserPlanRelVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlUserPlanRel" parameterType="XlUserPlanRel">
+        insert into xl_user_plan_rel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="userId != null ">user_id,</if>
+            <if test="planId != null ">plan_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="userId != null ">#{userId},</if>
+            <if test="planId != null ">#{planId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlUserPlanRel" parameterType="XlUserPlanRel">
+        update xl_user_plan_rel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="planId != null ">plan_id = #{planId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlUserPlanRelById" parameterType="Long">
+        delete from xl_user_plan_rel where id = #{id}
+    </delete>
+
+    <delete id="deleteXlUserPlanRelByIds" parameterType="String">
+        delete from xl_user_plan_rel where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--通过巡更计划删除关联-->
+    <delete id="deleteXlUserPlanRelByPlanId" parameterType="Long">
+        delete from xl_user_plan_rel where plan_id = #{planId}
+    </delete>
+</mapper>

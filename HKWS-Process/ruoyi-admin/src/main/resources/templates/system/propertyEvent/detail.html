@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+<div class="row animated fadeInRight">
+    <form  th:object="${propertyEventVo}">
+    <div class="ibox float-e-margins">
+        <div class="text-center float-e-margins p-md">
+            <div style="font-size:20px;">事件处理流程 </div>
+        </div>
+        <div id="ibox-content">
+            <div id="vertical-timeline" class="vertical-container light-timeline">
+                <div class="vertical-timeline-block">
+                    <div class="vertical-timeline-icon navy-bg">
+                        <i class="fa fa-briefcase"></i>
+                    </div>
+                    <div class="vertical-timeline-content">
+                        <h2 style="color: #761c19">待处理：(
+                            <span  th:text="${@dict.getLabel('property_event_type',propertyEventVo.eventType)}"></span>
+                            )</h2>
+                        <a  class="btn btn-sm"> <span th:text="${#dates.format(propertyEventVo.reportTime,'yyyy-MM-dd HH:mm:ss')}"></span></a>
+                        <p>事件标题：
+                        <span style="font-size:15px;"  th:text="*{eventTitle}"></span>
+                        </p>
+                        <p>
+                         <span>上报人：<span th:text="*{reporter}"></span>(业主)&nbsp;&nbsp;&nbsp;&nbsp;联系方式： <span  th:text="*{reporterPhone}"></span></span>
+                        </p>
+                        <p>事件内容：
+                            <span  th:text="*{reportContent}"></span>
+                        </p>
+                        <p>
+                        <span  th:each="image:${#strings.arraySplit(propertyEventVo.reportImage, ',')}">
+                            <img  th:src="${image}" height="90" />
+                        </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="vertical-timeline-block">
+                    <div class="vertical-timeline-icon blue-bg">
+                        <i class="fa fa-file-text"></i>
+                    </div>
+
+                    <div class="vertical-timeline-content">
+                        <h2 style="color: #00b5ad">处理中：</h2>
+                        <a  class="btn btn-sm" > <span th:text="${#dates.format(propertyEventVo.handleTime,'yyyy-MM-dd HH:mm:ss')}"></span></a>
+                        <p>处理人：
+                           <span th:text="*{handler}"></span>(物业)&nbsp;&nbsp;&nbsp;<!--联系方式：  <span  th:text="*{}"></span>-->
+                        </p>
+                        <p>处理内容：
+                            <span  th:text="*{handleContent}"></span>
+                        </p>
+                        <p>
+                        <span  th:each="image:${#strings.arraySplit(propertyEventVo.handleImage, ',')}">
+                            <img  th:src="${image}" height="90" />
+                        </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="vertical-timeline-block">
+                    <div class="vertical-timeline-icon lazur-bg">
+                        <i class="fa fa-coffee"></i>
+                    </div>
+
+                    <div class="vertical-timeline-content">
+                        <h2 style="color: #00B83F">已完成：</h2>
+                        <a  class="btn btn-sm" > <span th:text="${#dates.format(propertyEventVo.finishTime,'yyyy-MM-dd HH:mm:ss')}"></span></a>
+                        <p>处理人：
+                            <span th:text="*{handler}"></span>(物业)&nbsp;&nbsp;&nbsp;&nbsp;联系方式： <!-- <span  th:text="*{}"></span>-->
+                        </p>
+                        <p>完成内容：
+                            <span  th:text="*{finishContent}"></span>
+                        </p>
+                        <p>
+                        <span  th:each="image:${#strings.arraySplit(propertyEventVo.finishImage, ',')}">
+                            <img  th:src="${image}" height="90" />
+                        </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="vertical-timeline-block" th:style="*{appealPerson} eq '' or *{appealPerson} eq null ?'display: none':''">
+                    <div class="vertical-timeline-icon yellow-bg">
+                        <i class="fa fa-phone"></i>
+                    </div>
+
+                    <div class="vertical-timeline-content" >
+                        <h2 style="color: #8d9e13">业主申诉：</h2>
+                        <a  class="btn btn-sm" > <span th:text="${#dates.format(propertyEventVo.appealTime,'yyyy-MM-dd HH:mm:ss')}"></span></a>
+                        <p>申诉人：
+                           <span th:text="*{appealPerson}"></span>(业主)&nbsp;&nbsp;&nbsp;&nbsp;联系方式： <!-- <span  th:text="*{}"></span>-->
+                        </p>
+                        <p>申诉内容：
+                            <span  th:text="*{appealContent}"></span>
+                        </p>
+                        <p>
+                        <span  th:each="image:${#strings.arraySplit(propertyEventVo.appealImage, ',')}">
+                            <img  th:src="${image}" height="90" />
+                        </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="vertical-timeline-block" th:style="*{appealProperty} eq '' or *{appealProperty} eq null ?'display: none':''">
+                    <div class="vertical-timeline-icon lazur-bg">
+                        <i class="fa fa-user-md"></i>
+                    </div>
+
+                    <div class="vertical-timeline-content">
+                        <h2 style="color: #00b7ca ">物业申诉：</h2>
+                        <a  class="btn btn-sm" > <span th:text="${#dates.format(propertyEventVo.appealPropertyTime,'yyyy-MM-dd HH:mm:ss')}"></span></a>
+                        <p>处理人：
+                            <span th:text="*{appealProperty}"></span>(物业)&nbsp;&nbsp;&nbsp;&nbsp;联系方式： <!-- <span  th:text="*{}"></span>-->
+                        </p>
+                        <p>申诉内容：
+                            <span  th:text="*{appealPropertyContent}"></span>
+                        </p>
+                        <p>
+                        <span  th:each="image:${#strings.arraySplit(propertyEventVo.appealPropertyImage, ',')}">
+                            <img  th:src="${image}" height="90" />
+                        </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="vertical-timeline-block">
+                    <div class="vertical-timeline-icon lazur-bg">
+                        <i class="fa fa-user-md"></i>
+                    </div>
+
+                    <div class="vertical-timeline-content">
+                        <h2 style="color: #1ab394 " >申诉判定：</h2>
+                        <div th:style="*{appealResult} ne '' and *{appealResult} ne null ?'':'display:none'">
+                        <a  class="btn btn-sm" > <span th:text="${#dates.format(propertyEventVo.appealResultTime,'yyyy-MM-dd HH:mm:ss')}"></span></a>
+                        <h2 style="color: #0C0C0C " th:text="*{appealResult}"></h2>
+                        </div>
+                        <div th:style="*{appealResult} eq '' or *{appealResult} eq null ?'':'display: none'">
+                            <h2 style="color: #0e9aef;font-size: 20px;">结果暂未判定，请稍候</h2>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script type="text/javascript" th:inline="javascript">
+
+    $(document).ready(function(){
+
+
+    });
+</script>
+</body>
+</html>

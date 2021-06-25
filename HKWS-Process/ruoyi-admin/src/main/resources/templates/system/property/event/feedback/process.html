@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('处理流程')" />
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+</head>
+<body class="white-bg">
+<div class="row animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div id="ibox-content">
+            <div id="vertical-timeline" class="vertical-container light-timeline"></div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+    function submitHandler() {
+        //关闭
+        $.modal.close();
+    }
+
+    $(document).ready(function(){
+        let option = [];
+        //事件信息
+        let event = [[${xlPropertyEvent}]];
+
+        //反馈类型
+        let eventType = [[${@dict.getLabel('property_event_type', xlPropertyEvent.eventType)}]];
+
+        //处理人
+        let user = [[${user}]];
+
+
+        //事件状态
+        let statusName1 = "待处理";
+        let statusName2 = "处理中";
+        let statusName3 = "已处理";
+        let eventStatus = event.eventStatus;
+
+        //事件上报图片
+        let reportImage = event.reportImage;
+        let imgLable1 = [];
+        if(reportImage != null){
+            let images1 = reportImage.split(','); //数组
+            for(let i = 0; i < images1.length; i++){
+                let str =
+                    '<lable>\n' +
+                    '  <img src="'+images1[i]+'" style="margin: 10px; width: 100px"/>\n' +
+                    '</lable>';
+                imgLable1.push(str);
+            }
+        }else{
+            imgLable1.push(reportImage);
+        }
+
+        //事件完成图片
+        let finishImage = event.finishImage;
+        let imgLable3 = [];
+        if(finishImage != null){
+            let images3 = finishImage.split(','); //数组
+            for(let i = 0; i < images3.length; i++){
+                let str =
+                    '<lable>\n' +
+                    '  <img src="'+images3[i]+'" style="margin: 10px; width: 100px"/>\n' +
+                    '</lable>';
+                imgLable3.push(str);
+            }
+        }else{
+            imgLable3.push(finishImage);
+        }
+
+        //待处理
+        let option1 =
+            '<div class="vertical-timeline-block">\n' +
+            '    <div class="vertical-timeline-icon blue-bg">\n' +
+            '        <i class="fa fa-file-text"></i>\n' +
+            '    </div>\n' +
+            '\n' +
+            '    <div class="vertical-timeline-content">\n' +
+            '        <p><span style="font-size: large">'+eventType+'</span><span style="margin: 10px">'+statusName1+'</span><span style="margin: 10px">'+event.reportTime+'</span></p>\n' +
+            '        <p><span>'+event.reporter+'</span><span style="margin: 10px">联系方式：'+event.reporterPhone+'</span></p>\n' +
+            '        <p><span>描述：</span><span style="margin: 10px">'+event.reportContent+'</span></p>\n' +
+                      imgLable1
+            '    </div>\n' +
+            '</div>';
+
+        let option2 = '';
+        let option3 = '';
+        if(user){
+            //处理中
+             option2 =
+                '<div class="vertical-timeline-block">\n' +
+                '    <div class="vertical-timeline-icon blue-bg">\n' +
+                '        <i class="fa fa-file-text"></i>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="vertical-timeline-content">\n' +
+                '        <p><span style="font-size: large">'+user.userName+'(物业)</span><span style="margin: 10px">'+statusName2+'</span><span style="margin: 10px">'+event.handleTime+'</span></p>\n' +
+                '        <p><span>联系方式：'+user.phonenumber+'</span></p>\n' +
+                '    </div>\n' +
+                '</div>';
+
+            //已处理
+             option3 =
+                '<div class="vertical-timeline-block">\n' +
+                '    <div class="vertical-timeline-icon blue-bg">\n' +
+                '        <i class="fa fa-file-text"></i>\n' +
+                '    </div>\n' +
+                '\n' +
+                '    <div class="vertical-timeline-content">\n' +
+                '        <p><span style="font-size: large">'+user.userName+'(物业)</span><span style="margin: 10px">'+statusName3+'</span><span style="margin: 10px">'+event.finishTime+'</span></p>\n' +
+                '        <p><span>联系方式：'+user.phonenumber+'</span></p>\n' +
+                '        <p><span>描述：</span><span style="margin: 10px">'+event.finishContent+'</span></p>\n' +
+                imgLable3
+            '    </div>\n' +
+            '</div>';
+        }
+
+        //添加
+        if(eventStatus == 1){
+            //待处理
+            option.push(option1);
+            $('#vertical-timeline').html(option);
+        }else if(eventStatus == 2){
+            //处理中
+            option.push(option1);
+            option.push(option2);
+            $('#vertical-timeline').html(option);
+        }else if(eventStatus == 3){
+            //已处理
+            option.push(option1);
+            option.push(option2);
+            option.push(option3);
+            $('#vertical-timeline').html(option);
+        }
+    });
+</script>
+</body>
+</html>

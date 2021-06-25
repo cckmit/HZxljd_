@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业--人员进出记录列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>人员姓名：</label>
+                            <input type="text" name="personName" placeholder="请输入人员姓名查询"/>
+                        </li>
+                        <li>
+                            <label>人员性别：</label>
+                            <select name="personSex" th:with="type=${@dict.getType('sys_user_sex')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>设备名称：</label>
+                            <input type="text" name="deviceName" placeholder="请输入设备名称查询"/>
+                        </li>
+                        <li>
+                            <label>通行类型：</label>
+                            <select name="passType" th:with="type=${@dict.getType('pass_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>通行时间：</label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginAccessTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endAccessTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/property/event/personpass";
+    //数据字典
+    var sex = [[${@dict.getType('sys_user_sex')}]]; //性别
+    var passType = [[${@dict.getType('pass_type')}]]; //通行类型
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            modalName: "物业--人员进出记录",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'recordId',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    field: 'personName',
+                    title: '人员姓名'
+                },
+                {
+                    field: 'personSex',
+                    title: '人员性别',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(sex, value);
+                    }
+                },
+                {
+                    field: 'deviceName',
+                    title: '设备名称'
+                },
+                {
+                    field: 'passType',
+                    title: '通行类型',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(passType, value);
+                    }
+                },
+                {
+                    field: 'recordPhoto',
+                    title: '抓拍图片',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(value);
+                    }
+                },
+                {
+                    field: 'accessTime',
+                    title: '通行时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

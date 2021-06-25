@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRanksMapper">
+
+	<resultMap type="SysRanks" 			id="SysRanksResult">
+		<id     property="ranksId"     	column="ranks_id"     />
+		<result property="ranksName"   	column="ranks_name"   />
+		<result property="email"   		column="email"   />
+		<result property="phone"        column="phone"   />
+		<result property="sex"     		column="sex"      />
+		<result property="status"      	column="status"       />
+		<result property="delFlag"      column="del_flag"       />
+		<result property="createBy" 	column="create_by" />
+		<result property="createTime" 	column="create_time" />
+		<result property="updateBy"   	column="update_by"   />
+		<result property="updateTime" 	column="update_time" />
+		<result property="remark" 		column="remark" />
+		<result property="addr" 		column="addr" />
+	</resultMap>
+
+	<sql id="selectRanksVo">
+        select
+        ranks_id,
+		ranks_name,
+		email,
+		phone,
+		sex,
+		status,
+		del_flag,
+		create_by,
+		create_time,
+		update_by,
+		update_time,
+		remark,
+		addr
+        from sys_ranks
+    </sql>
+
+	<!--队伍信息列表-->
+	<select id="selectRanksList" parameterType="com.ruoyi.system.domain.HkEarlyWarning.SysRanksVo" resultMap="SysRanksResult">
+		select
+		r.ranks_id,
+		r.ranks_name,
+		r.email,
+		r.phone,
+		r.sex,
+		r.status,
+		r.create_by,
+		r.create_time,
+		r.update_by,
+		r.update_time,
+		r.remark,
+		r.addr
+		from sys_ranks r
+		left join sys_user su on r.ranks_id = su.user_id
+		left join sys_dept d on su.dept_id = d.dept_id and d.del_flag = '0'
+        where r.del_flag = '0'
+		<if test="ranksName != null and ranksName != ''">
+			AND r.ranks_name like concat('%', #{ranksName}, '%')
+		</if>
+		<if test="status != null and status != ''">
+			AND r.status = #{status}
+		</if>
+		<if test="searchValue != null and searchValue != ''">
+			AND concat(su.user_name,su.phone,d.dept_name) like concat('%', #{searchValue}, '%')
+		</if>
+		<if test="deptId != null">
+			AND d.dept_Id = #{deptId}
+		</if>
+		GROUP BY su.user_id
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+		order by parent_id, order_num
+    </select>
+
+	<select id="selectRanksInfo" parameterType="String" resultMap="SysRanksResult">
+		<include refid="selectRanksVo"/>
+		where ranks_id = #{ranksId}
+	</select>
+
+	<insert id="insertRanks" parameterType="SysRanks" useGeneratedKeys="true" keyProperty="ranksId">
+		insert into sys_ranks(
+		<if test="ranksId != null and ranksId != 0">ranks_id,</if>
+		<if test="ranksName != null and ranksName != ''">ranks_name,</if>
+		<if test="email != null and email != ''">email,</if>
+		<if test="avatar != null and avatar != ''">avatar,</if>
+		<if test="phone != null and phone != ''">phone,</if>
+		<if test="sex != null and sex != ''">sex,</if>
+		<if test="status != null and status != ''">status,</if>
+		<if test="createBy != null and createBy != ''">create_by,</if>
+		<if test="remark != null and remark != ''">remark,</if>
+		<if test="addr != null and addr != ''">addr,</if>
+		create_time
+		)values(
+		<if test="ranksId != null and ranksId != ''">#{ranksId},</if>
+		<if test="ranksName != null and ranksName != ''">#{ranksName},</if>
+		<if test="email != null and email != ''">#{email},</if>
+		<if test="avatar != null and avatar != ''">#{avatar},</if>
+		<if test="phone != null and phone != ''">#{phone},</if>
+		<if test="sex != null and sex != ''">#{sex},</if>
+		<if test="status != null and status != ''">#{status},</if>
+		<if test="createBy != null and createBy != ''">#{createBy},</if>
+		<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="addr != null and addr != ''">#{addr},</if>
+		sysdate()
+		)
+	</insert>
+
+	<update id="updateRanks" parameterType="SysRanks">
+		update sys_ranks
+		<set>
+			<if test="ranksName != null and ranksName != ''">ranks_name = #{ranksName},</if>
+			<if test="email != null and email != ''">email = #{email},</if>
+			<if test="phone != null and phone != ''">phone = #{phone},</if>
+			<if test="sex != null and sex != ''">sex = #{sex},</if>
+			<if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+			<if test="status != null and status != ''">status = #{status},</if>
+			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			<if test="remark != null">remark = #{remark},</if>
+			<if test="addr != null">addr = #{addr},</if>
+			update_time = sysdate()
+		</set>
+		where ranks_id = #{ranksId}
+	</update>
+
+	<!--更新队伍状态-->
+	<update id="changeStatus" parameterType="SysRanks">
+		update sys_ranks set status = #{status} where ranks_id = #{ranksId}
+	</update>
+	<!--删除单个队伍信息-->
+	<delete id="deleteRanksById" parameterType="Long">
+ 		update sys_ranks set del_flag = '2' where ranks_id = #{ranksId}
+ 	</delete>
+	<!--批量删除队伍信息-->
+	<delete id="deleteRanksByIds" parameterType="Long">
+		update sys_ranks set del_flag = '2' where ranks_id in
+		<foreach collection="array" item="ranksId" open="(" separator="," close=")">
+			#{ranksId}
+		</foreach>
+	</delete>
+	<select id="selectRanksByPhoneNumber" parameterType="String" resultType="int">
+		select count(1) from sys_ranks where phone = #{phone}
+	</select>
+
+    <select id="querySysRanksCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(0) FROM sys_ranks sr
+        where
+            sr.del_flag ='0'
+            <if test="status != null and status !=''">
+                and r.status = #{status}
+            </if>
+    </select>
+
+	<select id="selectCanBeChoose" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.HkEntity.UserInfoDto">
+		select distinct
+		sr.ranks_id as userId,
+		sr.ranks_name as userName,
+		sr.sex as sex,
+		sr.phone as phone,
+		d.dept_name as deptName
+		from
+		sys_ranks sr
+		left join sys_user u on u.user_id = sr.ranks_id
+		left join sys_dept d on u.dept_id = d.dept_id
+		where u.del_flag = '0'
+		AND u.user_id &lt;&gt; 1
+		<if test="searchValue != null and searchValue != ''">
+			AND concat(u.user_name,u.phonenumber,d.dept_name) like concat('%', #{searchValue}, '%')
+		</if>
+		<if test="userId != null and userId != ''">
+			AND u.user_id = #{userId}
+		</if>
+		<if test="deptId != null">
+			AND d.dept_Id = #{deptId}
+		</if>
+		<if test="notDeptId != null">
+			AND d.dept_Id &lt;&gt; #{notDeptId}
+		</if>
+		<if test="notUserId != null">
+			AND u.user_id &lt;&gt; #{notUserId}
+		</if>
+		GROUP BY sr.ranks_id
+	</select>
+
+	<select id="getRegionCountByRanks" resultType="java.util.Map">
+		select
+		any_value(re.ranks_name) as ranksName,
+		IFNULL(any_value(sd.dept_name),"") as deptName,
+		count(distinct upr.region_id) as regionCount
+		from sys_ranks re
+		left join sys_user su on re.ranks_id = su.user_id
+		left join sys_dept sd on sd.dept_id = su.dept_id
+		left join sys_user_post_region upr on upr.user_id = re.ranks_id
+		group by re.ranks_id
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <select id="querySysRanksAccountStatus" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(0) FROM sys_ranks sr
+        <where>
+            1 = 1
+            <if test="accountStatus != null and accountStatus !=''">
+                and sr.status = #{accountStatus}
+            </if>
+
+            <if test="station !=null and station !=''">
+                and sr.status = #{station}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPeopleDisposalAnalysis" resultType="com.ruoyi.system.domain.HkEarlyWarning.PeopleDisposalAnalysisVO" parameterType="java.util.Map">
+		select sr.user_name as `name`,count(srd1.ranksId) as `value` from sys_ranks sr
+		left join (select srd.ranks_id as `ranksId` from sys_user srd
+		inner join  sys_dept sd on srd.dept_id = sd.dept_id
+		inner join  hk_event_info hei on hei.region_index_code = sd.dept_uuid
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday != null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test ="deptCode != null and deptCode !=''">
+				and sd.dept_code = #{deptCode}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+		</where>
+		)srd1
+		on  sr.ranks_id = srd1.ranksId
+		group by sr.user_name
+		order by value desc
+		limit 5
+    </select>
+
+	<select id="queryPeopleDisposalAnalysisByDeptName" resultType="com.ruoyi.system.domain.HkEarlyWarning.PeopleDisposalAnalysisVO" parameterType="java.util.Map">
+		select sr.user_name as `name`,count(srd1.ranksId) as `value` from sys_ranks sr
+		left join (select srd.ranks_id as `ranksId` from sys_ranks_dept srd
+		inner join  sys_dept sd on srd.dept_id = sd.dept_id
+		inner join  hk_event_info hei on hei.region_index_code = sd.dept_uuid
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday != null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test ="deptCode != null and deptCode !=''">
+				and sd.dept_code = #{deptCode}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+			<if test="deptName !=null and deptName !=''">
+				and sd.dept_name = #{deptName}
+			</if>
+		</where>
+		)srd1
+		on  sr.ranks_id = srd1.ranksId
+		group by sr.user_name
+		order by value desc
+		limit 5
+	</select>
+
+    <select id="queryPeopleTime" resultType="com.ruoyi.system.domain.HkEarlyWarning.PeopleTimeVO" parameterType="java.util.Map">
+        select  sr.login_name as `loginName`,sr.user_name as  `name`,srd1.create_time as `createTime`,srd1.update_time as `updateTime` from sys_ranks sr
+        left join (select srd.ranks_id as `ranksId`,hei.create_time,hei.update_time from sys_ranks_dept srd
+        inner join  sys_dept sd on srd.dept_id = sd.dept_id
+        inner join  hk_event_info hei on hei.region_index_code = sd.dept_uuid
+        <where>
+            1 = 1
+            <if test="trendWeekMonday != null and trendWeekMonday !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+            </if>
+        </where>)srd1
+        on sr.ranks_id = srd1.ranksId
+        <where>
+            del_flag = '0'
+            <if test="accountStatus !=null and accountStatus !=''">
+                and sr.status = #{accountStatus}
+            </if>
+            <if test="station !=null and station !=''">
+                and sr.station = #{station}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPeopleType" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(0) as `peopleCount` FROM sys_ranks sr
+        <where>
+            1 = 1
+            <if test="accountStatus != null and accountStatus !=''">
+                and sr.status = #{accountStatus}
+            </if>
+        </where>
+    </select>
+
+</mapper> 

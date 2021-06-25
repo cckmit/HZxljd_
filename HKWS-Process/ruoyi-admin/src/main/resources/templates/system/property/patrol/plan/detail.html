@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('巡更计划查看')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m-t" id="signupForm">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">巡更计划：</label>
+            <div class="form-control-static" th:text="${xlPropertyPatrolPlan.planName}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">巡更路线：</label>
+            <div class="form-control-static">
+                <div th:if="${xlPropertyPatrolPlan.planStatus eq 1}">
+                    <span th:if="${xlPropertyPatrolPlan.path.delFlag eq 1}">
+                        <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 该计划关联巡更路线被删除，清重新选择巡更路线</span>
+                    </span>
+                    <span th:if="${xlPropertyPatrolPlan.path.delFlag eq 0}">
+                        <span th:text="${xlPropertyPatrolPlan.path.pathName}"></span>&nbsp;
+                        <span><i class="fa fa-info-circle"></i> 该计划关联巡更点被删除，清重新选择巡更路线</span>
+                    </span>
+                </div>
+                <div th:if="${xlPropertyPatrolPlan.planStatus eq 0}">
+                    <span th:text="${xlPropertyPatrolPlan.path.pathName}"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">巡更员：</label>
+            <div class="form-control-static" th:text="${xlPropertyPatrolPlan.userNames}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">生效日期范围：</label>
+            <div class="form-control-static">
+                <span th:text="${#dates.format(xlPropertyPatrolPlan.planStartTime, 'yyyy-MM-dd')}"></span>
+                <span>--</span>
+                <span th:text="${#dates.format(xlPropertyPatrolPlan.planEndTime, 'yyyy-MM-dd')}"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">巡更周期：</label>
+            <div class="form-control-static">
+                <span th:text="${xlPropertyPatrolPlan.planCycle}"></span>天/组
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">巡更时间点：</label>
+            <div class="form-control-static" th:text="${xlPropertyPatrolPlan.planCycleTiming}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">描述：</label>
+            <div class="form-control-static" th:text="${xlPropertyPatrolPlan.planRemark}">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript"></script>
+</body>
+</html>

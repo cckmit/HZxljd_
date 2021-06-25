@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <meta Staing="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>数智闲林·统一门户管理平台</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/css/step.css}" rel="stylesheet"/>
+</head>
+<body>
+<div id="app">
+    <!-- 步骤条 -->
+    <el-steps :active="active" finish-status="success" align-center>
+        <el-step title="填写基本信息"></el-step>
+        <el-step title="选择开放API"></el-step>
+        <el-step title="完成"></el-step>
+    </el-steps>
+
+
+    <!-- 表单 -->
+    <!-- <div class="step-form" ref='stepform'> -->
+    <el-form class="step-form" ref="form"  :model="form" label-width="90px" v-show="showForm">
+        <el-form-item label="对象接入码" >
+            <el-input v-model="form.amcode" name="amcode" id="amcode"  :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="接入对象名称" >
+            <el-input v-model="form.amname" name="amname" id="amname"></el-input>
+        </el-form-item>
+        <el-form-item label="接入密钥" >
+            <el-input v-model="form.amsecretkey" name="amsecretkey" id="amsecretkey" :disabled="true" ></el-input>
+            <el-button type="primary" style="margin-top: 12px" @click="scheng">生成</el-button>
+        </el-form-item>
+        <el-form-item label="事件类型" >
+            <el-select v-model="form.region" placeholder="请选择加密方式" id="actionType">
+                <el-option label="RSA" value="1"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="生效日期" >
+            <el-input v-model="form.ameffectivedate" type="date" name="ameffectivedate" id="ameffectivedate"></el-input>
+        </el-form-item>
+        <el-form-item label="失效日期" >
+            <el-input v-model="form.amexpirationdate" type="date" name="amexpirationdate" id="amexpirationdate"></el-input>
+        </el-form-item>
+        <el-form-item style="text-align: right;">
+            <el-button type="primary" style="margin-top: 12px" @click="next">下一步</el-button>
+            <!-- <el-button type="primary" @click="onSubmit">立即创建</el-button> -->
+            <el-button @click="prim2">取消</el-button>
+        </el-form-item>
+    </el-form>
+
+    <!-- </div> -->
+    <!-- 表格 -->
+    <div class="step_tab" v-show="showTable" style="width: 800px;height: 150px">
+        <el-table
+
+                ref="multipleTable"
+                :data="tableData"
+                tooltip-effect="dark"
+                @selection-change="handleSelectionChange"
+                border
+                align='center'
+                width="500px"
+                height="150px"
+        >
+            <el-table-column type="selection" align='center' width="76"> </el-table-column>
+            <el-table-column label="API地址" align='center' width="200">
+                <template slot-scope="fieldName">choucheng.event.getEventInfoByCode</template>
+                <template slot-scope="fieldName">choucheng.event.getEventInfoByPhone</template>
+                <template slot-scope="fieldName"> choucheng.event.getEventInfoList</template>
+                <template slot-scope="fieldName">choucheng.event.finishEvent</template>
+            </el-table-column>
+            <el-table-column prop="fieldType" label="API功能描述" width="200" align='center'>
+                <template slot-scope="fieldType">根据事件编号获取事件信息</template>
+                <template slot-scope="fieldType">根据手机号码获取事件信息</template>
+                <template slot-scope="fieldType">根据筛选条件获取事件的列表信息</template>
+                <template slot-scope="fieldType">对事件进行完成操作</template>
+            </el-table-column>
+            <el-table-column prop="fieldNull" label="授权类型" width="130" align='center'>
+                <template slot-scope="fieldType">需要</template>
+                <template slot-scope="fieldType">需要</template>
+                <template slot-scope="fieldType">需要</template>
+                <template slot-scope="fieldType">需要</template>
+            </el-table-column>
+            <el-table-column label="操作" align='center'  width="130">
+                <template slot-scope="scope">
+                    <!--              <span @click="handleEdit(scope.$index, scope.row)">编辑</span>-->
+                    <span @click="handleDelete(scope.$index, scope.row)">查看详情</span>
+                </template>
+            </el-table-column>
+
+        </el-table>
+<!--        <el-button type="text" @click="dialogTableVisible = true">添加字段</el-button>-->
+        <div class="step_button">
+            <el-button type="primary"  @click="prep">上一步</el-button>
+            <el-button type="primary" @click="prim1">完成</el-button>
+            <el-button @click="prim2">取消</el-button>
+        </div>
+
+    </div>
+    <!-- 添加字段 -->
+<!--    <div class="step-tab">-->
+<!--        <el-dialog title="添加字段" :visible.sync="dialogTableVisible">-->
+<!--            <span class="step-navtitle">常用字段</span>-->
+<!--            <el-tabs :tab-position="tabPosition">-->
+<!--                <el-form :model="Tabform" label-width="100px" ref="Tabform" :rules="Rules">-->
+<!--                    <el-form-item label="字段名称" prop="name">-->
+<!--                        <el-input v-model="Tabform.name" id="fieldName" name="fieldName"></el-input>-->
+<!--                    </el-form-item>-->
+<!--                    <el-form-item label="文本长度" prop="leng">-->
+<!--                        <el-radio-group v-model="Tabform.leng" id="fieldLength" name="fieldLength">-->
+<!--                            <el-radio label="不限"></el-radio>-->
+<!--                            <el-radio label="限制"></el-radio>-->
+<!--                        </el-radio-group>-->
+<!--                        <el-input v-model="Tabform.lengName" style="width: 56%;margin-left: 22px;"-->
+<!--                                  id="fieldLengName" name="fieldLengName"></el-input>-->
+<!--                    </el-form-item>-->
+<!--                    <el-form-item label="文本类型" prop="rejet">-->
+<!--                        <el-radio-group v-model="Tabform.rejet"  id="fieldType" name="fieldType" >-->
+<!--                            <el-radio label="单行文本"></el-radio>-->
+<!--                            <el-radio label="多行文本"></el-radio>-->
+<!--                        </el-radio-group>-->
+<!--                    </el-form-item>-->
+<!--                    <el-form-item label="是否必填" prop="reque">-->
+<!--                        <el-radio-group v-model="Tabform.reque" id="fieldReqirue" name="fieldReqirue">-->
+<!--                            <el-radio label="是"></el-radio>-->
+<!--                            <el-radio label="否"></el-radio>-->
+<!--                        </el-radio-group>-->
+<!--                    </el-form-item>-->
+<!--                    <el-form-item label="提示语" prop="tit">-->
+<!--                        <el-input v-model="Tabform.tit" id="fieidTips" name="fieidTips"></el-input>-->
+<!--                    </el-form-item>-->
+<!--                </el-form>-->
+<!--                &lt;!&ndash;                <el-tab-pane label="多行文本"></el-tab-pane>&ndash;&gt;-->
+<!--                &lt;!&ndash;                <el-tab-pane label="单选">角色管理</el-tab-pane>&ndash;&gt;-->
+<!--                &lt;!&ndash;                <el-tab-pane label="多选">定时任务补偿</el-tab-pane>&ndash;&gt;-->
+<!--                &lt;!&ndash;                <el-tab-pane label="日期时间">定时任务补偿</el-tab-pane>&ndash;&gt;-->
+<!--                &lt;!&ndash;                <el-tab-pane label="上传图片">定时任务补偿</el-tab-pane>&ndash;&gt;-->
+<!--            </el-tabs>-->
+<!--            <span slot="footer" class="dialog-footer">-->
+<!--              <el-button @click="dialogTableVisible = false">取 消</el-button>-->
+<!--               <el-button type="primary" @click="submitForm('Tabform')">确 定</el-button>-->
+<!--                &lt;!&ndash;               <el-button type="primary" @click="dialogTableVisible = false;prim2();AddList()">确 定</el-button>&ndash;&gt;-->
+<!--            </span>-->
+<!--        </el-dialog>-->
+<!--        <el-input id="uuid" type="hidden" th:value="*{commid}" ></el-input>-->
+<!--        <el-input id="uuid" type="hidden"></el-input>-->
+<!--    </div>-->
+
+
+</div>
+</body>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+<script th:inline="javascript">
+    // 表格的json
+    var tableData = [[${tableData}]];
+    tableData = JSON.parse(tableData);
+
+</script>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var validateLeng = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("请选择文本长度"));
+                }else{
+                    callback();
+                }
+
+            };
+            var validateName = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("字段名称不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            var validateReque = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("是否必填不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            var validateType = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("请选择文本类型"));
+                }else{
+                    callback();
+                }
+            };
+            var validateTit = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("提示语不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            return {
+                // 添加字段的title位置
+                tabPosition:'left',
+                // 控制步骤条
+                active: 0,
+                // 添加字段数据
+                Tabform:{
+                    leng:'',
+                    tit:'',
+                    name:'',
+                    reque:'',
+                    rejet:'',
+
+                },
+                // 表单数据
+                form: {
+                    amcode: "",
+                    amname: "",
+                    region: "",
+                    amsecretkey: "",
+                    ameffectivedate: "",
+                    amexpirationdate:''
+                },
+                biaoshi:0,
+
+                // 表单验证
+                Rules: {
+                    leng: [{required: true,validator: validateLeng, trigger: "blur"}],
+                    name: [{required: true,validator: validateName, trigger: "blur"}],
+                    rejet: [{required: true,validator: validateType, trigger: "blur"}],
+                    tit: [{required: true,validator: validateTit, trigger: "blur"}],
+                    reque: [{required: true,validator: validateReque, trigger: "blur"}],
+                },
+                tableData: tableData,
+
+                multipleSelection: [],
+                // 添加字段页面显示
+                dialogTableVisible: false,
+                // 表单显示隐藏
+                showForm: true,
+                // 表格显示隐藏
+                showTable: false,
+            };
+        },
+        methods: {
+            // 表格添加
+            AddList(){
+                console.log(this.Tabform.name);
+                this.tableData.push({
+                    fieldName: this.Tabform.name,
+                    fieldType: this.Tabform.rejet,
+                    fieldNull: this.Tabform.reque,
+                })
+            },
+
+            // 当表格选择项发生变化时会触发该事件
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            // 表格编辑
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            // 表格删除
+            handleDelete(index, row) {
+                console.log(index, row);
+                this.tableData.splice(index,1);
+                var id = row.id;
+                $.ajax({
+                    type: 'POST',
+                    url: "/system/gzhi/deleteHKfield",
+                    data: {
+                        "id": id,
+                    },
+                    success: function (result) {
+                    }
+                });
+            },
+            next() {
+                var amcode = $("#amcode").val();
+                if(amcode== ''){
+                    this.$message.error('请输入对象接入码');
+                    return;
+                }
+                var amsecrettype = this.form.region;
+                if(amsecrettype== ''){
+                    this.$message.error('请输入加密类型');
+                    return;
+                }
+                var amname = $("#amname").val();
+                if(amname== ''){
+                    this.$message.error('请输入接入对象名称');
+                    return;
+                }
+                var amsecretkey = $("#amsecretkey").val();
+                if(amsecretkey== ''){
+                    this.$message.error('请生成接入密钥');
+                    return;
+                }
+                var ameffectivedate = $("#ameffectivedate").val();
+                if(ameffectivedate== ''){
+                    this.$message.error('请输入生效日期');
+                    return;
+                }
+                var amexpirationdate = $("#amexpirationdate").val();
+                if(amexpirationdate== ''){
+                    this.$message.error('请输入失去效日期');
+                    return;
+                }
+                this.showForm = false
+                this.showTable = true
+                this.active = 1
+            },
+
+            scheng(){
+                $.ajax({
+                    async: false,
+                    type : 'POST',
+                    url:  "/system/open/miyao",
+                    data : {},
+                    success: function(result) {
+                        if ( $("#amsecretkey").val()==''&& $("#amcode").val()==''){
+                              $("#amcode").val(result["code"]);
+                              $("#amsecretkey").val(result["sid"]);
+                          }else{
+                            $("#amcode").val('');
+                            $("#amsecretkey").val('');
+                          }
+                    }})
+
+            },
+            prep() {
+                if (this.active-- < 0) this.active = 2;
+                this.showForm = true
+                this.showTable = false
+            },
+            prim2(){
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+            },
+            prim1(){
+                var amcode = $("#amcode").val();
+                if(amcode== ''){
+                    this.$message.error('请输入对象接入码');
+                    return;
+                }
+                var amsecrettype = this.form.region;
+                if(amsecrettype== ''){
+                    this.$message.error('请输入加密类型');
+                    return;
+                }
+                var amname = $("#amname").val();
+                if(amname== ''){
+                    this.$message.error('请输入接入对象名称');
+                    return;
+                }
+                var amsecretkey = $("#amsecretkey").val();
+                if(amsecretkey== ''){
+                    this.$message.error('请生成接入密钥');
+                    return;
+                }
+                var ameffectivedate = $("#ameffectivedate").val();
+                if(ameffectivedate== ''){
+                    this.$message.error('请输入生效日期');
+                    return;
+                }
+                var amexpirationdate = $("#amexpirationdate").val();
+                if(amexpirationdate== ''){
+                    this.$message.error('请输入失去效日期');
+                    return;
+                }
+                var _that = this
+                $.ajax({
+                    async: false,
+                    type : 'POST',
+                    url:  "/system/open/addHkAManagement",
+                    data : {
+                        "amcode": amcode,
+                        "amsecrettype": amsecrettype,
+                        "amname": amname,
+                        "amsecretkey": amsecretkey,
+                        "ameffectivedate": ameffectivedate,
+                        "amexpirationdate": amexpirationdate,
+                        "biaos":this.biaoshi,
+                    },
+                    success: function(result) {
+                        // if(result.code == 301){
+                        //     _that.$alert('行动名称已存在', {
+                        //         confirmButtonText: '确定',
+                        //         callback: action => {
+                        //
+                        //         }
+                        //     });
+                        // }else if(result.code == 500) {
+                        //     _that.$alert('事件类型已存在', {
+                        //         confirmButtonText: '确定',
+                        //         callback: action => {
+                        //
+                        //         }
+                        //     });
+                        // }else {
+                        // 成功回调数据
+                        var uu=result.data;
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    }                        // }
+
+                });
+                this.active = 3;
+            },
+            prim3(){
+                this.active = 0;
+                this.showForm = true
+                this.showTable = false
+            },
+            tuichu(){
+
+            },
+            // 添加字段表单验证
+            submitForm(Tabform) {
+                this.$refs[Tabform].validate((valid) => {
+                    if (valid) {
+                        this.dialogTableVisible = false;
+                        var id = $("#id1").val();
+                        var commonlyId = $("#uuid").val();
+                        var fieldName = this.Tabform.name;
+                        var fieldLength = this.Tabform.leng;
+                        var updateUser = $("#updateUser").val();
+                        var _that = this;
+                        if (fieldLength == '不限') {
+                            var fieldLength = "255"
+                        } else {
+                            var fieldLength = this.Tabform.lengName;
+                        }
+                        var fieldType = this.Tabform.rejet;
+                        var fieldNull = this.Tabform.reque;
+                        var fieldCommit = this.Tabform.tit;
+                        $.ajax({
+                            type: 'POST',
+                            url: "/system/gzhi/addField",
+                            data: {
+                                "commonlyId": commonlyId,
+                                "fieldName": fieldName,
+                                "fieldLength": fieldLength,
+                                "fieldType": fieldType,
+                                "fieldNull": fieldNull,
+                                "fieldCommit": fieldCommit
+                            },
+                            success: function (result) {
+                                if(result.code == 301){
+                                    _that.$alert('字段名称已存在', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+
+                                        }
+                                    });
+                                }else {
+                                    _that.tableData.push({
+                                        fieldName: _that.Tabform.name,
+                                        fieldType: _that.Tabform.rejet,
+                                        fieldNull: _that.Tabform.reque,
+                                    })
+                                }
+
+                            }
+                        });
+                        this.active = 2;
+
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+        },
+    });
+
+
+</script>
+</html>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.honey.XlAppealMapper">
+
+    <resultMap type="com.ruoyi.system.domain.honey.XlAppeal" id="XlAppealResult">
+        <result property="id"    column="id"    />
+        <result property="deductionContent"    column="deduction_content"    />
+        <result property="deductionNumber"    column="deduction_number"    />
+        <result property="appealPerson"    column="appeal_person"    />
+        <result property="appealPersonId"    column="appeal_person_id"    />
+        <result property="assessmentDepartment"    column="assessment_department"    />
+        <result property="assessmentDate"    column="assessment_date"    />
+        <result property="appealStatus"    column="appeal_status"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="appealDescribe"    column="appeal_describe"    />
+    </resultMap>
+
+    <sql id="selectXlAppealVo">
+        select id, deduction_content, deduction_number, appeal_person,appeal_person_id, assessment_department, assessment_date,
+         appeal_status, create_date, appeal_describe,appeal_count from xl_appeal
+    </sql>
+
+    <select id="selectXlAppealList" parameterType="com.ruoyi.system.domain.honey.XlAppeal" resultMap="XlAppealResult">
+        select id, deduction_content, deduction_number, appeal_person, assessment_department, assessment_date, appeal_status, create_date, appeal_describe
+		,(SELECT COUNT(1) FROM  xl_appeal  ap where ap.appeal_person=xl_appeal.appeal_person) AS appealCount
+		from xl_appeal
+        <where>
+            <if test="assessmentDepartment != null  and assessmentDepartment != ''"> and assessment_department like concat('%', #{assessmentDepartment}, '%')</if>
+            <if test="appealStatus != null "> and appeal_status = #{appealStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectXlAppealById" parameterType="Long" resultMap="XlAppealResult">
+        <include refid="selectXlAppealVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlAppeal" parameterType="com.ruoyi.system.domain.honey.XlAppeal" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_appeal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deductionContent != null  and deductionContent != ''">deduction_content,</if>
+            <if test="deductionNumber != null  and deductionNumber != ''">deduction_number,</if>
+            <if test="appealPerson != null  and appealPerson != ''">appeal_person,</if>
+            <if test="assessmentDepartment != null  and assessmentDepartment != ''">assessment_department,</if>
+            <if test="assessmentDate != null ">assessment_date,</if>
+            <if test="appealStatus != null ">appeal_status,</if>
+            <if test="createDate != null ">create_date,</if>
+            <if test="appealDescribe != null  and appealDescribe != ''">appeal_describe,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deductionContent != null  and deductionContent != ''">#{deductionContent},</if>
+            <if test="deductionNumber != null  and deductionNumber != ''">#{deductionNumber},</if>
+            <if test="appealPerson != null  and appealPerson != ''">#{appealPerson},</if>
+            <if test="assessmentDepartment != null  and assessmentDepartment != ''">#{assessmentDepartment},</if>
+            <if test="assessmentDate != null ">#{assessmentDate},</if>
+            <if test="appealStatus != null ">#{appealStatus},</if>
+            <if test="createDate != null ">#{createDate},</if>
+            <if test="appealDescribe != null  and appealDescribe != ''">#{appealDescribe},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlAppeal" parameterType="com.ruoyi.system.domain.honey.XlAppeal">
+        update xl_appeal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deductionContent != null  and deductionContent != ''">deduction_content = #{deductionContent},</if>
+            <if test="deductionNumber != null  and deductionNumber != ''">deduction_number = #{deductionNumber},</if>
+            <if test="appealPerson != null  and appealPerson != ''">appeal_person = #{appealPerson},</if>
+            <if test="assessmentDepartment != null  and assessmentDepartment != ''">assessment_department = #{assessmentDepartment},</if>
+            <if test="assessmentDate != null ">assessment_date = #{assessmentDate},</if>
+            <if test="appealStatus != null ">appeal_status = #{appealStatus},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="appealDescribe != null  and appealDescribe != ''">appeal_describe = #{appealDescribe},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlAppealById" parameterType="Long">
+        delete from xl_appeal where id = #{id}
+    </delete>
+
+    <delete id="deleteXlAppealByIds" parameterType="String">
+        delete from xl_appeal where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

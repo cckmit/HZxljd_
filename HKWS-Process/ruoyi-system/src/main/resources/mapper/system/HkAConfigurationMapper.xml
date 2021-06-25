@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkAConfigurationMapper">
+    <resultMap type="com.ruoyi.system.domain.HkAConfiguration" id="HkAConfigurationResult">
+        <id     property="id"      column="id"      />
+        <result property="uuid"    column="uuid"    />
+        <result property="actionName"     column="action_name"     />
+        <result property="actionRemarks"   column="action_remarks"   />
+        <result property="actionType"    column="action_type"    />
+        <result property="actionTypeId"    column="action_type_id"    />
+        <result property="actionStatus"      column="action_status"      />
+        <result property="isDelete"      column="is_delete"      />
+        <result property="createUser"    column="create_user"    />
+        <result property="createDate"      column="create_date"      />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="ecId"    column="ec_id"    />
+    </resultMap>
+
+    <!--查询一级分类下有没有二级分类 -->
+    <select id="countHkAConfiguration"  resultType="Integer">
+		 select count(1) from hk_Action_Configuration where action_type_id=#{ids}
+	</select>
+    <select id="selectRoleList" parameterType="com.ruoyi.system.domain.HkAConfiguration" resultMap="HkAConfigurationResult">
+        SELECT
+        a.*,
+        e.ec_id as ecId
+        FROM
+        hk_Action_Configuration a
+        left join hk_EClassification e on e.ec_id=a.action_type_id
+        <where>
+            <if test="actionType!= null and actionType!=''">
+                AND action_type = #{actionType}
+            </if>
+            <if test="actionStatus!= null and actionStatus!=''">
+                AND action_status = #{actionStatus}
+            </if>
+            <if test="id!= null and id!=''">
+                AND id = #{id}
+            </if>
+            <if test="actionName!= null and actionName!=''">
+                AND action_name LIKE CONCAT('%',#{actionName},'%')
+            </if>
+            and is_delete =0
+        </where>
+    </select>
+
+    <insert id="addHKAconfiguration" parameterType="com.ruoyi.system.domain.HkAConfiguration">
+        INSERT INTO hk_Action_Configuration (
+        `uuid`,
+        `action_name`,
+        `action_type`,
+        `action_remarks`,
+        `action_status`,
+        `create_user`,
+        `create_date`
+        )
+        VALUES
+        (
+        #{uuid},
+        #{actionName},
+        #{actionType},
+        #{actionRemarks},
+        0,
+        #{createUser},
+        NOW()
+        );
+    </insert>
+
+    <select id="findHKAconfiguration" parameterType="String" resultMap="HkAConfigurationResult">
+        SELECT
+        *
+        FROM
+        hk_Action_Configuration
+       where
+       uuid=#{uuid}
+       and
+       is_delete =0;
+    </select>
+
+    <!--校验行动名称 -->
+    <select id="checkRoleAllowed" resultType="int" parameterType="com.ruoyi.system.domain.HkAConfiguration">
+        select count(1) from  hk_Action_Configuration
+        where  action_name= #{actionName}
+        <if test="id!=null and id!=''" >
+            and id !=#{id}
+        </if>
+    </select>
+
+    <select id="selecAConfiguration" parameterType="int" resultMap="HkAConfigurationResult">
+        SELECT
+        *
+        FROM
+        hk_Action_Configuration
+       where
+       id=#{id}
+       and
+       is_delete =0;
+    </select>
+
+    <!--编辑行动配置 -->
+    <update id="editHKAconfiguration" parameterType="com.ruoyi.system.domain.HkAConfiguration">
+    UPDATE hk_Action_Configuration
+    SET
+    action_name = #{actionName},
+    action_remarks = #{actionRemarks},
+    action_type = #{actionType},
+    action_status = 0,
+    update_user = #{updateUser},
+    update_date = NOW()
+    WHERE
+    id = #{id}
+    </update>
+
+    <!--批量删除行动配置 -->
+    <update id="deleteHKAconfiguration" parameterType="String">
+        update hk_Action_Configuration set is_delete=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="findActionConfiguration" resultMap="HkAConfigurationResult">
+        select * from hk_Action_Configuration where action_status = 0
+    </select>
+
+    <select id="findKey" resultType="java.lang.String" parameterType="java.lang.String">
+        select id from hk_Action_Configuration where action_name = #{actionName}
+    </select>
+
+    <!--校验事件类型 -->
+    <select id="checkTypeAllowed" resultType="int" parameterType="com.ruoyi.system.domain.HkAConfiguration">
+        select count(1) from  hk_Action_Configuration
+        where  action_type= #{actionType}
+        <if test="id!=null and id!=''" >
+            and id !=#{id}
+        </if>
+    </select>
+
+    <select id="findEventTypeName" resultMap="HkAConfigurationResult" parameterType="java.lang.String">
+        select * from hk_Action_Configuration where action_name = #{eventTypeName}
+    </select>
+
+    <select id="findaConfiguration" resultMap="HkAConfigurationResult">
+        select * from hk_Action_Configuration where is_delete =0;
+    </select>
+
+    <select id="findActionStandard" resultMap="HkAConfigurationResult" parameterType="com.ruoyi.system.domain.HkAConfiguration">
+        select * from hk_Action_Configuration where action_name = #{actionName}
+    </select>
+
+    <select id="findConfigurationName" resultMap="HkAConfigurationResult" parameterType="java.lang.String">
+        select action_name from hk_Action_Configuration where uuid=#{uuid}
+    </select>
+
+</mapper>

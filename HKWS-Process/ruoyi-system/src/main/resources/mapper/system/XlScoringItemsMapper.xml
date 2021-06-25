@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlScoringItemsMapper">
+    
+    <resultMap type="XlScoringItems" id="XlScoringItemsResult">
+        <result property="id"    column="id"    />
+        <result property="describes"    column="describes"    />
+        <result property="subdivideId"    column="subdivide_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUser"    column="create_user"    />
+        <association property="sysDept"    column="deptId" javaType="SysDept" resultMap="SysDeptResult" />
+        <association property="xlSubdivide"    column="subdivideId" javaType="XlSubdivide" resultMap="XlSubdivideResult" />
+    </resultMap>
+
+    <resultMap type="SysDept" id="SysDeptResult">
+        <id     property="deptId"     column="dept_id"     />
+        <result property="deptUuid"   column="dept_uuid"   />
+        <result property="parentId"   column="parent_id"   />
+        <result property="ancestors"  column="ancestors"   />
+        <result property="deptName"   column="dept_name"   />
+        <result property="orderNum"   column="order_num"   />
+        <result property="leader"     column="leader"      />
+    </resultMap>
+
+    <resultMap type="XlSubdivide" id="XlSubdivideResult">
+        <result property="subdivideId"    column="subdivide_id"    />
+        <result property="subdivideName"    column="subdivide_name"    />
+        <result property="assessmentId"    column="assessment_id"    />
+        <result property="assessmentScore"    column="assessment_score"    />
+        <result property="assessmentCycle"    column="assessment_cycle"    />
+        <result property="workRequirement"    column="work_requirement"    />
+        <result property="dataSource"    column="data_source"    />
+    </resultMap>
+
+    <sql id="selectXlScoringItemsVo">
+        SELECT xsi.id, xsi.describes, xsi.subdivide_id, xsi.dept_id, xsi.create_time, xsi.create_user, sd.dept_name, xs.subdivide_name FROM xl_scoring_items xsi
+        LEFT JOIN sys_dept sd ON xsi.dept_id = sd.dept_id
+        LEFT JOIN xl_subdivide xs ON  xsi.subdivide_id = xs.subdivide_id
+    </sql>
+
+    <select id="selectXlScoringItemsList" parameterType="XlScoringItems" resultMap="XlScoringItemsResult">
+        <include refid="selectXlScoringItemsVo"/>
+        <where>  
+            <if test="describes != null  and describes != ''"> and xsi.describes like concat('%', #{describes}, '%')</if>
+            <if test="subdivideId != null "> and xsi.subdivide_id = #{subdivideId}</if>
+            <if test="deptId != null  and deptId != ''"> and xsi.dept_id = #{deptId}</if>
+            <if test="createTime != null "> and xsi.create_time = #{createTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlScoringItemsById" parameterType="Long" resultMap="XlScoringItemsResult">
+        <include refid="selectXlScoringItemsVo"/>
+        where xsi.id = #{id}
+    </select>
+
+    <insert id="insertXlScoringItems" parameterType="XlScoringItems" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_scoring_items
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="describes != null  and describes != ''">describes,</if>
+            <if test="subdivideId != null ">subdivide_id,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="describes != null  and describes != ''">#{describes},</if>
+            <if test="subdivideId != null ">#{subdivideId},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlScoringItems" parameterType="XlScoringItems">
+        update xl_scoring_items
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="describes != null  and describes != ''">describes = #{describes},</if>
+            <if test="subdivideId != null ">subdivide_id = #{subdivideId},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlScoringItemsById" parameterType="Long">
+        delete from xl_scoring_items where id = #{id}
+    </delete>
+
+    <delete id="deleteXlScoringItemsByIds" parameterType="String">
+        delete from xl_scoring_items where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

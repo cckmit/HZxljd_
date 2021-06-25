@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事件信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>事件标题：</label>
+                                <input type="text" name="eventTitle"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:event:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:event:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:event:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:event:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:event:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:event:remove')}]];
+        var prefix = ctx + "system/eventDeal";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "事件信息",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    field: 'eventTitle', 
+                    title: '事件标题'
+                },
+                {
+                    field: 'cameraName',
+                    title: '事件地点'
+                },
+                {
+                    field: 'reportTime',
+                    title: '上报时间'
+                },
+                {
+                    field: 'reportTypeName',
+                    title: '上报类型'
+                },
+                {
+                    field: 'regionName',
+                    title: '区域名称'
+                },
+                {
+                    field: 'eventAlertStatus',
+                    title: '状态',
+                    sortable: true,
+                    formatter:function (value,row,index) {
+                        if(row['eventAlertStatus'] == 2){
+                            return '研判中';
+                        }
+                        if(row['eventAlertStatus'] == 3){
+                            return '调度中';
+                        }
+                        if(row['eventAlertStatus'] == 4){
+                            return '退回';
+                        }
+                        if(row['eventAlertStatus'] == 5){
+                            return '处置中';
+                        }
+                        if(row['eventAlertStatus'] == 6){
+                            return '完结';
+                        }
+                        if(row['eventAlertStatus'] == 7){
+                            return '已忽略';
+                        }
+                        if(row['eventAlertStatus'] == 8){
+                            return '已关闭';
+                        }
+                        if(row['eventAlertStatus'] == 9){
+                            return '系统完结';
+                        }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                        /*if(row.eventAlertStatus==2){
+                            var actions = [];
+                            actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="judgement('+ row.id + ')"><i class="fa fa-edit"></i>交办</a> ');
+                            actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>确认</a> ');
+                            actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>忽略</a> ');
+                            actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>关闭</a> ');
+                            return actions.join('');
+                        }else if(row.eventAlertStatus==3){
+                            var actions = [];
+                            actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>查看</a> ');
+                            return actions.join('');
+                        }*/
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

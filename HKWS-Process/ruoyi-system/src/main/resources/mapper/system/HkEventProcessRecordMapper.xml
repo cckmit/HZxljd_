@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkEventProcessRecordMapper">
+    
+    <resultMap type="HkEventProcessRecord" id="HkEventProcessRecordResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="eventId"    column="event_id"    />
+        <result property="regionIndexCode"    column="region_index_code"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="handlerRecordIndexCode"    column="handler_record_index_code"    />
+        <result property="handlerIndexCode"    column="handler_index_code"    />
+        <result property="handlerName"    column="handler_name"    />
+        <result property="handlerPhone"    column="handler_phone"    />
+        <result property="handlerContent"    column="handler_content"    />
+        <result property="processStatus"    column="process_status"    />
+        <result property="processStatusName"    column="process_status_name"    />
+        <result property="processTime"    column="process_time"    />
+        <result property="extendInt1"    column="extend_int1"    />
+        <result property="extendInt2"    column="extend_int2"    />
+        <result property="extendInt3"    column="extend_int3"    />
+        <result property="extendStr1"    column="extend_str1"    />
+        <result property="extendStr2"    column="extend_str2"    />
+        <result property="extendStr3"    column="extend_str3"    />
+        <result property="extendjson"    column="extendjson"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectHkEventProcessRecordVo">
+        select id, record_id, event_id, region_index_code, region_name, handler_record_index_code, handler_index_code, handler_name, handler_phone, handler_content, process_status, process_status_name, process_time, extend_int1, extend_int2, extend_int3, extend_str1, extend_str2, extend_str3, extendjson, create_time from hk_event_process_record
+    </sql>
+
+    <select id="selectHkEventProcessRecordList" parameterType="HkEventProcessRecord" resultMap="HkEventProcessRecordResult">
+        <include refid="selectHkEventProcessRecordVo"/>
+        <where>  
+            <if test="recordId != null  and recordId != ''"> and record_id = #{recordId}</if>
+            <if test="eventId != null  and eventId != ''"> and event_id = #{eventId}</if>
+            <if test="regionIndexCode != null  and regionIndexCode != ''"> and region_index_code = #{regionIndexCode}</if>
+            <if test="regionName != null  and regionName != ''"> and region_name like concat('%', #{regionName}, '%')</if>
+            <if test="handlerRecordIndexCode != null  and handlerRecordIndexCode != ''"> and handler_record_index_code = #{handlerRecordIndexCode}</if>
+            <if test="handlerIndexCode != null  and handlerIndexCode != ''"> and handler_index_code = #{handlerIndexCode}</if>
+            <if test="handlerName != null  and handlerName != ''"> and handler_name like concat('%', #{handlerName}, '%')</if>
+            <if test="handlerPhone != null  and handlerPhone != ''"> and handler_phone = #{handlerPhone}</if>
+            <if test="handlerContent != null  and handlerContent != ''"> and handler_content = #{handlerContent}</if>
+            <if test="processStatus != null  and processStatus != ''"> and process_status = #{processStatus}</if>
+            <if test="processStatusName != null  and processStatusName != ''"> and process_status_name like concat('%', #{processStatusName}, '%')</if>
+            <if test="processTime != null "> and process_time = #{processTime}</if>
+            <if test="extendInt1 != null "> and extend_int1 = #{extendInt1}</if>
+            <if test="extendInt2 != null "> and extend_int2 = #{extendInt2}</if>
+            <if test="extendInt3 != null "> and extend_int3 = #{extendInt3}</if>
+            <if test="extendStr1 != null  and extendStr1 != ''"> and extend_str1 = #{extendStr1}</if>
+            <if test="extendStr2 != null  and extendStr2 != ''"> and extend_str2 = #{extendStr2}</if>
+            <if test="extendStr3 != null  and extendStr3 != ''"> and extend_str3 = #{extendStr3}</if>
+            <if test="extendjson != null  and extendjson != ''"> and extendjson = #{extendjson}</if>
+        </where>
+    </select>
+
+    <select id="queryProcessRecordByParam" parameterType="java.util.Map" resultMap="HkEventProcessRecordResult">
+        select
+        DISTINCT
+        pr1.id,
+        pr1.record_id,
+        pr1.event_id,
+        pr1.handler_index_code,
+        pr1.handler_name,
+        pr1.handler_content,
+        pr1.process_status,
+        pr1.process_time,
+        pr1.extend_int1,
+        pr1.extend_int2,
+        pr1.extend_int3,
+        pr1.extend_str1,
+        pr1.extend_str2,
+        pr1.extend_str3,
+        pr1.extendjson,
+        pr1.create_time
+        from hk_event_process_record pr1
+        left join
+        hk_event_process_record pr2 on pr1.event_id = pr2.event_id and pr2.handler_index_code = #{userId}
+        where pr2.event_id = #{eventId}
+        and pr1.create_time <![CDATA[ <= ]]>  pr2.create_time
+        order by pr1.create_time asc
+    </select>
+
+
+    <!--状态（1重新指派 2 指派，3签收，4已处置 5退回,6中心处置，7忽略，8异常报送）-->
+    <select id="queryProcessRecordList" parameterType="java.lang.String" resultType="com.ruoyi.system.domain.HkEntity.EventBackProcessRecordVo">
+        select
+        handler_index_code as processUserId,
+        create_time as processTime,
+        process_status as processStatus,
+        handler_content as processResult
+        from hk_event_process_record
+        WHERE
+        event_id = #{eventId}
+        ORDER BY create_time ASC
+    </select>
+
+    
+    <select id="selectHkEventProcessRecordById" parameterType="Long" resultMap="HkEventProcessRecordResult">
+        <include refid="selectHkEventProcessRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHkEventProcessRecord" parameterType="HkEventProcessRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_event_process_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null  and recordId != ''">record_id,</if>
+            <if test="eventId != null  and eventId != ''">event_id,</if>
+            <if test="regionIndexCode != null  and regionIndexCode != ''">region_index_code,</if>
+            <if test="regionName != null  and regionName != ''">region_name,</if>
+            <if test="handlerRecordIndexCode != null  and handlerRecordIndexCode != ''">handler_record_index_code,</if>
+            <if test="handlerIndexCode != null  and handlerIndexCode != ''">handler_index_code,</if>
+            <if test="handlerName != null  and handlerName != ''">handler_name,</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">handler_phone,</if>
+            <if test="handlerContent != null  and handlerContent != ''">handler_content,</if>
+            <if test="processStatus != null  and processStatus != ''">process_status,</if>
+            <if test="processStatusName != null  and processStatusName != ''">process_status_name,</if>
+            <if test="processTime != null ">process_time,</if>
+            <if test="extendInt1 != null ">extend_int1,</if>
+            <if test="extendInt2 != null ">extend_int2,</if>
+            <if test="extendInt3 != null ">extend_int3,</if>
+            <if test="extendStr1 != null  and extendStr1 != ''">extend_str1,</if>
+            <if test="extendStr2 != null  and extendStr2 != ''">extend_str2,</if>
+            <if test="extendStr3 != null  and extendStr3 != ''">extend_str3,</if>
+            <if test="extendjson != null  and extendjson != ''">extendjson,</if>
+            <if test="createTime != null ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null  and recordId != ''">#{recordId},</if>
+            <if test="eventId != null  and eventId != ''">#{eventId},</if>
+            <if test="regionIndexCode != null  and regionIndexCode != ''">#{regionIndexCode},</if>
+            <if test="regionName != null  and regionName != ''">#{regionName},</if>
+            <if test="handlerRecordIndexCode != null  and handlerRecordIndexCode != ''">#{handlerRecordIndexCode},</if>
+            <if test="handlerIndexCode != null  and handlerIndexCode != ''">#{handlerIndexCode},</if>
+            <if test="handlerName != null  and handlerName != ''">#{handlerName},</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">#{handlerPhone},</if>
+            <if test="handlerContent != null  and handlerContent != ''">#{handlerContent},</if>
+            <if test="processStatus != null  and processStatus != ''">#{processStatus},</if>
+            <if test="processStatusName != null  and processStatusName != ''">#{processStatusName},</if>
+            <if test="processTime != null ">#{processTime},</if>
+            <if test="extendInt1 != null ">#{extendInt1},</if>
+            <if test="extendInt2 != null ">#{extendInt2},</if>
+            <if test="extendInt3 != null ">#{extendInt3},</if>
+            <if test="extendStr1 != null  and extendStr1 != ''">#{extendStr1},</if>
+            <if test="extendStr2 != null  and extendStr2 != ''">#{extendStr2},</if>
+            <if test="extendStr3 != null  and extendStr3 != ''">#{extendStr3},</if>
+            <if test="extendjson != null  and extendjson != ''">#{extendjson},</if>
+            <if test="createTime != null ">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkEventProcessRecord" parameterType="HkEventProcessRecord">
+        update hk_event_process_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null  and recordId != ''">record_id = #{recordId},</if>
+            <if test="eventId != null  and eventId != ''">event_id = #{eventId},</if>
+            <if test="regionIndexCode != null  and regionIndexCode != ''">region_index_code = #{regionIndexCode},</if>
+            <if test="regionName != null  and regionName != ''">region_name = #{regionName},</if>
+            <if test="handlerRecordIndexCode != null  and handlerRecordIndexCode != ''">handler_record_index_code = #{handlerRecordIndexCode},</if>
+            <if test="handlerIndexCode != null  and handlerIndexCode != ''">handler_index_code = #{handlerIndexCode},</if>
+            <if test="handlerName != null  and handlerName != ''">handler_name = #{handlerName},</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">handler_phone = #{handlerPhone},</if>
+            <if test="handlerContent != null  and handlerContent != ''">handler_content = #{handlerContent},</if>
+            <if test="processStatus != null  and processStatus != ''">process_status = #{processStatus},</if>
+            <if test="processStatusName != null  and processStatusName != ''">process_status_name = #{processStatusName},</if>
+            <if test="processTime != null ">process_time = #{processTime},</if>
+            <if test="extendInt1 != null ">extend_int1 = #{extendInt1},</if>
+            <if test="extendInt2 != null ">extend_int2 = #{extendInt2},</if>
+            <if test="extendInt3 != null ">extend_int3 = #{extendInt3},</if>
+            <if test="extendStr1 != null  and extendStr1 != ''">extend_str1 = #{extendStr1},</if>
+            <if test="extendStr2 != null  and extendStr2 != ''">extend_str2 = #{extendStr2},</if>
+            <if test="extendStr3 != null  and extendStr3 != ''">extend_str3 = #{extendStr3},</if>
+            <if test="extendjson != null  and extendjson != ''">extendjson = #{extendjson},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkEventProcessRecordById" parameterType="Long">
+        delete from hk_event_process_record where id = #{id}
+    </delete>
+
+    <delete id="deleteHkEventProcessRecordByIds" parameterType="String">
+        delete from hk_event_process_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="queryLastRecordByEventId" parameterType="java.lang.String" resultMap="HkEventProcessRecordResult">
+        <include refid="selectHkEventProcessRecordVo"/>
+        where event_id = #{eventId}
+        order by create_time desc
+        limit 1
+    </select>
+    
+</mapper>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改物业--公告通知')"/>
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-xlpropertynotice-edit" th:object="${xlPropertyNotice}">
+        <input name="id" th:field="*{id}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">物业：</label>
+            <div class="col-sm-8">
+                <input  th:value="${xlVillage.propertyName}" class="form-control" type="text" readonly/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">小区：</label>
+            <div class="col-sm-8">
+                <input  th:value="${xlVillage.name}" class="form-control" type="text" readonly/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">标题：</label>
+            <div class="col-sm-8">
+                <input name="title" th:field="*{title}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">通知类型：</label>
+            <div class="col-sm-8">
+                <select name="noticType" th:field="*{noticType}" class="form-control m-b"
+                        th:with="type=${@dict.getType('notic_type')}" required>
+                    <option value="">-请选择-</option>
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">通知内容：</label>
+            <div class="col-sm-8">
+                <textarea name="noticContent" class="form-control">[[*{noticContent}]]</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">附件：</label>
+            <div class="col-sm-8">
+                <input id="files" name="files" class="form-control" type="file" multiple/>
+            </div>
+        </div>
+        <input name="fileCode" type="hidden" th:field="*{fileCode}"/>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<!--文件上传-->
+<th:block th:include="include :: bootstrap-fileinput-js"/>
+<script th:src="@{/upload/upload.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    var prefix = ctx + "system/property/xlpropertynotice";
+    $("#form-xlpropertynotice-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            //上传文件
+            $("#files").fileinput("upload");
+            //文件上传成功的回调
+            $('#files').on('filebatchuploadsuccess',function(event,data,previewId,index) {
+                $('input[name=fileCode]').attr('value',data.response.msg);
+                $.operate.save(prefix + "/edit", $('#form-xlpropertynotice-edit').serialize());
+            });
+        }
+    }
+
+    //初始化文件上传
+    $(document).ready(function () {
+        let uploadUrl = ctx + "system/attachment/upload"; //上传路径
+        //回显
+        //let deleteUrl = ctx + "system/attachment/remove"; //删除路径
+        //let attachments = [[${attachments}]]; //附件
+        //if(null != attachments){
+        //    //附件
+        //    let previewJson = [];
+        //    //附件配置
+        //    let initPreviewConfig = [];
+        //    for(let i = 0; i< attachments.length; i++){
+        //        previewJson[i] = attachments[i].attachmentUrl;
+        //        //组装图片配置
+        //        var json = {
+        //            caption: '', // 展示的文件名
+        //            width: '120px',
+        //            url: deleteUrl , // 删除url
+        //            key: attachments[i].attachmentId,
+        //            extra: {id: attachments[i].attachmentId} //若需要同步删除，将id换成ids
+        //        };
+        //        initPreviewConfig[i] = json;
+        //    }
+        //    initSyncFiles('files', uploadUrl, previewJson, initPreviewConfig);
+        //}
+        initSyncFiles('files', uploadUrl);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>数智闲林·统一门户管理平台</title>
+      <link th:href="@{/layui/css/layui.css}" rel="stylesheet"/>
+      <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+      <link th:href="@{/font/iconfont.css}" rel="stylesheet"/>
+      <link th:href="@{/css/public.css}" rel="stylesheet"/>
+      <link th:href="@{/css/yujin.css}" rel="stylesheet"/>
+
+  </head>
+  <body>
+    <div class="container-fluid">
+        <div class=" main row tab-conten" >
+            <div role="tabpanel" class="tab-pane fade in active row" id="YuJin" style="margin: 0;">
+               <!-- <div class="col-md-4 main-left">
+                   &lt;!&ndash; <div class="Yj-title">
+                        <p>预警列表</p>
+                        <p>预警对接</p>
+                        <p>预警管理</p>
+                    </div>&ndash;&gt;
+                    <div class="input-group">
+                        <i class="iconfont" id="submit" th:onclick="'javascript:onserch()'">&#xe609;</i>
+                        <input type="text" id="content" style="color: #ffffff" placeholder="搜索">
+                    </div>
+                    <div class="select">
+                        <select  id="source">
+                            <option value="">事件类别</option>
+                            <option value="垃圾堆积">垃圾堆积</option>
+                            <option value="出店经营">出店经营</option>
+                            <option value="游商摊贩">游商摊贩</option>
+                            <option value="沿街晾晒">沿街晾晒</option>
+                            <option value="人员聚集">人员聚集</option>
+                            <option value="机动车违停">机动车违停</option>
+                            <option value="非机动车违停">非机动车违停</option>
+                            <option value="违规宣传物">违规宣传物</option>
+                            <option value="消控室离岗">消控室离岗</option>
+                            <option value="消防通道违规占用">消防通道违规占用</option>
+                            <option value="电动车飞线">电动车飞线</option>
+                        </select>
+                        <select  id="type">
+                            <option value="">预警类别</option>
+                            <option value="智能上报">智能上报</option>
+                            <option value="人工上报">人工上报</option>
+                        </select>
+                        &lt;!&ndash;<select  id="status">
+                            <option value="">当前状态</option>
+                            <option value="1">预警</option>
+                            <option value="2">研判中</option>
+                            <option value="3">调度中</option>
+                            <option value="5">处置中</option>
+                            <option value="6">完结</option>
+                            <option value="7">已忽略</option>
+                            <option value="8">已关闭</option>
+                        </select>&ndash;&gt;
+                        <div class="data-input">
+                            <input type="text" id="dateTime" style="color: #ffffff;" placeholder="/年/月/日">&lt;!&ndash;<input type="date" id="endTime" style="color:#ffffff;">&ndash;&gt;
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-tabs Yj-tab" id="load">
+
+                    </ul>
+
+                    <div class="fy">
+                        <ul class="pagination pagination-sm" id="pagePlug">
+                            <li><a href="#">&laquo;</a></li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">&raquo;</a></li>
+                        </ul>  
+                    </div>
+                    
+                </div>-->
+               <div class="col-md-12 tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active row" id="home">
+                        <div id="additional" style="padding: 0 15px 0 0;">
+
+                            <div class=""><!-- <div class="Yjc-title">“AI 城市眼”详情</div>-->
+                                <div class="Yj-xq">
+                                    <div class="xq-title">
+                                        事件详情
+                                    </div>
+                                    <div class="xq-cont">
+                                        <div class="gs-xq _gsxq">
+                                            <div class="gs-left">
+                                                <p>
+                                                    取证资料：</p>
+                                                <img src="../static/u618.png" th:src="@{/img/u618.png}">
+                                            </div>
+                                            <div class="gs-right">
+                                                <div style="display: none">
+                                                    <span id="createTime"></span>
+                                                </div>
+                                                <input th:type="hidden" id="eventId">
+                                                <input th:type="hidden" id="id">
+                                                <input th:type="hidden" id="eventType">
+                                                <!--<input th:type="hidden" th:value="${details.createDate}" id="createDate">-->
+                                                <p>事件类别：<span data-toggle="modal" data-target="#myForm" id="eventTypeName">店外秩序</span></p>
+                                                <p>预警来源：<span data-toggle="modal" data-target="#myForm2" id="cameraName">智能球型摄像机/iDS-GPZ2286X-I/CG(B)</span></p>
+                                                <p>责任主体：<span data-toggle="modal" data-target="#myForm3" id="responsibilitySubject">城管中队</span></p>
+                                                <p>警情地址：<span data-toggle="modal" data-target="#myForm4" id="gridCommunity">横店镇秦清路15号附近</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="Yj-xq">
+                                    <div class="xq-title">
+                                        单位信息
+                                    </div>
+                                    <div class="xq-cont">
+                                        <div class="gs-xq _gsxq">
+                                            <div class="gs-left xxq">
+                                                <p>涉事主体：<span data-toggle="modal" data-target="#myForm5" id="placeName">鲜丰水果店（秦清路店）</span></p>
+                                                <!--<p>水果店</p>-->
+                                            </div>
+                                            <div class="gs-right">
+                                                <p>统一信用代码：<span data-toggle="modal" data-target="#myForm6" id="creditUnionCode">98238MB7236CX81</span></p>
+
+                                            </div>
+                                        </div>
+                                        <div class="gs-xq">
+                                            <div class="gs-left">
+                                                <p>单位法人：<span data-toggle="modal" data-target="#myForm7" id="companyLegalPerson">王五</span>
+                                                </p>
+                                            </div>
+                                            <div class="gs-right">
+                                                <p>联系方式：<span data-toggle="modal" data-target="#myForm8" id="companyContactInformation" class="span1" >18657154232</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="gs-xq">
+                                            <div class="gs-left">
+                                                <p>单位地址：<span data-toggle="modal" data-target="#myForm9" id="eventAddress">浙江省东阳市横店镇秦清路15号</span>
+                                                </p>
+                                            </div>
+                                            <div class="gs-right">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="Yj-xq">
+                                    <div class="xq-title">关联网格</div>
+                                    <div class="xq-cont">
+                                        <div class="gs-xq _gsxq">
+                                            <div class="gs-left xxq">
+                                                <p>网格名称：<span data-toggle="modal" data-target="#myForm10" id="gridName">横店镇第四网格</span>
+                                                </p>
+                                            </div>
+                                            <div class="gs-right">
+                                                <p>网格社区：<span data-toggle="modal" data-target="#myForm11" id="regionName">秦清社区</span></p>
+
+                                            </div>
+                                        </div>
+                                        <div class="gs-xq">
+                                            <div class="gs-left">
+                                                <p>网格员：<span data-toggle="modal" data-target="#myForm12" id="gridMan">张超</span></p>
+                                            </div>
+                                            <div class="gs-right">
+                                                <p>联系方式：<span data-toggle="modal" data-target="#myForm13" class="span1" id="gridContactInformation">13588549956</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="gs-xq">
+                                            <div class="gs-left">
+                                                <p>巡防队伍：<span id="patrolTeam" data-toggle="modal" data-target="#myForm14">李伟【秦清社区民警】</span></p>
+                                            </div>
+                                            <div class="gs-right">
+                                                <p>联系方式：<span class="span1" data-toggle="modal" data-target="#myForm15" id="patrolTeamPhone">13588549956</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="gs-xq">
+                                            <div class="gs-left">
+                                                <p><span data-toggle="modal" data-target="#myForm16" class="span2" id="patrolTeam2">姜超【秦清城管人员】</span></p>
+                                            </div>
+                                            <div class="gs-right">
+                                                <p>联系方式：<span data-toggle="modal" data-target="#myForm17" class="span1" id="patrolTeam2Phone">13588549956</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class = "bopao">
+                            <div id = "container_small_tip" class = "bopao-pic">
+                                <div id = "content_small_tip" style = "height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+  </body>
+  <script th:src="@{/js/jquery.min.js}"></script>
+  <script th:src="@{/js/bootstrap.min.js}"></script>
+  <script th:src="@{/layui/layui.js}"></script>
+  <script th:inline="javascript">
+      var y=[[${eventTypeNameList}]]
+  </script>
+  <script type="text/javascript">
+
+
+  </script>
+</html>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyAuditHouseMapper">
+
+    <resultMap type="XlPropertyAuditHouse" id="XlPropertyAuditHouseResult">
+        <result property="auditId"    column="audit_id"    />
+        <result property="location"    column="location"    />
+        <result property="area"    column="area"    />
+        <result property="houseType"    column="house_type"    />
+        <result property="propertyRight"    column="property_right"    />
+        <result property="proposer"    column="proposer"    />
+        <result property="proposerPhone"    column="proposer_phone"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlPropertyAuditHouseVo">
+        select audit_id, location, area, house_type, property_right, proposer, proposer_phone, audit_status, village_id, create_by, create_time, update_by, update_time from xl_property_audit_house
+    </sql>
+
+    <select id="selectXlPropertyAuditHouseList" parameterType="XlPropertyAuditHouse" resultMap="XlPropertyAuditHouseResult">
+        <include refid="selectXlPropertyAuditHouseVo"/>
+        <where>
+            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
+            <if test="area != null  and area != ''"> and area = #{area}</if>
+            <if test="houseType != null "> and house_type = #{houseType}</if>
+            <if test="propertyRight != null "> and property_right = #{propertyRight}</if>
+            <if test="proposer != null  and proposer != ''"> and proposer like concat('%', #{proposer}, '%')</if>
+            <if test="proposerPhone != null  and proposerPhone != ''"> and proposer_phone like concat('%', #{proposerPhone}, '%')</if>
+            <if test="auditStatus != null "> and audit_status = #{auditStatus}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyAuditHouseById" parameterType="Long" resultMap="XlPropertyAuditHouseResult">
+        <include refid="selectXlPropertyAuditHouseVo"/>
+        where audit_id = #{auditId}
+    </select>
+
+    <insert id="insertXlPropertyAuditHouse" parameterType="XlPropertyAuditHouse" useGeneratedKeys="true" keyProperty="auditId">
+        insert into xl_property_audit_house
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="location != null  and location != ''">location,</if>
+            <if test="area != null  and area != ''">area,</if>
+            <if test="houseType != null ">house_type,</if>
+            <if test="propertyRight != null ">property_right,</if>
+            <if test="proposer != null  and proposer != ''">proposer,</if>
+            <if test="proposerPhone != null  and proposerPhone != ''">proposer_phone,</if>
+            <if test="auditStatus != null ">audit_status,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="location != null  and location != ''">#{location},</if>
+            <if test="area != null  and area != ''">#{area},</if>
+            <if test="houseType != null ">#{houseType},</if>
+            <if test="propertyRight != null ">#{propertyRight},</if>
+            <if test="proposer != null  and proposer != ''">#{proposer},</if>
+            <if test="proposerPhone != null  and proposerPhone != ''">#{proposerPhone},</if>
+            <if test="auditStatus != null ">#{auditStatus},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyAuditHouse" parameterType="XlPropertyAuditHouse">
+        update xl_property_audit_house
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="location != null  and location != ''">location = #{location},</if>
+            <if test="area != null  and area != ''">area = #{area},</if>
+            <if test="houseType != null ">house_type = #{houseType},</if>
+            <if test="propertyRight != null ">property_right = #{propertyRight},</if>
+            <if test="proposer != null  and proposer != ''">proposer = #{proposer},</if>
+            <if test="proposerPhone != null  and proposerPhone != ''">proposer_phone = #{proposerPhone},</if>
+            <if test="auditStatus != null ">audit_status = #{auditStatus},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where audit_id = #{auditId}
+    </update>
+
+    <delete id="deleteXlPropertyAuditHouseById" parameterType="Long">
+        delete from xl_property_audit_house where audit_id = #{auditId}
+    </delete>
+
+    <delete id="deleteXlPropertyAuditHouseByIds" parameterType="String">
+        delete from xl_property_audit_house where audit_id in
+        <foreach item="auditId" collection="array" open="(" separator="," close=")">
+            #{auditId}
+        </foreach>
+    </delete>
+
+</mapper>

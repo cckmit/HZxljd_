@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改公共管理--商铺信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-storeInfo-edit" th:object="${xlEnterpriseInfo}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">商铺名称：</label>
+                <div class="col-sm-8">
+                    <input name="enterpriseName" th:field="*{enterpriseName}" placeholder="请填写商铺信息" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">商铺地址：</label>
+                <div class="col-sm-8">
+                    <input name="enterpriseAdress" th:field="*{enterpriseAdress}" placeholder="请填写商铺地址" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">经营状态：</label>
+                <div class="col-sm-8">
+                    <select name="enterpriseStatus" class="form-control m-b" th:with="type=${@dict.getType('enterprise_status')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{enterpriseStatus}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">状态名称：</label>
+                <div class="col-sm-8">
+                    <input name="enterpriseStatusName" th:field="*{enterpriseStatusName}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">企业类型：</label>
+                <div class="col-sm-8">
+                    <select name="enterpriseType" class="form-control m-b">
+                        <option value="">所有</option>
+                    </select>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">成立日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="establishDate" th:value="${#dates.format(xlEnterpriseInfo.establishDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">法人代表：</label>
+                <div class="col-sm-8">
+                    <input name="establishPerson" th:field="*{establishPerson}" placeholder="请填写法人代表" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">公司更新时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="enterpriseUpdateDate" th:value="${#dates.format(xlEnterpriseInfo.enterpriseUpdateDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">信息状态(1.待确认 2.已确认)：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('information_status')}">
+                        <input type="radio" th:id="${'informationStatus_' + dict.dictCode}" name="informationStatus" th:value="${dict.dictValue}" th:field="*{informationStatus}">
+                        <label th:for="${'informationStatus_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">邮箱地址：</label>
+                <div class="col-sm-8">
+                    <input name="mailbox" th:field="*{mailbox}" placeholder="请填写邮箱地址" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">注册资金：</label>
+                <div class="col-sm-8">
+                    <input name="registeredCapital" th:field="*{registeredCapital}" placeholder="请填写注册资金,如30万元人民币" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">登记机关：</label>
+                <div class="col-sm-8">
+                    <input name="registrationAuthority" th:field="*{registrationAuthority}" placeholder="请填写登记机关" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">统一信用代码：</label>
+                <div class="col-sm-8">
+                    <input name="unifiedCreditCode" th:field="*{unifiedCreditCode}" placeholder="请填写统一信用代码" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">注册号：</label>
+                <div class="col-sm-8">
+                    <input name="registrationNumber" th:field="*{registrationNumber}" placeholder="请填写注册号" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">组织结构：</label>
+                <div class="col-sm-8">
+                    <input name="organization" th:field="*{organization}" placeholder="请填写组织机构" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">经营范围：</label>
+                <div class="col-sm-8">
+                    <input name="natureBusiness" th:field="*{natureBusiness}" placeholder="请填写经营范围" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">营业开始日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="termstart" th:value="${#dates.format(xlEnterpriseInfo.termstart, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">营业结束日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="teamend" th:value="${#dates.format(xlEnterpriseInfo.teamend, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">发照日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="checkdata" th:value="${#dates.format(xlEnterpriseInfo.checkdata, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">企业logo：</label>
+                <div class="col-sm-8">
+                    <textarea name="enterpriseLogo" class="form-control">[[*{enterpriseLogo}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">创建人：</label>
+                <div class="col-sm-8">
+                    <input name="createUser" th:field="*{createUser}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">修改时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="updateDate" th:value="${#dates.format(xlEnterpriseInfo.updateDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">修改人：</label>
+                <div class="col-sm-8">
+                    <input name="updateUser" th:field="*{updateUser}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/storeInfo";
+        $("#form-storeInfo-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-storeInfo-edit').serialize());
+            }
+        }
+
+        $("input[name='establishDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='enterpriseUpdateDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='termstart']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='teamend']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='checkdata']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='updateDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

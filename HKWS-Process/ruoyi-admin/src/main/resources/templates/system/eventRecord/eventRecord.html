@@ -1,0 +1,2752 @@
+<!DOCTYPE html>
+<html lang = "zh" xmlns:shiro = "http://www.pollix.at/thymeleaf/shiro" xmlns:th = "http://www.thymeleaf.org">
+<head>
+  <meta charset = "UTF-8">
+  <title>数智闲林·统一门户管理平台</title>
+  <link rel = "stylesheet" th:href = "@{/css/bootstrap.min.css}" />
+  <link th:href = "@{/bootstrap-daterangepicker/daterangepicker.css}" rel = "stylesheet" />
+  <link rel = "stylesheet" th:href = "@{/css/public.css}" />
+  <link rel = "stylesheet" th:href = "@{/layui/css/layui.css}" />
+  <link rel = "stylesheet" th:href = "@{/powerment/css/ok.css}" />
+  <link rel = "stylesheet" th:href = "@{/powerment/css/mian.css}" />
+  <link rel = "stylesheet" th:href = "@{/videojs/video-js.min.css}" />
+  <link th:href = "@{/css/font-awesome.min.css}" rel = "stylesheet" />
+  <style>
+
+  </style>
+  <link rel = "stylesheet" th:href = "@{/icon/iconfont.css}" />
+</head>
+<body class="Comprehensive">
+<div class = "mediaCont">
+<div th:insert="common/header :: header"></div>
+<div th:include="common/sidebar::sidebar(activeUri='eventRecord')" class = "nav_sider"></div>
+</div>
+<div class = "mediaCont mediaCenter">
+<div class = "container-fluid">
+
+  <div class = "row">
+    <div class = "col-lg-12" style = "padding: 0">
+      <div class = "">
+        <div class = "col-lg-12">
+
+          <ul class = "nav complexTab">
+            <li class = "active"><a data-toggle = "tab" href = "#bulletin1">全部事件(<span class="partCount1">0</span>)</a></li>
+            <li><a href="#rule" data-toggle="tab">重要事件(<span class="partCount2">0</span>)</a></li>
+            <li><a href="#forum" data-toggle="tab">紧急事件(<span class="partCount3">0</span>)</a></li>
+          </ul>
+
+          <div class = "col-lg-12 right-oneContent">
+            <div class = "row" style = "margin: 0;">
+              <div class = "col-lg-2">
+                <!--<input type = "email" hidden="true" th:value="${targetId}" id = "targetId">-->
+                <input class = "form-control" id = "contents" placeholder = "事件标题/事件类型" type = "email">
+              </div>
+              <div class = "col-lg-2">
+                <input class = "form-control" id = "region" placeholder = "警情地址/社区网格信息" type = "email">
+              </div>
+              <div class = "col-lg-2" style="width: 20%;">
+                <input class = "form-control" id = "dateTime" placeholder = "年/月/日/时/分/秒" style = "width: 320px;" autocomplete="false" type = "text">
+                <i class = "iconfont">&#xe637;</i>
+              </div>
+              <div class = "col-lg-2">
+                <!--<input type="email" class="form-control" placeholder="搜索" id="contents">-->
+              </div>
+              <div class = "col-lg-4 text-right" style="width: 54%;">
+                <button class = "btn btn-default" th:onclick = "'javascript:reset()'" type = "submit">重置</button>
+                <button class = "btn btn-primary" th:onclick = "'javascript:onSearch()'" type = "submit">查询</button>
+              </div>
+              <div class = "col-lg-12 right-oneContentData">
+                <span><b class = "tag-zhong"></b> 待处理：<i class = "pendingCount">0</i> 条</span>
+                <span><b class = "tag-dcl"></b> 已签收：<i class = "beSignCount">0</i> 条</span>
+                <span><b class = "tag-ok"></b> 已完结：<i class = "doneCount">0</i> 条</span>
+              </div>
+              <!--<div class="col-lg-12 right-oneContentData">
+                  <span><b class="tag-tesu"></b> 全部事件：<i>297</i> 条</span>
+                  <span><b class="tag-dcl"></b> 待处理：<i>99</i> 条</span>
+                  <span><b class="tag-ok"></b> 已完成：<i>99</i> 条</span>
+                  <span><b class="tag-weidu"></b> 已逾期：<i>99</i> 条</span>
+              </div>-->
+            </div>
+          </div>
+          <div class = "col-lg-12 right-oneFilter" style="padding-left: 0;">
+              <!--<div class = "row">
+                <div class = "col-lg-1 right-oneFilter-text">总事件：<span id = "eventCount"></span>条
+              </div>-->
+            <div class = "col-lg-2">
+              <select class = "form-control" id = "type">
+                <option value = "">事件上报类型</option>
+                <option value = "1">智能上报</option>
+                <option value = "2">人工上报</option>
+              </select>
+            </div>
+              <div class = "col-lg-2">
+                <select class = "form-control" id = "source">
+                  <option value = "">全部预警类别</option>
+                  <option value = "1001">城管事件</option>
+                  <option value = "1002">浙里坊事件</option>
+                 <!-- <option value = "1002">应急消防</option>
+                  <option value = "1003">综合治理</option>
+                  <option value = "1004">青山云</option>
+                  <option value = "1010">网格上报</option>-->
+                </select>
+              </div>
+
+              <div class = "col-lg-2">
+                <select class = "form-control" id = "alterStatus">
+                  <option value = "">全部事件状态</option>
+                  <option value = "3">调度中</option>
+                  <option value = "5">已签收</option>
+                  <option value = "4">已退回</option>
+                  <option value = "6">已完成</option>
+                </select>
+              </div>
+            <div class = "col-lg-1">
+              <div class = "checkbox">
+                <label>
+<!--                  <input type = "checkbox" value = "1" name = "yu" checked> 逾期状态-->
+                </label>
+              </div>
+            </div>
+            <div class = "col-lg-1">
+              <div class = "checkbox">
+                <label>
+<!--                  <input type = "checkbox" value = "2" name = "yu" checked> 正常状态-->
+                </label>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class = "col-lg-12">
+          <div class = "tab-content" id = "mytab-content">
+            <div class = "tab-pane fade in active" id = "bulletin">
+              <div class = "row">
+                <div class = "col-lg-12">
+                  <!--                  暂无数据-->
+                  <div class = "earlyWarning-pic" style = "display:none;">
+                    <img src = "../static/work1.png" th:src = "@{/img/noList.png}">
+                    <p>未查询到相关数据</p>
+                  </div>
+
+                  <input id = "id" type = "hidden">
+                  <input id = "procdefType" type = "hidden">
+                  <input id = "eventId" type = "hidden">
+                  <input id = "cameraIndexCode" type = "hidden">
+                  <input id = "eventStatus" type = "hidden">
+                  <input id = "eventAlertStatus" type = "hidden">
+                  <input id = "componentId" type = "hidden">
+                  <input id = "videoPath" type = "hidden">
+                  <input id = "imgPath" type = "hidden">
+                  <input id = "longitude" type = "hidden">
+                  <input id = "latitude" type = "hidden">
+                  <input id = "regionIndexCode" type = "hidden">
+                  <div class = "right-card">
+                    <ul id = "load" style="height: 69vh;">
+
+                    </ul>
+                    <div id = "pagetest1"></div>
+                  </div>
+
+                  <div class = "right-content">
+                    <div class = "right-content-map" id = "additional">
+                      <div id = "container"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!--完结报告-->
+<div aria-hidden = "true" aria-labelledby = "myModalLabel" class = "modal fade" id = "myModal" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog" style = "width:1070px">
+    <div class = "modal-content" style = "width: 1070px; height: 81vh">
+      <div class = "modal-header">
+        <button aria-hidden = "true" class = "close" data-dismiss = "modal" type = "button">&times;</button>
+        <h4 class = "modal-title" id = "myModalLabel">事件报告</h4>
+      </div>
+      <div class = "modal-body">
+        <div class = "end right-content-1">
+          <div class = "right-content-c" id = "endEvent" style = "height: 70vh">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div aria-hidden = "true" aria-labelledby = "EventSupervise1" class = "modal fade" id = "myModalSupervise" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog" style = "width: 1070px">
+    <div class = "modal-content" style = "width: 1070px">
+      <div class = "modal-header">
+        <button aria-hidden = "true" class = "close" data-dismiss = "modal" type = "button">&times;</button>
+        <h4 class = "modal-title" id = "EventSupervise1">事件督办</h4>
+      </div>
+      <div class = "modal-body">
+        <div class = "end right-content-1">
+          <div class = "right-content-c" id = "EventSupervise">
+
+            <div class = "col-lg-12 right-content-c-line">
+              <div class = "row">
+                <div class = "col-lg-6 right-content-c-line">
+                  <h5>取证资料</h5>
+                  <p>事件类别：<span> </span></p>
+                  <p>预警来源：<span></span></p>
+                  <p>预警时间：<span> </span></p>
+                  <p>警情地址：<span> </span></p>
+                  <p>所属辖区：<span> </span></p>
+                  <h5>图片</h5>\n' +
+                  <img alt = "" src = '' />
+                </div>
+                <div class = "col-lg-6" id = "superviseDetail">
+                  <div class = "col-lg-12" style = "display:flex;align-items: center;justify-content: space-between">
+                    <h5>处理详情</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div aria-hidden = "true" aria-labelledby = "myModalLabel1" class = "modal fade" id = "myModal1" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog">
+    <div class = "modal-content">
+      <div class = "modal-header">
+        <button aria-hidden = "true" class = "close" data-dismiss = "modal" type = "button">
+          &times;
+        </button>
+        <h4 class = "modal-title" id = "myModalLabel1">
+          查看指派人员
+        </h4>
+      </div>
+      <div class = "modal-body check-event-model" id = "zhiPai">
+
+      </div>
+    </div>
+  </div>
+</div>
+<div aria-hidden = "true" aria-labelledby = "myModalLabel2" class = "modal fade" id = "myModal2" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog">
+    <div class = "modal-content">
+      <div class = "modal-header">
+        <button aria-hidden = "true" class = "close" data-dismiss = "modal" type = "button">
+          &times;
+        </button>
+        <h4 class = "modal-title" id = "myModalLabel2">
+          查看签收人员
+        </h4>
+      </div>
+      <div class = "modal-body check-event-model" id = "qianShou">
+
+      </div>
+    </div>
+  </div>
+</div>
+<div aria-hidden = "true" aria-labelledby = "myModalLabel3" class = "modal fade" id = "myModal3" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog">
+    <div class = "modal-content">
+      <div class = "modal-header">
+        <button aria-hidden = "true" class = "close" data-dismiss = "modal" type = "button">
+          &times;
+        </button>
+        <h4 class = "modal-title" id = "myModalLabel3">
+          查看处置人员
+        </h4>
+      </div>
+      <div class = "modal-body check-event-model" id = "chuZhi">
+
+      </div>
+    </div>
+  </div>
+</div>
+<div aria-labelledby = "ModalLabel" class = "modal fade" id = "machine" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog model-yijin" role = "document">
+    <div class = "modal-content">
+      <div class = "modal-header">
+        <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+          &times;
+        </button>
+        <h4 class = "modal-title">你确定要结束该事件嘛？</h4>
+      </div>
+      <div class = "modal-body">
+        <div class = "chuans">
+          <img alt = "" data-imgsrc = "../img/zanwu.png" id = "photo" src = "../img/zanwu.png" style = "height: 100px; width: 100px;display:block;margin-bottom: 10px">
+          <div class = "file">选择文件
+            <input class = "uploadImg file1" name = "file1" type = "file">
+          </div>
+          <!--                     <input class="uploadImg file1" type="file"  >-->
+        </div>
+        <h4 class = "modal-h3" style = "padding-top: 10px;margin: 0;margin-top: 10px;">意见：</h4>
+        <div class = "modal-textarea">
+          <textarea id = "closeReason" name = "closeReason" placeholder = "请输入处理意见..." rows = "5"></textarea>
+        </div>
+      </div>
+      <div class = "modal-footer">
+        <button class = "btn btn-middle btn-primary hunueBtn" data-dismiss = "modal" th:onclick = "'javascript:machineHandling()'" type = "button">确定</button>
+        <button class = "btn btn-middle btn-default" data-dismiss = "modal" type = "button">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div aria-labelledby = "OptionLabel" class = "modal fade" id = "Option" role = "dialog" tabindex = "-1">
+  <div class = "modal-dialog" role = "document">
+    <div class = "modal-content">
+      <div class = "modal-header">
+        <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+          &times;
+        </button>
+        <h4 class = "modal-title">请重新指派人员</h4>
+      </div>
+      <div class = "modal-body">
+        <div class = "mohu">
+          <input id = "searchValue" placeholder = "请输入用户姓名/手机号/部门" type = "text">
+          <input id = "handlerUserId" type = "hidden">
+          <button th:onclick = "'javascript:refresh()'">查询</button>
+        </div>
+        <table class = "table table-bordered" style = "text-align: center;">
+          <thead>
+          <tr>
+            <th style = "width: 40px;"></th>
+            <th style="width: 100px">用户姓名</th>
+            <th style="width: 100px">手机</th>
+            <th class="tabWidth">部门</th>
+            <th class="tabWidth">岗位</th>
+          </tr>
+          </thead>
+          <tbody id = "MM">
+
+          </tbody>
+        </table>
+        <div id = "pagePlugs" style = "text-align:right;"></div>
+      </div>
+      <div class = "modal-footer">
+        <button class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:Determine()'" type = "button">确定</button>
+        <button class = "btn btn-middle btn-default" data-dismiss = "modal" type = "button">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+<script th:src = "@{/bmap-offline/map3.0_init.js}"></script>
+<script th:src = "@{/bmap-offline/map3.0.js}"></script>
+<script th:src = "@{/js/AreaRestriction_min.js}"></script>
+<script th:src = "@{/js/theme.js}"></script>
+<script th:src = "@{/layui/layui.js}"></script>
+<script th:src = "@{/video/jsencrypt.min.js}"></script>
+<script th:src = "@{/video/jsWebControl-1.0.0.min.js}"></script>
+<script th:src = "@{/video/eventRecordVideo.js}"></script>
+<script th:src = "@{/videojs/video.min.js}"></script>
+<script th:src = "@{/js/jquery.cookie.js}"></script>
+<!--bootstrap-daterangepicker日期控件-->
+<script th:src = "@{/moment/min/moment.min.js}"></script>
+<script th:src = "@{/bootstrap-daterangepicker/daterangepicker.js}"></script>
+<script>
+    //全局变量
+    var pageNum = 1,
+        pageNum1 = 1,
+        pageSize = 5,
+        total = 0,
+        total1 = 0,
+        startTime = funGetDateStr(-7),
+        endTime = funGetDateStr(0),
+        riskLevel,
+        overdueStatus;
+    var pleased = 0;
+
+
+    // 判断当前是哪个事件
+    $('.complexTab li').click(function () {
+        let index = $('.complexTab li').index(this);
+        // 全部事件
+        if(index==0){
+            riskLevel = "";
+            onSearch(riskLevel);
+        }else if(index==1){//重要事件
+            riskLevel = "99";
+            onSearch(riskLevel);
+        }else if(index==2){//紧急事件
+            riskLevel = "999";
+            onSearch(riskLevel);
+        }
+    });
+    $(function () {
+        onSearch();
+    });
+
+    //时间区间查询
+    layui.use(['laydate', 'layer', 'laypage'], function () {
+        var laydate = layui.laydate;
+        var $ = layui.jquery,
+            laypage = layui.laypage,
+            layer = layui.layer;
+        laypage.render({
+            elem: 'pagetest1' //注意，这里的 test1 是 ID，不用加 # 号
+            , count: total //数据总数，从服务端得到
+            , limit:5
+            , groups: 1     //连续出现的页码个数
+            , prev: '<'
+            , next: '>'
+            , layout: ['prev', 'page', 'next', 'skip']
+            , jump: function (obj, first) {
+                //首次不执行
+                if (!first) {
+                    pageNum = obj.curr;
+                    onSearch();
+                }
+            }
+        });
+        laypage.render({
+            elem: 'pagePlugs' //注意，这里的 test1 是 ID，不用加 # 号
+            , count: total1 //数据总数，从服务端得到
+            , limit:5
+            , groups: 1     //连续出现的页码个数
+            , prev: '<'
+            , next: '>'
+            , layout: ['prev', 'page', 'next', 'skip']
+            , jump: function (obj, first) {
+                //首次不执行
+                if (!first) {
+                    pageNum1 = obj.curr;
+                    refresh();
+                }
+            }
+        });
+    });
+
+    $('#load').on('click', 'li', function () {
+        $(this).addClass("active");
+        $(this).siblings().removeClass("active");
+        labelList = [];
+      pleased=0;
+    });
+
+    $('#additional').on('click', '.Play', function () {
+        var componentId = $("#componentId").val();
+        var videoPath = $("#videoPath").val();
+        if (componentId == '1001') {
+            $('#playVideojs').css('display', 'none');
+            if (oWebControl == null) {
+                initPlugin();
+            }
+            initClickEvent();
+            oWebControl.JS_ShowWnd();
+        } else {
+            if (videoPath.length > 10) {
+                $('#myCarousel').css('display', 'none');
+                var myPlayer = videojs('playVideojs');
+                videojs("playVideojs").ready(function () {
+                    var myPlayer = this;
+                    myPlayer.play();
+                });
+            } else {
+                var customSkinSC = 'demoWaring';
+                var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>该事件无视频资料！</span>';
+                customOpen(customSkinSC, customContentSC)
+            }
+        }
+    });
+
+
+    $('#additional').on('click', '.before-play', function () {
+        var componentId = $("#componentId").val();
+        var videoPath = $("#videoPath").val();
+        if (componentId == '1001') {
+            $('#playVideojs').css('display', 'none');
+            if (oWebControl1 == null) {
+                initPlugin();
+            }
+            initClickEvent();
+            oWebControl1.JS_ShowWnd();
+        } else {
+            if (videoPath.length > 10) {
+                $('#myCarousel').css('display', 'none');
+                var myPlayer = videojs('playVideojs');
+                videojs("playVideojs").ready(function () {
+                    var myPlayer = this;
+                    myPlayer.play();
+                });
+            } else {
+                var customSkinSC = 'demoWaring';
+                var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>该事件无视频资料！</span>';
+                customOpen(customSkinSC, customContentSC)
+            }
+        }
+    });
+
+    /**
+     * 垂直居中模态框
+     **/
+    function centerModals() {
+        $('.modal').each(function (i) {
+            var $clone = $(this).clone().css('display', 'block').appendTo('body');
+            var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+            top = top > 50 ? top : 0;
+            $clone.remove();
+            $(this).find('.modal-content').css("margin-top", top - 50);
+        });
+    }
+
+    // 在模态框出现的时候调用垂直居中方法
+    $('.modal').on('show.bs.modal', centerModals);
+    // 在窗口大小改变的时候调用垂直居中方法
+    $(window).on('resize', centerModals);
+
+
+    /**
+     * 漂浮消息
+     **/
+
+    // $(".center").click(function () {
+    //     showMsg('暂未开放', 'center');
+    // });
+
+    /*function showMsg(text, position) {
+        var show = $('.show_msg').length
+        if (show > 0) {
+
+        } else {
+            var div = $('<div></div>');
+            div.addClass('show_msg');
+            var span = $('<span></span>');
+            span.addClass('show_span');
+            span.appendTo(div);
+            span.text(text);
+            $('body').append(div);
+        }
+        $(".show_span").text(text);
+        if (position == 'bottom') {
+            $(".show_msg").css('bottom', '5%');
+        } else if (position == 'center') {
+            $(".show_msg").css('top', '');
+            $(".show_msg").css('bottom', '50%');
+        } else {
+            $(".show_msg").css('bottom', '95%');
+        }
+        $('.show_msg').hide();
+        $('.show_msg').fadeIn(1000);
+        $('.show_msg').fadeOut(1000);
+    }*/
+
+    function flushPage(pageId, total, page) {
+        layui.use(['layer', 'laypage'], function () {
+            var laypage = layui.laypage;
+            laypage.render({
+                elem: pageId //注意，这里的 test1 是 ID，不用加 # 号
+                , count: total //数据总数，从服务端得到
+                , limit:5
+                , curr: page
+                , groups: 1      //连续出现的页码个数
+                , prev: '<'
+                , next: '>'
+                , layout: ['prev', 'page', 'next', 'skip']
+                , jump: function (obj, first) {
+                    //首次不执行
+                    if (!first) {
+                        if (pageId == 'pagetest1') {
+                            pageNum = obj.curr;
+                            onSearch();
+                        } else if (pageId == 'pagePlugs') {
+                            pageNum1 = obj.curr;
+                            refresh();
+                        }
+                    }
+                }
+            });
+        })
+    }
+
+    //事件类别
+    var sources = "";
+    $("#source").change(function () {
+        sources = $(this).val();
+        onSearch();
+    });
+    //预警类别
+    var type = "";
+    $("#type").change(function () {
+        type = $(this).val();
+        onSearch();
+    });
+    var alertStatus = "";
+    $("#alterStatus").change(function () {
+        alertStatus = $(this).val();
+        onSearch();
+    });
+
+    //重置
+    function reset() {
+        $("#contents").val("");
+        $("#region").val("");
+        $('.right-card').show();
+        $('.right-content').show();
+        $('.earlyWarning-pic').hide();
+        /*if (startTime != null && endTime != null) {
+            startTime = "";
+            endTime = "";
+        }*/
+        $("#dateTime").val(funGetDateStr(-6)+"~"+funGetDateStr(0));
+        onSearch();
+    }
+
+    /**
+     * 获取当前域名
+     * @returns {string}
+     * @constructor
+     */
+    function GetCookieDomain() {
+        var host = location.hostname;
+        var ip = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        if (ip.test(host) === true || host === 'localhost') return host;
+        var regex = /([^]*).*/;
+        var match = host.match(regex);
+        if (typeof match !== "undefined" && null !== match) host = match[1];
+        if (typeof host !== "undefined" && null !== host) {
+            var strAry = host.split(".");
+            if (strAry.length > 1) {
+                host = strAry[strAry.length - 2] + "." + strAry[strAry.length - 1];
+            }
+        }
+        return '.' + host;
+    };
+
+    /**获取当前**/
+    function funGetDateStr(p_count) {
+        var dd = new Date();
+        dd.setDate(dd.getDate() + p_count);//获取p_count天后的日期
+        var y = dd.getFullYear();
+        var m = dd.getMonth() + 1;//获取当前月份的日期
+        if( m <10){
+            m = '0'+m;
+        }
+        var d = dd.getDate();
+        if( d <10){
+            d = '0'+d;
+        }
+        var hh = dd.getHours();
+        var mm = dd.getMinutes();
+        var ss = dd.getSeconds();
+        if(hh < 10){
+            hh = '0'+hh;
+        }
+        if(mm < 10){
+            mm = '0'+mm;
+        }
+        if(ss < 10){
+            ss = '0'+ss;
+        }
+        /*if(p_count < 0){
+            return y + "-" + m + "-" + d +" 00:00:00";
+        }else{
+        }*/
+        return y + "-" + m + "-" + d +" "+hh+":"+mm+":"+ss;
+    }
+    //列表
+    function onSearch(level) {
+        var dateTime = $("#dateTime").val();
+        if(dateTime && dateTime.length > 0){
+            var arr = dateTime.split("~");
+            startTime = arr[0];
+            endTime = arr[1];
+        }
+        var targetId = '';
+        var targetId1 = $.cookie("targetId");
+        var targetId2 = localStorage.getItem("targetId");
+        if (targetId1) {
+            targetId = targetId1;
+        } else if (targetId2) {
+            targetId = targetId2;
+        }
+        if(level){
+            riskLevel = level;
+        }
+        var params = {
+            targetId: targetId,
+            region: $("#region").val(),
+            contents: $("#contents").val(),
+            platCode: sources,
+            alertStatus: alertStatus,
+            reportType: type,
+            riskLevel: riskLevel,
+            startDate: startTime,
+            endDate: endTime,
+            pageSize: pageSize,
+            pageNum: pageNum,
+            overdueStatus: overdueStatus,
+        };
+        $.ajax({
+            url: "/system/eventRecord/recordSearch",
+            data: params,
+            type: "GET",
+            success: function (data) {
+                localStorage.removeItem("targetId");
+                $.cookie('targetId', null, {path: '/', expires: 0, domain: GetCookieDomain()});
+                if (data.code == '0') {
+                    total = data.total;
+                    console.log(data)
+                    $(".doneCount").text(data.doneCount);
+                    $(".beSignCount").text(data.beSignCount);
+                    $(".pendingCount").text(data.pendingCount);
+                    // $("#eventCount").text(total);
+                    $('.partCount1').text(data.partCount1);
+                    $('.partCount2').text(data.partCount2);
+                    $('.partCount3').text(data.partCount3);
+                    var recordList = data.rows;
+                    $("#load").empty();
+                    flushPage('pagetest1', total, pageNum);
+                    for (var i = 0; i < recordList.length; i++) {
+                        var date = recordList[i].date;
+                        var id = recordList[i].id;
+                        var eventStatus = recordList[i].eventStatus;
+                        var eventTitle = recordList[i].eventTitle;
+                        var eventCategory = recordList[i].eventCategory;
+                        var eventAlertStatus = recordList[i].eventAlertStatus;
+                        var eventTypeName = recordList[i].eventTypeName;
+                        var cameraName=recordList[i].cameraName;
+                        var eventAddress = recordList[i].eventAddress;
+                        var regionName=recordList[i]. regionName;
+                        var reportType=recordList[i].reportType;
+                        var extendStr1=recordList[i].extendStr1;
+                        var timeOutEnd=recordList[i].timeOutEnd;
+                        var componentId = recordList[i].componentId;
+                        var riskLevel = recordList[i].riskLevel;
+                        let date1 = new Date(Date.parse(timeOutEnd));
+                        let date2 = new Date();
+                        var timeOut='';
+                        if(eventAlertStatus!=6 && date2 > date1){
+                            timeOut+='<em class="tag-yu" title="已逾期">逾</em>';
+                        }else {
+                            timeOut+='';
+                        }
+                        if(reportType == null || reportType==""){
+                            reportType = "";
+                        }
+                        var createTime = recordList[i].createTime;
+                        var rsta="";
+                        if(eventStatus == 3){
+                            rsta += '<em class="tag-zhong" title="中心处置">中</em>';
+                        }else{
+                            rsta += '';
+                        }
+                        var read="";
+                        if(eventAlertStatus == 4){
+                            read += '<em class="tag-tui" title="已退回">退</em>'+
+                                '<em class="tag-tesu" title="处置中">处</em>';
+                        }else{
+                            read += ''
+                        }
+                        var status="";
+
+                        if(eventAlertStatus == 6 ){
+                            status += '<em class="tag-end" title="完结">结</em>';
+
+                        }else if(eventAlertStatus == 3 || eventAlertStatus == 5){
+                            status += '<em class="tag-tesu" title="处置中">处</em>'
+                        }
+                        var beforeEm="";
+                      if(componentId == '1001'){
+                        beforeEm += '<em>城管事件</em>';
+                      }else if(componentId == '1002'){
+                        beforeEm += '<em>浙里访事件</em>';
+                      }else if(componentId == '1003'){
+                        beforeEm += '<em>应急事件</em>';
+                      }else if(componentId == '1004'){
+                        beforeEm += '<em>四平台事件</em>';
+                      }else if(componentId == '1010'){
+                        beforeEm += '<em>网格上报</em>';
+                      }else if(componentId == '1005'){
+                        beforeEm += '<em>街道内部事件</em>';
+                      }
+                        var judge = "";
+                        if (reportType == 1) {
+                            judge += '<em class="tag-zhi" title="智能上报">智</em>'
+                        } else if (reportType == 2) {
+                            judge += '<em class="tag-zhi" title="人工上报">人</em>'
+                        }
+                        var tt='<li class="" onclick = "recordDetails(' + id + ','+componentId+')">\n';
+                        var specialIcon = '';
+                        var specialTag = '';
+                        var endPic = '';
+                        if(riskLevel == '99'){
+                            tt+='<div class="right-card-title" style="background-color: rgba(255, 157, 64,0.59)">';
+                            specialIcon += '<span class="glyphicon glyphicon-star" aria-hidden="true" title="重要事件" style="color: rgba(255, 157, 64,0.59)"></span>';
+                            specialTag +='<em class="tag-zy" title="重要事件">重</em>';
+                            if (eventAlertStatus == 6) {
+                                endPic += '<img src="../img/endZY.png" class="endPic" />';
+                            }
+                        }else if(riskLevel == '999'){
+                            tt+='<div class="right-card-title" style="background-color: rgba(217,48,38,0.59)">';
+                            specialIcon += '<span class="glyphicon glyphicon-star" aria-hidden="true" title="紧急事件" style="color: rgba(217,48,38,0.59)"></span>'
+                            specialTag += '<em class="tag-ji" title="紧急事件">急</em>'
+                            if(eventAlertStatus == 6){
+                                endPic += '<img src="../img/endJ.png" class="endPic" />';
+                            }
+                        }else{
+                            tt+='<div class="right-card-title">';
+                        }
+                        tt+='                                                    <div class="col-lg-9">\n' +
+                            beforeEm+
+                            '                                                        <span>'+eventTitle+'</span>\n' +
+                            '                                                    </div>\n' +
+                            '                                                    <div class="col-lg-3 text-right">\n' +
+                            '                                                        <strong>'+date+'</strong>\n' +
+                            '                                                    </div>\n' +
+                            '                                                </div>\n' +
+                            '                                                <div class="right-card-content">\n' +
+                            '                                                    <div class="col-lg-7">\n' +
+                            '                                                        <i class="iconfont">&#xe62b;</i>\n' +
+                            '                                                        <span>'+regionName+'</span>\n' +
+                            '                                                    </div>\n' +
+                            '                                                    <div class="col-lg-5 text-right right-card-tag">\n' +
+                            specialTag+
+                            // specialIcon+
+                            timeOut+
+                            rsta+
+                            read+
+                            status+
+                            judge +
+                            '                                                    </div>\n' +
+                            '                                                    <div class="col-lg-9 TextOmit">\n' +
+                            '                                                        <i class="iconfont">&#xe66e;</i>\n' +
+                            '                                                        <span title="' + eventAddress + '">'+eventAddress+'</span>\n' +
+                            '                                                    </div>\n' +
+                            '                                                    <div class="col-lg-3 text-right font12 color6" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden"><i class="iconfont">&#xe607;</i>'+extendStr1+'</div>\n' +
+                            '                                                </div>\n' +
+                            // endPic+
+                            '                                            </li>';
+                        $("#load").append(tt);
+                        $('#load li:first').attr('class', 'active');
+                    }
+                    if ($('#load li').length == 0) {
+                        $('.right-card').hide();
+                        $('.right-content').hide();
+                        $('.earlyWarning-pic').show();
+                    }else{
+                        $('.right-card').show();
+                        $('.right-content').show();
+                        $('.earlyWarning-pic').hide()
+                    }
+                    if(recordList.length > 0){
+                        recordDetails(recordList[0].id,recordList[0].componentId);
+                    }
+                }
+            }
+        })
+    }
+
+    /**获取事件详情**/
+    function recordDetails(id,componentId) {
+        if(oWebControl!=null){
+            oWebControl.JS_HideWnd();   // 先让窗口隐藏，规避可能的插件窗口滞后于浏览器消失问题
+            oWebControl.JS_Disconnect().then(function(){  // 断开与插件服务连接成功
+                },
+                function() {  // 断开与插件服务连接失败
+                });
+        }
+        $.ajax({
+            url: "/system/eventRecord/recordDetails",
+            data: {id: id},
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    $("#componentId").val(componentId);
+                    var detail = data.data;
+                    $("#additional").empty();
+                    if(detail){
+                        console.log(detail)
+                        var id = detail.id;
+                        $("#id").val(id);
+                        var dateNow = detail.dateNow;
+                        var eventStatus=detail.eventStatus;
+                        var eventTitle=detail.eventTitle;
+                        $("#eventStatus").val();
+                        var eventId = detail.eventId;
+                        if (eventId == null || eventId == "") {
+                            eventId = "";
+                        }
+                        $("#eventId").val(eventId);
+                        var cameraName = detail.cameraName;
+                        if (cameraName == null || cameraName == "") {
+                            cameraName = "";
+                        }
+                        var videoPath = detail.extendStr1;
+                        if (videoPath == null || videoPath == "") {
+                            videoPath = "";
+                        }
+                        var videoType = "";
+                        if(videoPath.substring(videoPath.length-6).indexOf("m3u8") > -1){
+                            videoType = "application/x-mpegURL";
+                        }else if(videoPath.substring(videoPath.length-6).indexOf("mp4") > -1){
+                            videoType = "video/mp4";
+                        }
+                        $("#videoPath").val(videoPath);
+                        var eventAddress = detail.eventAddress;
+                        if (eventAddress == null || eventAddress == "") {
+                            eventAddress = "";
+                        }
+                        var eventTypeName = detail.eventTypeName;
+                        if (eventTypeName == null || eventTypeName == "") {
+                            eventTypeName = "";
+                        }
+                        if(componentId == '1004'){
+                            eventTypeName = eventTitle;
+                        }
+                        var reportTypeName = detail.reportTypeName;
+                        if (reportTypeName == null || reportTypeName == "") {
+                            reportTypeName = "";
+                        }
+
+                        var regionName = detail.regionName;
+                        if (regionName == null || regionName == "") {
+                            regionName = "";
+                        }
+                        var responsibilitySubject = detail.responsibilitySubject;
+                        if (responsibilitySubject == null || responsibilitySubject == "") {
+                            responsibilitySubject = "";
+                        }
+                        var procdefType = detail.procdefType;
+                        if (procdefType == null || procdefType == "") {
+                            procdefType = "";
+                        }
+                        $("#procdefType").val(procdefType);
+                        var todoUserName = detail.todoUserName;
+                        if(todoUserName == null || todoUserName == ""){
+                            todoUserName="";
+                        }
+                        var todoTime = detail.todoTime;
+                        if(todoTime == null || todoTime == ""){
+                            todoTime="";
+                        }
+                        var reportType = detail.reportType;
+                        if(reportType == null || reportType==""){
+                            reportType = "";
+                        }
+                        // 判断摄像头图片
+                        var cameraPic = '';
+                        if(reportType == '1'){
+                            if (componentId == "1001") {
+                                cameraPic = "../img/sxt.png";
+                            } else {
+                                cameraPic = "../img/no_video.png";
+                            }
+                        } else if (reportType == '2') {
+                            cameraPic = '../img/personSxt.png'
+                        }
+
+                        var date= detail.date;
+                        var regionIndexCode = detail.regionIndexCode;
+                        $("#regionIndexCode").val(regionIndexCode);
+                        var regionName = detail.regionName;
+                        var listMap=detail.listMap;
+                        var count=detail.count;
+                        var eventAlertStatus=detail.eventAlertStatus;
+                        $("#eventAlertStatus").val(eventAlertStatus);
+                        var cameraIndexCode = detail.cameraIndexCode;
+                        $("#cameraIndexCode").val(cameraIndexCode);
+                        var eventImage=detail.eventImage;
+                        if (eventImage == null || eventImage == '') {
+                            eventImage = '../img/no-pic1.png';
+                            $('.Play-look').css('display','none')
+                        }
+                        $("#imgPath").val(eventImage);
+                        //如果无经纬度,默认经纬度为闲林街道办
+                        var longitude=detail.longitude;
+                        if(longitude == null || longitude==""){
+                            longitude="119.989472";
+                        }
+                        $("#longitude").val(longitude);
+                        var latitude=detail.latitude;
+                        if(latitude == null || latitude == ""){
+                            latitude="30.237869";
+                        }
+                        $("#latitude").val(latitude);
+                        var todoTime=detail.todoTime;
+                        var signTime=detail.signTime;
+                        var endTime=detail.endTime;
+                        var beforeBackStatus = detail.beforeBackStatus;//2 未签收退回 3已签收后退回
+                        var status ='';
+                        if(eventAlertStatus == 6){
+                            status+='<button class="btn btn-primary zhongh-btn2" type="submit" data-toggle = "modal" data-target = "#myModal" onclick="searchDoneInfo()">事件报告</button>';
+                        }else{
+                            status+='<button class="btn btn-primary zhongh-btn1" type="submit" data-toggle = "modal" data-target = "#machine" id="zhongxin">中心处理</button>'+
+                                '<button class="btn btn-Danger zhongh-btn2" type="submit" data-toggle = "modal" data-target = "#myModalSupervise" id="supervise">事件督办</button>';
+                        }
+                        //3调度  4退回  5 签收 6处置 完结
+                        var eventAlert='';
+                        if(eventAlertStatus == 3 || eventAlertStatus == 5 || eventAlertStatus == 6){
+                            eventAlert += '<li class="time_li time_li-success">\n' +
+                                '           <div class="Time-line-icon">\n' +
+                                '              <span class="circle"><i class="iconfont circle-icon">&#xe613;</i></span>\n';
+                        }else if(eventAlertStatus == 4){
+                            if(beforeBackStatus == '2'){//未签收退回
+                                eventAlert += '<li class="time_li time_li-fail">\n' +
+                                    '           <div class="Time-line-icon">\n' +
+                                    '              <span class="circle"><i class="iconfont circle-icon">&#xe605;</i></span>\n';
+                            }else if(beforeBackStatus == '3'){//已签收后退回
+                                eventAlert += '<li class="time_li time_li-fail">\n' +
+                                    '           <div class="Time-line-icon">\n' +
+                                    '              <span class="circle"><i class="iconfont circle-icon">&#xe605;</i></span>\n';
+                            }//暂时不判断做强制改派的判断
+                            else{
+                                eventAlert += '<li class="time_li time_li-fail">\n' +
+                                    '           <div class="Time-line-icon">\n' +
+                                    '              <span class="circle"><i class="iconfont circle-icon">&#xe605;</i></span>\n';
+                            }
+                        }
+
+                        eventAlert +='</div>\n' +
+                            '           <div class="Time-line-text">调度</div>\n' +
+                            '           <div class="Time-line-text-time">'+todoTime+'</div>\n' +
+                            '           <div class="Time-line-text-a" id="center" data-toggle="modal" href="#myModal1"><a>查看</a></div>\n' +
+                            '       </li>\n';
+                        if (eventAlertStatus == 5 || eventAlertStatus == 6) {
+                            eventAlert += '<li class="Time-line-text-left33 time_li time_li-success">\n'+
+                                '<div class="Time-line-icon">\n' +
+                                '              <span class="circle"><i class="iconfont circle-icon">&#xe613;</i></span>\n';
+                        }else{
+                            eventAlert += '<li class="Time-line-text-left33">\n'+
+                                '<div class="Time-line-icon">\n' +
+                                '              <span class="circle"></span>\n' ;
+                        }
+                        eventAlert += '</div>\n' +
+                            '           <div class="Time-line-text">签收</div>\n';
+                        if(signTime != null && $.trim(signTime) != ""){
+                            eventAlert+='<div class="Time-line-text-time">'+signTime+'</div>' +
+                                '<div class="Time-line-text-a" id="sign" data-toggle="modal" href="#myModal2"><a href="#">查看</a></div>';
+                        }
+                        eventAlert+='</li>\n';
+                        if (eventAlertStatus == 6) {
+                            eventAlert += '<li class="Time-line-text-left66 time_li time_li-success">\n'+
+                                '<div class="Time-line-icon">\n' +
+                                '              <span class="circle"><i class="iconfont circle-icon">&#xe613;</i></span>\n';
+                        }else{
+                            eventAlert += '<li class="Time-line-text-left66">\n'+
+                                '<div class="Time-line-icon">\n' +
+                                '              <span class="circle"></span>\n';
+                        }
+                        eventAlert += '</div>\n' +
+                            '           <div class="Time-line-text">处置</div>\n';
+                        if(endTime != null && $.trim(endTime) != ""){
+                            eventAlert +='<div class="Time-line-text-time">'+endTime+'</div>\n' +
+                                '<div class="Time-line-text-a" id="disposal" data-toggle="modal" href="#myModal3"><a href="#">查看</a></div>';
+                        }
+                        eventAlert+='</li>\n';
+                        if (eventAlertStatus == 6) {
+                            eventAlert += '<li class="Time-line-text-left100 time_li time_li-success">\n'+ '<div class="Time-line-icon">\n' +
+                                '               <span class="circle"><i class="iconfont circle-icon">&#xe613;</i></span>\n';
+                        }else{
+                            eventAlert += '<li class="Time-line-text-left100">\n'+
+                                '<div class="Time-line-icon">\n' +
+                                '               <span class="circle"></span>\n' ;
+                        }
+                        eventAlert += '</div>\n' +
+                            '           <div class="Time-line-text">完结</div>\n';
+                        if(eventAlertStatus == 6){
+                            eventAlert+='<div class="Time-line-text-time">'+endTime+'</div>' +
+                                '<div class="Time-line-text-a" onclick="searchDoneInfo()" data-toggle="modal" href="#myModal"><a href="#" >查看</a></div>';
+                                /*'<div class="" onclick="serch()" data-toggle="modal" href="#myModal"><a href="#" >查看</a></div>';*/
+                        }
+                        eventAlert+='</li>';
+                    }
+                    var newDate = Date.parse(new Date());
+                    var labelTimeOut = Date.parse(detail.timeOut);
+                    timeOut = labelTimeOut;
+                    // console.log(newDate, labelTimeOut)
+                    var labelOut = '';
+                    if (newDate > labelTimeOut && eventAlertStatus != 6) {
+                        labelOut = '<em class="tag-yu">已逾期</em>'
+                    }
+                    var labelBack = '';
+                    if (eventAlertStatus == 4) {
+                        labelBack = '<em class="tag-yu">已退回</em>'
+                    }
+                    var tagStatus = '';
+                    if(eventAlertStatus==3|| eventAlertStatus==5){
+                        tagStatus ='<em class="tag-tesu">处置中</em>';
+                    }else if(eventAlertStatus == 6){
+                        tagStatus = '<em class="tag-end">已完结</em>';
+                    }
+                    var labelCenter = '';
+                    if(eventAlertStatus == 6&& eventStatus==3){
+                        labelCenter = '<em class="tag-zhong">中心处理</em>';
+                    }
+                    var lmHtml = '';
+                    var hkLmanagements = detail.hkLmanagements;
+                    if(hkLmanagements && hkLmanagements.length > 0){
+                        for (let i = 0; i < hkLmanagements.length; i++) {
+                            lmHtml+= '<em class = "tag-add" data-id="'+hkLmanagements[i].lmId+'">' + hkLmanagements[i].lmName + '</em>';
+                        }
+                    }
+                    var riskLevel = detail.riskLevel;
+                    var specialTag = '';
+                    if(riskLevel=='99'){
+                        specialTag += '<em class="tag-zy">重要事件</em>'
+                    }else if(riskLevel == '999'){
+                        specialTag += '<em class="tag-ji">紧急事件</em>'
+                    }
+                    var carousel_pic = "";
+                    carousel_pic+=  '<div id = "myCarousel" class = "carousel slide" onmousemove="prev()" onmouseout="next()">\n' +
+                                    '<ol class = "carousel-indicators">\n';
+                    //获取事件处置前后的图片
+                    var picList = detail.picList;
+                    if(picList && picList.length > 0){
+                        for (var i = 0; i < picList.length; i++) {
+                            if(i == 0){
+                                carousel_pic +='<li data-target = "#myCarousel" data-slide-to = "0" class = "active"></li>\n';
+                            }else{
+                                carousel_pic +='<li data-target = "#myCarousel" data-slide-to = "'+i+'"></li>\n';
+                            }
+                        }
+                    }else{
+                        carousel_pic +='<li data-target = "#myCarousel" data-slide-to = "0" class = "active"></li>\n'+
+                            '<li data-target = "#myCarousel" data-slide-to = "1"></li>\n';
+                    }
+                    carousel_pic +='</ol>' +
+                        '<div class = "carousel-inner">\n';
+                    if(picList && picList.length > 0){
+                        for (var i = 0; i < picList.length; i++) {
+                            let type = picList[i].type;
+                            let pic = picList[i].pic;
+                            let firstPic = picList[0].pic;
+                            let video = picList[i].video;
+                            if(i == 0){
+                                if (type == 'after') {
+                                    type = "整改后";
+                                    carousel_pic += '<div class = "item active">\n' +
+                                        '                <img src = "' + pic + '" alt = "' + type + '" onclick="imagePreview(\'' + pic + '\')">\n' +
+                                        '                <div class = "carousel-caption colorG">' + type + '</div>\n' +
+                                        '             </div>\n';
+                                } else {
+                                    type = "整改前";
+                                    carousel_pic += '<div class = "item active">\n' +
+                                        '                <img src = "' + pic + '" alt = "' + type + '" onclick="imagePreview(\'' + pic + '\')">\n' +
+                                        '                <div class = "carousel-caption colorR">' + type + '</div>\n' +
+                                        '             </div>\n';
+                                }
+
+                            }else{
+                                if (type == 'after') {
+                                    type = "整改后";
+                                    carousel_pic += '<div class = "item">\n' +
+                                        '                <img src = "' + pic + '" alt = "' + type + '" onclick="imagePreview(\'' + pic + '\')">\n' +
+                                        '                <div class = "carousel-caption colorG">' + type + '</div>\n' +
+                                        '             </div>\n';
+                                } else {
+                                    type = "整改前";
+                                    if(video && video.length > 0 || componentId == '1001'){
+                                        carousel_pic += '<div class = "item">\n' +
+                                            '                <img src = "' + firstPic + '" alt = "' + type + '">\n' +
+                                            '                <div class="right-video-p-img Play">\n' +
+                                            '                   <img src = "../img/play.png" style="width: 32px;height: 32px">\n' +
+                                            '                </div>\n' +
+                                            '                <div class = "carousel-caption colorR">' + type + '</div>\n' +
+                                            '             </div>\n';
+                                    }else{
+                                        carousel_pic += '<div class = "item">\n' +
+                                            '                <img src = "' + pic + '" alt = "' + type + '" onclick="imagePreview(\'' + pic + '\')">\n' +
+                                            '                <div class = "carousel-caption colorR">' + type + '</div>\n' +
+                                            '             </div>\n';
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+
+                        //还未判断 前后都木有图片的情况
+
+                        carousel_pic +='<div class = "item active">\n' +
+                            '                <img src = "../img/no-pic1.png" alt = "整改后">\n' +
+                            '                <div class = "carousel-caption colorG">整改后</div>\n' +
+                            '             </div>\n'+
+                            '          <div class = "item">\n' +
+                            '              <img src = "../img/no-video1.png" alt = "整改前">\n' +
+                            '              <div class = "carousel-caption colorR">整改前</div>\n' +
+                            '          </div>\n';
+                    }
+                    carousel_pic += '</div><a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">\n' +
+                        '<i class="fa fa-angle-left" aria-hidden="true"></i>\n' +
+                        '<span class="sr-only">Previous</span>\n' +
+                        '</a>\n' +
+                        '<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">\n' +
+                        '<i class="fa fa-angle-right" aria-hidden="true"></i>\n' +
+                        '<span class="sr-only">Next</span>\n' +
+                        '</a></div>\n';
+
+
+                    var recordList='<div id = "container"></div>\n' +
+                        '                                            <div class="right-content-map-Time">\n' +
+                        '                                                <div class="right-content-title" style="padding: 1vh 1vw;height: 14vh;" onmousemove="$(\'.addPic\').css(\'display\',\'inline-block\');" onmouseout="outAdd(this)">\n' +
+                        '                                                    <div class="row">\n' +
+                        '                                                        <div class="col-lg-12 right-content-title-t">\n' +
+                        '                                                            <b>'+eventAddress+'</b>发生<b>'+eventTitle+'</b> 事件 <span class="font12">'+dateNow+'</span>\n' +
+                        '                                                        </div>\n' +
+                        '                                                    </div>\n' +
+                        '<div class="row">' +
+                        '<div class="col-lg-7" style="display:flex;flex-wrap: wrap">' +
+
+                        '<div>' +
+                        '<span class="addLabel">' +
+                        specialTag +
+                        labelOut +
+                        labelBack +
+                        labelCenter +
+                        tagStatus +
+                        '<em class="tag-zhi">' + reportTypeName + '</em>' +
+                        lmHtml+
+                        '</span>'+
+                        '<span style="position: relative"><em class="addPic custom-options" onclick="addLabelInformation(this)"><i class="fa fa-plus"></i>标签</em>' +
+                        '</span>' +
+
+                        '</div>' +
+
+                        '</div>'+
+                        '                                                        <div class="col-lg-5 zhongh-btn">\n' +
+                        status +
+                        '                                                        </div>\n' +
+                        '                                                          <div style="display: none" class="img-div">\n' +
+                        '                                                               <span>\n' +
+                        '                                                                   <img src =' + eventImage + ' id="eventImage">\n' +
+                        '                                                               </span>\n' +
+                        '                                                          </div>' +
+                        '</div>\n'+
+                        '                                                </div>\n' +
+                        '                                                <div class="right-content-map-Time-p">\n' +
+                        '                                                    <div class="right-content-map-Time-line">\n' +
+                        '                                                        <ul>\n' +
+                        eventAlert +
+                        '                                                        </ul>\n' +
+                        '                                                    </div>\n' +
+                        '                                                </div>\n' +
+                        '                                            </div>\n' +
+                        '                                            <div class="right-content-map-video">\n' +
+                        '                                                <div id="playWnd" class="playWnd" style="width: 334px;height: 260px;">' +
+                        '                                                   <video id="playVideojs" class="video-js vjs-default-skin right-video-v-video" ' +
+                        '                                                                            style = "width: 100%;height: 100%;" controls preload="none" poster='+eventImage+'>\n' +
+                        '                                                       <source src="'+videoPath+'" type="'+videoType+'"/>\n' +
+                        '                                                   </video>\n' +
+                        '                                                </div>\n' +
+                        carousel_pic +
+                        '                                           </div>'+
+                        '        </div>';
+                }
+                $("#additional").append(recordList);
+                // 设置轮播一张图时导航按钮为灰色
+                if (picList.length == 1) {
+                    $('.fa-angle-left').css('color', '#ccc')
+                    $('.fa-angle-right').css('color', '#ccc')
+                }
+                $('.carousel').carousel({
+                    interval :3000//轮播间隔
+                });
+                if(componentId == '1001'){
+                    $("#playVideojs").css('display','none');
+                }else if(videoPath == ''){
+                    $("#playVideojs").css('display','none');
+                    var video = '../img/no-video1.png';
+                    $(".Play").attr('src', video)
+                    $(".Play-look").css('display','none');
+                }
+
+                var map = new BMap.Map("container", {minZoom:14,maxZoom:18}); // 创建地图实例
+                var cont = new BMap.Point(longitude, latitude);//地图中心点
+                map.centerAndZoom(cont, 16); // 初始化地图，设置中心点坐标和地图级别
+                map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放,
+                // map.disableDragging(); //禁止拖拽
+                // map.disableDoubleClickZoom();//禁用双击
+                var marker = new BMap.Marker(cont);        // 创建标注
+                marker.setIcon(new BMap.Icon(cameraPic, new BMap.Size(30, 40), {
+                    anchor: new BMap.Size(15, 40)
+                }));
+                map.addOverlay(marker);
+                // 标注点击事件
+                marker.addEventListener("click", function () {
+                    if(componentId == '1001'){
+                        $('#myCarousel').css('display','none');
+                        if(oWebControl ==null){
+                            initPlugin();
+                        }
+                        startPlayback();
+                        oWebControl.JS_ShowWnd();
+                    }else{
+                        if(videoPath.length > 10){
+                            $('#myCarousel').css('display','none');
+                            var myPlayer = videojs('playVideojs');
+                            videojs("playVideojs").ready(function(){
+                                var myPlayer = this;
+                                myPlayer.play();
+                            });
+                        }else{
+                            var customSkinSC = 'demoWaring';
+                            var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>该事件无视频资料！</span>';
+                            customOpen(customSkinSC, customContentSC)
+                        }
+                    }
+                });
+                var tagMarkerIcon = new BMap.Icon("../img/markers.png", new BMap.Size(23, 25), {
+                    imageOffset: new BMap.Size(0, 0 - 13 * 25), // 设置图片偏移
+                });
+                // 设置地图可拖拽范围 Bounds(sw: Point , ne: Point ) 创建一个包含所有给定点坐标的矩形区域。其中sw表示矩形区域的西南角，参数ne表示矩形区域的东北角
+                var b = new BMap.Bounds(new BMap.Point(119.939329,30.220157), new BMap.Point(120.056325,30.270699));
+                try {
+                    BMapLib.AreaRestriction.setBounds(map, b);
+                } catch (e) {
+                    alert(e);
+                }
+
+                //根据社区deptId获取上一级街道
+                $.ajax({
+                    url:"/system/region/queryParentRegionByRegionId",
+                    type:"post",
+                    data:{
+                        "regionId":regionIndexCode,
+                    },
+                    success:function (data) {
+                        if(data.code == 0){
+                            let parentId = data.data;
+                            //动态加载已绘制完成点位信息
+                            $.ajax({
+                                url:"/system/region/map/details",
+                                type:"post",
+                                data:{
+                                    "regionId":parentId,
+                                },
+                                success:function (data) {
+                                    if(data.code == 0){
+                                        let colors = [
+                                            '#0000ff', '#02a7f0', '#01a63a', '#d9001b',
+                                            '#70b603', '#8b741a',
+
+                                        ]
+                                        let backgroundColors = [
+                                            '#8080ff', '#81d3f8', '#38b051', '#ec808d',
+                                            '#caf982', '#facd91',
+                                        ]
+
+                                        //保存所有覆盖物集合
+                                        let polygons = []
+                                        //保存所有文本标注集合
+                                        let labels = []
+                                        //遍历集合
+                                        let markerPointsList = data.data;
+                                        if (markerPointsList && markerPointsList.length > 0) {
+                                            $('#tips').text('已绘制' + markerPointsList.length + '个下级网格。如有需要，请前往各地区下编辑地图。')
+                                            for (let i = 0; i < markerPointsList.length; i++) {
+                                                let markerPoints = JSON.parse(markerPointsList[i].markerPoints)
+                                                //获取当前区域中心点
+                                                let centerPoint = JSON.parse(markerPointsList[i].centerPoint);
+                                                // console.log(centerPoint)
+                                                let regionName = markerPointsList[i].parentName;
+                                                // console.log(markerPoints)
+                                                //覆盖物
+                                                let polygon;
+                                                //文本标注
+                                                let label;
+                                                //覆盖物标记点回显.
+                                                if (markerPoints && markerPoints.length > 3) {
+                                                    let settings = {
+                                                        strokeColor: colors[i % 6],    //边线颜色。
+                                                        fillColor: backgroundColors[i % 6],      //填充颜色。当参数为空时，圆形将没有填充效果。
+                                                        strokeWeight: 2,       //边线的宽度，以像素为单位。
+                                                        strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+                                                        fillOpacity: 0.3,      //填充的透明度，取值范围0 - 1。
+                                                        strokeStyle: 'solid' //边线的样式，solid或dashed。
+                                                    }
+                                                    let points = []
+                                                    for (let i = 0; i < markerPoints.length; i++) {
+                                                        points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+                                                    }
+                                                    //构造一个覆盖物
+                                                    polygon = new BMap.Polygon(points, settings)
+                                                    //指定文本标注的位置
+                                                    let opts = {
+                                                        position: new BMap.Point(centerPoint[0], centerPoint[1]), // 指定文本标注所在的地理位置
+                                                        offset: new BMap.Size(0, 0) // 设置文本偏移量
+                                                    };
+                                                    //构造一个文本标注
+                                                    label = new BMap.Label(regionName, opts);
+                                                    // 自定义文本标注样式
+                                                    label.setStyle({
+                                                        color: "#000000",
+                                                        backgroundColor: 'transparent',//文本背景色
+                                                        borderColor: 'transparent',//文本框边框色
+                                                        width: '70px',
+                                                        whiteSpace: "normal",//设置文字超出自动换行
+                                                        fontSize: "15px",
+                                                        minHeight: "15px",
+                                                        lineHeight: "1.5",
+                                                        fontFamily: "微软雅黑"
+                                                    });
+                                                }
+                                                //添加覆盖物到数组
+                                                polygons.push(polygon)
+                                                //添加文本标注到数组
+                                                labels.push(label);
+                                                //添加覆盖物到地图
+                                                map.addOverlay(polygon);
+                                                //添加文本标注到地图
+                                                map.addOverlay(label);
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    }
+                });
+                let src = $("#imgPath").val();
+                $(".Play").attr('src', src)
+
+            }
+        })
+    }
+
+    /**调度的人员信息**/
+    $('#additional').on('click','#center',function () {
+        let procdefType = $("#procdefType").val();
+        let eventId = $("#eventId").val();
+        $.ajax({
+            url: "/system/eventRecord/assignorUser",
+            type: "GET",
+            data: {
+                procdefType: procdefType,
+                eventId:eventId
+            },
+            success: function (data) {
+                if (data.code == '0') {
+                    var map = data.data;
+                    $("#zhiPai").empty();
+                    var information = map.list;
+                    var eventAlertStatus = map.eventAlertStatus;
+                    for (var i = 0; i < information.length; i++) {
+                        var todoUserName = information[i].todoUserName;
+                        var todoUserId = information[i].todoUserId;
+                        var todoTime = information[i].todoTime;
+                        var zpUserName = information[i].zpUserName;
+                        var returnFlag = information[i].returnFlag;
+                        var backReason = information[i].backReason;
+                        var backTime = information[i].backTime;
+                        var processStatus = information[i].processStatus;
+                        var uu = '';
+                        if(i == 0){
+                            uu += '<div class="Dd_div" style="display:flex;padding-left: 10px;position: relative;padding-bottom:10px;line-height: 4vh;">';
+                            if(processStatus == '5'){
+                                uu += '当前指派人：<span" id="dqzpr">-</span>';
+                            }else{
+                              uu += '当前指派人：<div class="custom-options person-options" id="dqzpr" style="color:cornflowerblue;" onclick="addInformation('+todoUserId+',$(this))">'+todoUserName+'' +'</div>';
+                            }
+                            if(eventAlertStatus != 6){
+                                uu += '<i class="iconfont zhi" id="todoUserName" style="color: red;font-size:18px;margin-left: 20px;" data-id="' + todoUserId + '" ' +
+                                    'data-toggle = "modal" data-target = "#Option" onclick = "refresh()" title="改派">&#xe656;</i></div>';
+                            }
+                          uu += '</div>';
+                        }
+                        if(processStatus == '5'){
+                            uu += '<div class="Dd_div">' +
+                                '<p>网格员：<span style="color:#cccccc;">' + todoUserName + '</span></p>' +
+                                '<p>退回时间：<span style="color:#cccccc;">' + todoTime + '</span></p>' +
+                                '<p>退回原因：<span style="color:#cccccc;">' + backReason + '</span></p></div>';
+                        }else{
+                            uu += '<div class="Dd_div">' +
+                                '<p>网格员：<span style="color:#cccccc;">' + todoUserName + '</span></p>' +
+                                '<p>指派时间：<span style="color:#cccccc;">' + todoTime + '</span></p>' +
+                                '<p>操作人：<span style="color:#cccccc;">' + zpUserName + '</span></p></div>';
+                        }
+                        $("#zhiPai").append(uu);
+
+                    /*$('.custom-options').on('click',function (){
+                        var userId = $(this).data("id");
+                        addInformation(userId,$(this));
+                        $('.custom_tooltip').show()
+                    })*/
+
+                    }
+                }
+            }
+        })
+    });
+
+    /**签收人员信息**/
+    $('#additional').on('click', '#sign', function () {
+        let eventId = $("#eventId").val();
+        $.ajax({
+            url: "/system/eventRecord/signName",
+            type: "GET",
+            data: {
+                "eventId": eventId,
+            },
+            success: function (data) {
+                var sign = data.data;
+                if(data.code == 0){
+                    $("#qianShou").empty();
+                    var uu = "";
+                    for (var i = 0; i < sign.length; i++) {
+                        var userId = sign[i].userId;
+                        var userName = sign[i].userName;
+                        var signTime = sign[i].signTime;
+                        if(i == 0){
+                            uu += '<div class="Dd_div">' +
+                                '<p>签收人：<span style="color:cornflowerblue;" class="custom-options person-options" onclick="addInformation('+userId+',$(this))">' + userName + '</span></p>' +
+                                '<p>签收时间：<span>' + signTime + '</span></p></div>';
+                        }else{
+                            uu += '<div class="Dd_div">' +
+                                '<p>签收人：<span style="color:#cccccc;">' + userName + '</span></p>' +
+                                '<p>签收时间：<span style="color:#cccccc;">' + signTime + '</span></p></div>';
+                        }
+                    }
+                    $("#qianShou").append(uu);
+                }
+            }
+        })
+    });
+
+    /**处置人员信息**/
+    $('#additional').on('click', '#disposal', function () {
+        $("#dv").attr("style", "display:block;");
+        let eventId = $("#eventId").val();
+        let eventStatus = $("#eventStatus").val();
+        $.ajax({
+            url: "/system/eventRecord/queryChainHandler",
+            type: "get",
+            data: {
+                "eventId": eventId
+            },
+            success: function (data) {
+                if (data.code == '0') {
+                    var Handler = data.data;
+                    $("#chuZhi").empty();
+                    var uu = '';
+                    for (var i = 0; i < Handler.length; i++) {
+                        var userId = Handler[i].userId;
+                        var userName = Handler[i].userName;
+                        var updateTime = Handler[i].updateTime;
+                        uu += '<div class="Dd_div">';
+                        if(i == 0){
+                            uu += '<p>处置人员：<span style="color:cornflowerblue;" class="custom-options person-options" onclick="addInformation('+userId+',$(this))">' + userName + '</span></p>' +
+                                '<p>处置时间：<span>' + updateTime + '</span></p></div>';
+                        }else{
+                            uu += '<p>处置人员：<span style="color:#cccccc;">' + userName + '</span></p>' +
+                                '<p>处置时间：<span style="color:#cccccc;">' + updateTime + '</span></p>';
+                        }
+                        uu +='</div>';
+                    }
+                    $("#chuZhi").append(uu);
+                }
+            }
+        })
+    });
+
+    // 完结报告
+    function searchDoneInfo() {
+        let eventId = $("#eventId").val();
+        $.ajax({
+            url: "/system/eventRecord/queryProcessRecord",
+            type: "GET",
+            data: {
+                "eventId": eventId
+            },
+            success: function (data) {
+                var history = data.data;
+                if (data.code == 0) {
+                    $("#endEvent").empty();
+                    var eventTypeName = history.eventTypeName;
+                    var reportTypeName = history.reportTypeName;
+                    var eventAddress = history.eventAddress;
+                    var regionName = history.regionName;
+                    var createTime = history.createTime;
+                    var eventImage = history.eventImage;
+                    var eventTitle = history.eventTitle;
+                  var evaluate=history.evaluate;
+                  var evaluateAll;
+                  if (evaluate == null || evaluate == '') {
+                    evaluateAll = '<p>请评价此次流程：<span class="pleased"><i class="iconfont">&#xe630;</i>满意</span><span class="unPleased"><i class="iconfont">&#xe63a;</i>不满意</span></span></p>';
+                  }else if(evaluate ==1){
+                    evaluateAll = '<p>请评价此次流程：<span class="pleased active"><i class="iconfont">&#xe630;</i>满意</span><span class="unPleased "><i class="iconfont">&#xe63a;</i>不满意</span></span></p>';
+                  }else if(evaluate==2){
+                    evaluateAll = '<p>请评价此次流程：<span class="pleased"><i class="iconfont">&#xe630;</i>满意</span><span class="unPleased active"><i class="iconfont">&#xe63a;</i>不满意</span></span></p>';
+                  }
+                    if (eventImage == null || eventImage == '') {
+                        eventImage = '../img/no-pic1.png';
+                    }
+                    let reportBigPic = eventImage.split("|");
+                    var carouselIndicators = '';
+                    var carouselInner = '';
+
+                    if (reportBigPic != '') {
+                        for (var i = 0; i < reportBigPic.length; i++) {
+                            if (i == 0) {
+                                carouselIndicators += '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>\n';
+                                carouselInner += '<div class="item active">\n' +
+                                    '<img  src = "' + reportBigPic[0] + '" onClick="showMorePic(\'' + eventImage + '\')">\n' +
+                                    '</div>\n';
+                            } else {
+                                carouselIndicators += '<li data-target="#myCarousel" data-slide-to="' + i + '"></li>\n';
+                                carouselInner += '<div class="item">\n' +
+                                    '<img  src = "' + reportBigPic[i] + '" onClick="showMorePic(\'' + eventImage + '\')">\n' +
+                                    '</div>\n';
+                            }
+                        }
+                    } else {
+                        carouselInner += '<div class="item active">\n' +
+                            '<img  src ="../img/no-pic1.png">\n' +
+                            '</div>\n';
+                    }
+                    var updateTime = history.updateTime;
+                    var processTime = history.processTime;
+                    var signTimeOut = history.signTimeOut;
+                    var disposalTimeOut = history.disposalTimeOut;
+                    var userName = history.userName;
+                    var phone = history.phone;
+                    var allTime = history.allTime;
+                    var firstProcessTime = history.firstProcessTime;
+                    var signTotalTime = history.signTotalTime;
+                    var disposalTotalTime = history.disposalTotalTime;
+                    var list = history.list.reverse();
+                    var finsh = '<h5><span class="left_line-title">完成</span><span class="line-blue fr" style="font-size: 12px;"><i class="iconfont">&#xe672;</i><b style=" font-weight: normal;">总耗时' + allTime + '</b></span></h5>';
+
+                    var zong = '<div class="ok_data"><p>事件完结总耗时</p><p>' + allTime + '</p></div>';
+                    var fileContent = '<div class="col-lg-6 right-content-c-line">\n' +
+                        '                            <div class="row">\n' +
+                        '                                <div class="col-lg-12">\n' +
+                        '                                    <h5>取证资料</h5>\n' +
+                        '                                    <p>事件类别：<span>' + eventTypeName + '</span></p>\n' +
+                        '                                    <p>预警来源：<span></span>' + reportTypeName + '</p>\n' +
+                        '                                    <p>预警时间：<span>' + createTime + '</span></p>\n' +
+                        '                                    <p>警情地址：<span>' + eventAddress + '</span></p>\n' +
+                        '                                    <p>所属辖区：<span>' + regionName + '</span></p>\n' +
+                        '                                    <div class="ok">\n' +
+                        '                                        <img src = "../img/ok.png" >\n' +
+                        zong +
+                        '                                    </div>\n' +
+                        '                                </div>\n' +
+                        '                                <div class="col-lg-12">\n' +
+                        '                                    <h5>图片</h5>\n' +
+                        '<div id="reportBigPic" class="carousel slide reportBigPic" onmousemove="prev()" onmouseout="next()" style="height: 28vh;">\n' +
+                        '   <ol class="carousel-indicators">\n' +
+                        carouselIndicators +
+                        '   </ol>   \n' +
+                        '   <div class="carousel-inner">\n' +
+                        carouselInner +
+                        '   </div>\n' +
+                        '   <a class="left carousel-control" href="#reportBigPic" role="button" data-slide="prev">\n' +
+                        '       <i class="fa fa-angle-left" aria-hidden="true"></i>\n' +
+                        '       <span class="sr-only">Previous</span>\n' +
+                        '   </a>\n' +
+                        '   <a class="right carousel-control" href="#reportBigPic" role="button" data-slide="next">\n' +
+                        '       <i class="fa fa-angle-right" aria-hidden="true"></i>\n' +
+                        '       <span class="sr-only">Next</span>\n' +
+                        '   </a>\n' +
+                        '</div> '+
+                            '                                    <div class="evaluate">\n' +
+                            evaluateAll+
+                            '</div>\n' +
+                        '                                </div>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                        <div class="col-lg-6">\n' +
+                        '                            <div class="row">\n' +
+                        '                                <div class="col-lg-12">\n' +
+                        '                                    <h5>处理详情</h5>\n' +
+                        '                                </div>\n' +
+                        '                                <div class="col-lg-12 detail-text" style=" overflow-y: auto; scrollbar-width: none;-ms-overflow-style: none; height: 63vh; ">\n' +
+                        '                                    <div class="left_line">\n' +
+                        '                                    <div class="left_line-l"></div>\n' +
+                        '                                        <div class="left_line-box left_box-active">\n' +
+                        '                                            <h5>\n' +
+                        '                                                <span class="left_line-title">事件上报</span>\n' +
+                        '                                                <i class="iconfont"></i>\n' +
+                        '                                                <span class="left_line-data">' + createTime + '</span><span class="line-blue fr"></span>\n' +
+                        '                                            </h5>\n' +
+                        '                                            <p>位于<span class="line-blue">' + eventAddress + '</span>出现<span class="line-red">' + eventTitle + '</span>事件</p>\n' +
+                        '                                            <div class="line-circle">\n' +
+                        '                                                <span class="circle"></span>\n' +
+                        '                                            </div>\n' +
+                        '                                        </div>\n';
+                    for (let i = 0; i < list.length; i++) {
+                        let phone = list[i].phone;
+                        let todoUserId = list[i].todoUserId;
+                        let todoUserName = list[i].todoUserName;
+                        let processTime = list[i].processTime;
+                        let processStatus = list[i].processStatus;
+                        let backReason = list[i].backReason;
+                        let zpUserId = list[i].zpUserId;
+                        let zpUserName = list[i].zpUserName;
+                        if (processStatus == '6') { //中心处置
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">处置</span>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                '             <p>平台人员<span class="line-blue custom-options person-options" onclick="addInformation(' + todoUserId + ',$(this))">' + todoUserName + '</span>已中心处置</p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }
+                        if (processStatus == '5') {
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">指派退回</span>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                '             <p>网格员<span class="line-blue custom-options person-options" onclick="addInformation(' + todoUserId + ',$(this))">' + todoUserName + '</span>已退回事件，请重新指派</p>\n' +
+                                '             <p class="line-greey">备注：<span>' + backReason + '</span></p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }
+                        if (processStatus == '3') {
+                            fileContent += '<div class="left_line-box left_box-active SignFor">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">签收</span>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                '             <p>网格员<span class="line-blue custom-options person-options"  onclick="addInformation(' + todoUserId + ',$(this))">' + todoUserName + '</span>已签收</p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+
+                        }
+                        if (processStatus == '4') { //已处置
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">处置</span>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                '             <p>网格员<span class="line-blue custom-options person-options"  onclick="addInformation(' + todoUserId + ',$(this))">' + todoUserName + '</span>已处置</p>\n';
+                            var mapResult = list[i].processResult;
+                            if (mapResult && mapResult.length > 0) {
+                                for (let j = 0; j < mapResult.length; j++) {
+                                    let result = mapResult[j];
+                                    var fieldName = result.fieldName;
+                                    var fieldType = result.fieldType;
+                                    var fieldValue = result.fieldValue;
+                                    if (fieldType == "图片") {
+                                        if (fieldValue == null || fieldValue == '') {
+                                            fieldValue = '../img/no-pic1.png';
+                                        }
+                                        let picList = fieldValue.split("|");
+                                        fileContent += '<p>' + fieldName + '：<span  name = "example1" class="morePic" id="morePic' + j + '">';
+                                        picList.forEach(item => {
+                                            fileContent += '<img class="my-pic" src="' + item + '" style="width: 50px; height: 50px"/>';
+                                        })
+                                        fileContent += '</span></p>';
+                                    } else {
+                                        fileContent += '<p>' + fieldName + '：<span>' + fieldValue + '</span></p>';
+                                    }
+                                }
+                            }
+                            fileContent += '<div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }
+                        if (processStatus == '2' || processStatus == '1') {
+                            fileContent += '<div class="left_line-box left_box-active assign">\n' +
+                                '             <h5>\n';
+                            if (processStatus == '2') {
+                                fileContent += '<span class="left_line-title">事件指派</span>\n';
+                            } else if (processStatus == '1') {
+                                fileContent += '<span class="left_line-title">事件重新指派</span>\n';
+                            }
+
+                            fileContent += '<span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                '             <p style="position: relative">已指派网格员<span class="line-blue custom-options person-options" onclick="addInformation(' + todoUserId + ',$(this))">' + todoUserName + '</span>前往处理事件</p>\n' +
+                                '             <p class="line-greey">处理人员：<span>' + todoUserName + '</span></p>\n' +
+                                '             <p class="line-greey">联系方式：<span>' + phone + '</span></p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }
+                    }
+                    var timeOutFlag = '';
+                    if (disposalTimeOut < 0) {
+                        timeOutFlag = '<span style="font-size: 12px;" class="line-red fr"><i class="iconfont">&#xe672;</i><b style=" font-weight: normal;">事件处置耗时' + disposalTotalTime + '</b></span>\n';
+                    } else {
+                        timeOutFlag = '<span style="font-size: 12px;" class="line-blue fr"><i class="iconfont">&#xe672;</i><b style=" font-weight: normal;">事件处置耗时' + disposalTotalTime + '</b></span>\n';
+                    }
+                    fileContent += '<div class="left_line-box left_box-active">\n' +
+                        '               <h5>\n' +
+                        '                  <span class="left_line-title">事件处理结果</span>' + timeOutFlag +
+                        '                  <span class="left_line-data">' + updateTime + '</span>' +
+                        '               </h5>\n' +
+                        '               <div id="proposal">';
+                    fileContent += '<p>处置结果：已处理</p>';
+                    fileContent += '</div>' +
+                        '               <div class="line-circle">\n' +
+                        '                   <span class="circle"></span>\n' +
+                        '               </div>' +
+                        '            </div>\n' +
+                        '            <div class="left_line-box left_box-active">\n' +
+                        finsh +
+                        '            </h5>\n' +
+                        '            <div class="line-circle">\n' +
+                        '                <span class="circle"></span>\n' +
+                        '            </div>\n' +
+                        '          </div>\n' +
+                        '        </div>\n' +
+                        '      </div>\n' +
+                        '    </div>\n' +
+                        '  </div>';
+
+
+                    $("#endEvent").append(fileContent);
+
+                    var SignFor = $('.left_line').children('.SignFor:last');
+                    if (signTimeOut < 0) {
+                        $(SignFor).find('.left_line-title').after('<span class="line-red fr" style="font-size: 12px;"><i class="iconfont">&#xe672;</i><b style=" font-weight: normal;">签收耗时' + signTotalTime + '</b></span>')
+                    } else {
+                        $(SignFor).find('.left_line-title').after('<span class="line-blue fr" style="font-size: 12px;"><i class="iconfont">&#xe672;</i><b style=" font-weight: normal;">签收耗时' + signTotalTime + '</b></span>')
+                    }
+                    /**是否超时**/
+                    var assign = $('.left_line').children('.assign:first');
+                    $(assign).find('.left_line-title').after('<span style="font-size: 12px" class="line-blue fr"><i class="iconfont">&#xe672;</i><b style=" font-weight: normal;">事件指派耗时' + firstProcessTime + '</b></span>')
+                    // 设置轮播一张图时导航按钮为灰色
+                    if (reportBigPic.length == 1) {
+                        $('.fa-angle-left').css('color', '#ccc')
+                        $('.fa-angle-right').css('color', '#ccc')
+                    }
+
+                  if(pleased == 1){
+                    // $('.unPleased').hide();
+                    $('.pleased').addClass('active')
+                  }else if(pleased == 2){
+                    // $('.pleased').hide();
+                    $('.unPleased').addClass('active')
+                  }
+                }
+            }
+        })
+    }
+
+
+    //右侧轮播图预览
+    function imagePreview(src){
+      //弹出层
+      layer.open({
+        type: 1,
+        area: ['800px','600px'],
+        shadeClose: true,//点击外围关闭弹窗
+        scrollbar: false,//不现实滚动条
+        title: "", //不显示标题
+        content: "<img src='" + src + "' style='width: 100%;height: 100%'/>", //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+        cancel: function () {
+        }
+      });
+      return false;
+    }
+
+    // 图片预览事件
+    $("#endEvent").off('click').on("click",".my-pic", function() {
+        // console.log($(this).parent())
+        var length = $("#endEvent").find('.morePic').length;
+        // console.log(length)
+        for(var i = 0;i< length;i++){
+            var id = '#morePic'+i+'';
+        }
+        layer.photos({
+            photos: id
+            , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            , area: ['800px', '600px']
+            , shade: [0.3, '#000']//遮罩层颜色
+        });
+
+    });
+
+    /**事件督办**/
+    $("#additional").on('click', '#supervise', function () {
+        let eventId = $("#eventId").val();
+        $.ajax({
+            url: "/system/eventRecord/queryProcessRecord",
+            type: "GET",
+            data: {
+                "eventId": eventId,
+                "type":"1"
+            },
+            success: function (data) {
+                var history = data.data;
+                if(data.code == 0){
+                    $("#EventSupervise").empty();
+                    var eventTypeName = history.eventTypeName;
+                    var reportTypeName = history.reportTypeName;
+                    var eventAddress = history.eventAddress;
+                    var regionName = history.regionName;
+                    var eventTitle = history.eventTitle;
+                    var createTime = history.createTime;
+                    var eventImage = history.eventImage;
+                    if (eventImage == null || eventImage == '') {
+                        eventImage = '../img/no-pic1.png';
+                    }
+                    let reportBigPic = eventImage.split("|");
+                    var carouselIndicators = '';
+                    var carouselInner = '';
+                    if (reportBigPic != '') {
+                        for (var i = 0; i < reportBigPic.length; i++) {
+                            if (i == 0) {
+                                carouselIndicators += '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>\n';
+                                carouselInner += '<div class="item active">\n' +
+                                    '<img  src = "' + reportBigPic[0] + '" onClick="showMorePic(\''+ eventImage+'\')" />\n' +
+                                    '</div>\n';
+                            } else {
+                                carouselIndicators += '<li data-target="#myCarousel" data-slide-to="' + i + '"></li>\n';
+                                carouselInner += '<div class="item">\n' +
+                                    '<img  src = "' + reportBigPic[i] + '" onClick="showMorePic(\'' + eventImage + '\')" />\n' +
+                                    '</div>\n';
+                            }
+                        }
+                    } else {
+                        carouselInner += '<div class="item active">\n' +
+                            '<img  src ="../img/no-pic1.png" />\n' +
+                            '</div>\n';
+                    }
+                    var list = history.list.reverse();
+                    var fileContent='<div class="col-lg-6 right-content-c-line">\n' +
+                        '                            <div class="row">\n' +
+                        '                                <div class="col-lg-12">\n' +
+                        '                                    <h5>取证资料</h5>\n' +
+                        '                                    <p>事件类别：<span>' + eventTypeName + '</span></p>\n' +
+                        '                                    <p>预警来源：<span></span>' + reportTypeName + '</p>\n' +
+                        '                                    <p>预警时间：<span>' + createTime + '</span></p>\n' +
+                        '                                    <p>警情地址：<span>' + eventAddress + '</span></p>\n' +
+                        '                                    <p>所属辖区：<span>' + regionName + '</span></p>\n' +
+                        '                                </div>\n' +
+                        '                                <div class="col-lg-12">\n' +
+                        '                                    <h5>图片</h5>\n' +
+                        '<div id="reportBigPic" class="carousel slide reportBigPic" onmousemove="prev()" onmouseout="next()" style="height: 28vh;">\n' +
+                        '   <ol class="carousel-indicators">\n' +
+                        carouselIndicators +
+                        '   </ol>   \n' +
+                        '   <div class="carousel-inner">\n' +
+                        carouselInner +
+                        '   </div>\n' +
+                        '   <a class="left carousel-control" href="#reportBigPic" role="button" data-slide="prev">\n' +
+                        '       <i class="fa fa-angle-left" aria-hidden="true"></i>\n' +
+                        '       <span class="sr-only">Previous</span>\n' +
+                        '   </a>\n' +
+                        '   <a class="right carousel-control" href="#reportBigPic" role="button" data-slide="next">\n' +
+                        '       <i class="fa fa-angle-right" aria-hidden="true"></i>\n' +
+                        '       <span class="sr-only">Next</span>\n' +
+                        '   </a>\n' +
+                        '</div> ' +
+                        // '                                    <img src=' + eventImage + ' alt=""/>\n' +
+                        '                                </div>\n' +
+                        '                            </div>\n' +
+                        '                        </div>\n' +
+                        '                        <div class="col-lg-6 detail">\n' +
+                        '                            <div class="row">\n' +
+                        '                                <div class="col-lg-12">\n' +
+                        '                                    <h5>处理详情</h5>\n' +
+                        '                                </div>\n' +
+                        '                                <div class="col-lg-12 detail-text" style=" overflow-y: auto; scrollbar-width: none;-ms-overflow-style: none; height: 63vh; ">\n' +
+                        '                                    <div class="left_line">\n' +
+                        '                                    <div class="left_line-l"></div>\n' +
+                        '                                        <div class="left_line-box left_box-active">\n' +
+                        '                                            <h5>\n' +
+                        '                                                <span class="left_line-title">事件上报</span>\n' +
+                        '                                                <i class="iconfont"></i>\n' +
+                        '                                                <span class="left_line-data">' + createTime + '</span><span class="line-blue fr"></span>\n' +
+                        '                                            </h5>\n' +
+                        '                                            <p>位于<span class="line-blue">' + eventAddress + '</span>出现<span class="line-red">' + eventTitle + '</span>事件</p>\n' +
+                        '                                            <div class="line-circle">\n' +
+                        '                                                <span class="circle"></span>\n' +
+                        '                                            </div>\n' +
+                        '                                        </div>\n';
+                    let sendMsgPhone = '';
+                    for (let i = 0; i < list.length; i++) {
+                        let phone = list[i].phone;
+                        sendMsgPhone = phone;
+                        let todoTime = list[i].todoTime;
+                        let todoUserId = list[i].todoUserId;
+                        let todoUserName = list[i].todoUserName;
+                        let processTime = list[i].processTime;
+                        let processStatus = list[i].processStatus;
+                        let backReason = list[i].backReason;
+                        if (processStatus == '5') {
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">指派退回</span>\n' +
+                                '                <i class="iconfont"></i>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                '             <p>网格员<span class="line-blue custom-options person-options" onclick="addInformation('+todoUserId+',$(this))">' + todoUserName + '</span>已退回事件，请重新指派</p>\n' +
+                                '             <p class="line-greey">退回原因：<span>' + backReason + '</span></p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }else if (processStatus == '3' && i > 0) {
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">签收</span>\n' +
+                                '                <i class="iconfont"></i>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                // '             <p>网格员<span class="line-blue">' + todoUserName + '</span>已签收</p>\n' +
+                                '             <p>网格员<span class="line-blue custom-options person-options" onclick="addInformation('+todoUserId+',$(this))">' + todoUserName + '</span>已签收</p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }else if(processStatus == '2' || processStatus == '1'){
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n';
+                            if(processStatus == '2'){
+                                fileContent += '<span class="left_line-title">事件指派</span>\n';
+                            }else if(processStatus == '1'){
+                                fileContent += '<span class="left_line-title">事件重新指派</span>\n';
+                            }
+                            fileContent += '<i class="iconfont"></i>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                // '             <p>已指派网格员<span class="line-blue">' + todoUserName + '</span>前往处理事件</p>\n' +
+                                '             <p>已指派网格员<span class="line-blue custom-options person-options" onclick="addInformation('+todoUserId+',$(this))">' + todoUserName + '</span>前往处理事件</p>\n' +
+                                '             <p class="line-greey">处理人员：<span>' + todoUserName + '</span></p>\n' +
+                                '             <p class="line-greey">联系方式：<span>' + phone + '</span></p>\n' +
+                                '             <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }else if(processStatus == '4'){
+                            fileContent += '<div class="left_line-box left_box-active">\n' +
+                                '             <h5>\n' +
+                                '                <span class="left_line-title">处置</span>\n' +
+                                '                <i class="iconfont"></i>\n' +
+                                '                <span class="left_line-data">' + processTime + '</span>\n' +
+                                '             </h5>\n' +
+                                // '             <p>网格员<span class="line-blue">' + todoUserName + '</span>已处置</p>\n';
+                                '             <p>网格员<span class="line-blue custom-options person-options" onclick="addInformation('+todoUserId+',$(this))">' + todoUserName + '</span>已处置</p>\n';
+                            var mapResult = list[i].processResult;
+                            if (mapResult && mapResult.length > 0) {
+                                for (let j = 0; j < mapResult.length; j++) {
+                                    let result = mapResult[j];
+                                    var fieldName = result.fieldName;
+                                    var fieldType = result.fieldType;
+                                    var fieldValue = result.fieldValue;
+                                    if (fieldType == "图片") {
+                                        if (fieldValue == null || fieldValue == '') {
+                                            fieldValue = '../img/no-pic1.png';
+                                        }
+                                        let picList = fieldValue.split("|");
+                                        fileContent += '<p>' + fieldName + '：<span>';
+                                        picList.forEach(item=>{
+                                            fileContent += '<a href=' + item + ' target="view_window"><img src="' + item + '" style="width: 50px; height: 50px"/></a>';
+                                        })
+                                        fileContent += '</span></p>';
+
+                                    } else {
+                                        fileContent += '<p>' + fieldName + '：<span>' + fieldValue + '</span></p>';
+                                    }
+                                }
+                            }
+                            fileContent += '  <div class="line-circle">\n' +
+                                '                 <span class="circle"></span>\n' +
+                                '             </div>\n' +
+                                '           </div>\n';
+                        }
+                    }
+                    if (list.length > 0) {
+                        let processStatus = list[list.length - 1].processStatus;
+                        if (processStatus == '2' || processStatus == '1') {//已指派
+                            fileContent += '<div class="left_line-box">' +
+                                '   <h5>' +
+                                '       <span class="left_line-title">签收人员</span>' +
+                                '       <i class="iconfont"></i>' +
+                                '       <button class = "btn btn-small btn-primary send-message" type = "submit" onclick="sendMessage(' + sendMsgPhone + ')">发送短信</button>' +
+                                '   </h5>' +
+                                '   <p>暂无签收</p>' +
+                                '   <div class="line-circle">' +
+                                '       <span class="circler circle"></span>' +
+                                '   </div>' +
+                                '</div>' +
+                                '<div class="left_line-box">' +
+                                '   <h5>' +
+                                '      <span class="left_line-title">处置</span>' +
+                                '      <i class="iconfont"></i>' +
+                                '      <span class="left_line-data"></span>' +
+                                '   </h5>' +
+                                '   <p>暂无处置</p>' +
+                                '   <div class="line-circle">' +
+                                '       <span class="circle circles"></span>' +
+                                '   </div>' +
+                                '</div>';
+                        } else if (processStatus == '3') {//已签收
+                            fileContent += '<div class="left_line-box">\n' +
+                                '   <h5>\n' +
+                                '      <span class="left_line-title">处置</span>\n' +
+                                '      <i class="iconfont"></i>\n' +
+                                '      <span class="left_line-data"></span>\n' +
+                                '       <button class = "btn btn-middle btn-primary send-message" type = "submit" onclick="sendMessage(' + sendMsgPhone + ')">发送短信</button>' +
+                                '   </h5>\n' +
+                                '   <p>暂无处置</p>' +
+                                '   <div class="line-circle">\n' +
+                                '       <span class="circler circle"></span>\n' +
+                                '   </div>\n' +
+                                '</div>\n';
+                        } else if (processStatus == '5') {//已退回
+                            fileContent += '<div class="left_line-box">\n' +
+                                '  <h5>\n' +
+                                '     <span class="left_line-title">事件重新指派</span>\n' +
+                                '     <i class="iconfont"></i>\n' +
+                                '     <span class="left_line-data"></span>\n' +
+                                '   </h5>\n' +
+                                '   <p>暂无指派</p>' +
+                                '   <div class="line-circle">\n' +
+                                '       <span class="circle"></span>\n' +
+                                '   </div>\n' +
+                                '</div>\n' +
+                                '<div class="left_line-box">\n' +
+                                '   <h5>\n' +
+                                '       <span class="left_line-title">签收人员</span>\n' +
+                                '       <i class="iconfont"></i>\n' +
+                                '   </h5>\n' +
+                                '   <p>暂无签收</p>' +
+                                '   <div class="line-circle">' +
+                                '       <span class="circles circle"></span>' +
+                                '   </div>\n' +
+                                '</div>\n' +
+                                '<div class="left_line-box">\n' +
+                                '   <h5>\n' +
+                                '      <span class="left_line-title">处置</span>\n' +
+                                '      <i class="iconfont"></i>\n' +
+                                '      <span class="left_line-data"></span>\n' +
+                                '   </h5>' +
+                                '   <p>暂无处置</p>' +
+                                '   <div class="line-circle">\n' +
+                                '       <span class="circles circle"></span>\n' +
+                                '   </div>\n' +
+                                '</div>\n';
+                        }
+                    }
+                    fileContent += '<div class="left_line-box">\n' +
+                        '               <div class="line-circle">\n' +
+                        '                   <span class="circle circles"></span>\n' +
+                        '               </div>' +
+                        '            </div>\n' +
+                        '        </div>\n' +
+                        '      </div>\n' +
+                        '    </div>\n' +
+                        '  </div>';
+                    $("#EventSupervise").append(fileContent);
+                    // 设置轮播一张图时导航按钮为灰色
+                    if (reportBigPic.length == 1) {
+                        $('.fa-angle-left').css('color', '#ccc')
+                        $('.fa-angle-right').css('color', '#ccc')
+                    }
+                }
+            }
+        })
+    });
+
+    $("#sendMessage").click(function () {
+        sendMessage($("#phonenumber").val())
+    });
+
+    $("#additional").on('click', '#zhongxin', function () {
+        document.getElementById('closeReason').value = '';
+    });
+
+    /**
+     *短信发送
+     */
+    function sendMessage(phone) {
+        var customSkinSC = 'demoInfo';
+        var customContentSC = '<i class="fa fa-info-circle"></i><span>短信功能暂未开通！</span>';
+        customOpen(customSkinSC, customContentSC)
+    }
+
+    /**
+     * 中心处理
+     */
+    function machineHandling() {
+        let eventId = $("#eventId").val();
+        let closeReason = $("#closeReason").val();
+        var s = document.getElementById("photo").src;
+        // console.log(s);
+        if (closeReason == null || closeReason == "") {
+            var customSkinSC = 'demoWaring';
+            var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>请填写处理的原因！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return false;
+        }
+        $.ajax({
+            url: "/system/eventRecord/machineHandling",
+            type: "post",
+            data: {
+                "eventId": eventId,
+                "closeReason": closeReason
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    var customSkinSC = 'demosuccess';
+                    var customContentSC = '<i class="fa fa-check-circle"></i><span>警情已归档！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                    // location.reload();
+                    onSearch();
+                }else {
+                    var customSkinSC = 'demoError';
+                    var customContentSC = '<i class="fa fa-times-circle"></i><span>操作失败，请重试！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                }
+            }
+        })
+
+    }
+
+    function refresh() {
+
+        $('#myModal1').modal('hide');
+        let eventId = $("#eventId").val();
+        let searchValue = $("#searchValue").val();
+        if(!eventId){
+            var customSkinSC = 'demoInfo';
+            var customContentSC = '<i class="fa fa-info-circle"></i><span>事件ID不能为空！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return;
+        }
+        $.ajax({
+            url: "/system/eventRecord/queryReAssignUser",
+            data: {
+                eventId: eventId,
+                searchValue:searchValue,
+                pageSize: 5,
+                pageNum: pageNum1
+            },
+            type: "GET",
+            success: function (data) {
+                if (data.code == '0') {
+                    let pageTotal = data.total;
+                    flushPage('pagePlugs', pageTotal, pageNum1);
+                    var sysUser = data.rows;
+                    $("#MM").empty();
+                    for (var i = 0; i < sysUser.length; i++) {
+                        var id = sysUser[i].userId;
+                        var userName1 = sysUser[i].userName;
+                        var phone = sysUser[i].phone;
+                        var deptName = sysUser[i].deptName;
+                        if (!deptName) {
+                            deptName = "-";
+                        }
+                        var bb = ' <tr>\n' +
+                            '      <td><input type="radio" name="single" class="single" value="' + id + '"></td>\n' +
+                            '      <td>' + userName1 + '</td>     \n' +
+                            '      <td>' + phone + '</td>      \n' +
+                            '      <td class="tabWidth" title="'+deptName+'">' + deptName + '</td>   \n' +
+                            '      <td class="tabWidth" title="">-</td>         \n' +
+                            '      </tr>';
+                        $("#MM").append(bb);
+                    }
+                }
+            }
+        })
+    }
+
+    /**
+     * 重新指派
+     * @constructor
+     */
+    function Determine() {
+        $(this).modal('hide');
+        let eventId = $("#eventId").val();
+        var userId = $('input:radio[name="single"]:checked').val();
+        if (userId == null) {
+            var customSkinSC = 'demoInfo';
+            var customContentSC = '<i class="fa fa-info-circle"></i><span>您还未选择网格员！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return;
+        } else {
+            $.ajax({
+                url: "/system/eventRecord/afreshAssign",
+                type: "post",
+                data: {
+                    eventId: eventId,
+                    afterHandlerUserId: userId
+                },
+                success: function (data) {
+                  if (data.code == '0') {
+                      var customSkinSC = 'demosuccess';
+                      var customContentSC = '<i class="fa fa-check-circle"></i><span>改派成功！</span>';
+                      customOpen(customSkinSC, customContentSC)
+                      onSearch();
+                    }else {
+                      var customSkinSC = 'demoError';
+                      var customContentSC = '<i class="fa fa-times-circle"></i><span>操作失败，请重试！</span>';
+                      customOpen(customSkinSC, customContentSC)
+                  }
+                }
+            })
+        }
+    }
+
+    $("body").on("change", ".file input.uploadImg", function () {
+        var reads = new FileReader();
+        var f = $(this).get(0).files[0];
+        var rep = /jpeg|png|gif|bmp/ig;
+        var gstyle = f.type.split("/")[1];
+        if (rep.test(gstyle)) {
+            reads.readAsDataURL(f);
+            var that = this;
+            reads.onload = function (e) {
+                $(that).parent().prev("img").attr("src", this.result)
+            };
+        } else {
+            var customSkinSC = 'demoWaring';
+            var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>图片格式不正确，请上传 jpeg|png|gif|bmp 格式的图片！</span>';
+            customOpen(customSkinSC, customContentSC)
+        }
+
+    });
+
+    // 点击除信息框之外的地方隐藏信息框
+    $('body').on('click',function (e) {
+        if(($(e.target).hasClass('person-options'))){
+            $('.person_option').hide();
+            $(e.target).next().css('display','block');
+        }else if(($(e.target).attr('class') != 'person-options')){
+            $('.person_option').remove();
+        }
+
+    })
+    // 弹出人物信息
+    // 使用时必须给需要使用的dom元素添加class：custom-options，父元素添加style：position: relative
+    function addInformation(userId,that) {
+        $.ajax({
+            url: "/system/user/userDetail",
+            type: "get",
+            data: {
+                "userId": userId
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    var user = data.data;
+                    var sex = user.sex;
+                    var phone = user.phone;
+                    var userName = user.userName;
+                    var deptName = user.deptName;
+                    var sexIcon = '';
+                    if (sex == "0") {
+                        sex = "男";
+                        sexIcon +='<i class="iconfont">&#xe60d;</i>'
+                    } else if (sex == "1") {
+                        sex = "女";
+                        sexIcon += '<i class="iconfont">&#xe6b2;</i>'
+                    }
+                    deptName = deptName==null?"-":deptName;
+
+                    // 添加节点
+                    var information = '<div class="custom_tooltip person_option">' +
+                        // '<p class="custom_tooltip-colse"><i class="fa fa-close" onclick="removePerson(this)"></i></p>' +
+                        '<p class="personName"><i class="fa fa-user"></i>：<span>' + userName + '</span></p>' +
+                        '<p>'+ sexIcon+'：<span>' + sex + '</span></p>' +
+                        '<p><i class="fa fa-phone-square"></i>：<span>' + phone + '</span></p>' +
+                        '<p><i class="fa fa-bank"></i>：<span>' + deptName + '</span></p>' +
+                        '</div>';
+                    that.after(information);
+                    $(that).next('.person_option').show()
+                }
+            }
+        })
+    }
+
+    // 删除人物信息框
+    function removePerson(person) {
+        $(person).parents('.custom_tooltip').hide()
+        $(person).parents('.custom_tooltip').remove();
+    }
+
+    // 添加标签的集合
+    var lookList = [];
+    // 保存标签
+    var labelList =[];
+    // 渲染弹框标签
+    function see() {
+        lookList = [];
+        var text = '';
+        labelList.forEach(item => {
+            if (item !== '' || item !== null) {
+                text += '<li class="addList tag-add"><span data-id="'+item.lmId+'">' + item.lmName + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+                lookList.push(item);
+                lookList.join('.');
+            }
+        });
+        $('.addInput').before(text);
+    }
+
+    // 选择已有标签
+    function addTag(add) {
+        var text = $(add).text();
+        var id = $(add).data("id");
+        let flag = false;
+        lookList.forEach(item => {
+            if(item.lmId == id){
+                flag = true;
+            }
+        });
+        if(!flag){
+            var addtext = '<li class="addList tag-add"><span>' + text + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+            $('.addInput').before(addtext);
+            lookList.push({lmId:id,lmName:text});
+            lookList.join('.');
+        }
+    }
+
+    // 自定义输入标签
+    function addTagInput() {
+        $('.addLabelSelect').css({
+            'border': '1px solid #ddd',
+            'box-shadow': 'none'
+        });
+        var inputText = $('.addTagInput').val();
+        if (inputText !== '') {
+            var addtext = '<li class="addList tag-add"><span>' + inputText + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+            $('.addInput').before(addtext);
+            $('.addTagInput').val('');
+            lookList.push({lmId:"",lmName:inputText});
+            lookList.join('.');
+        }
+    }
+
+    // 点击获取焦点
+    function addLabelSelect() {
+        $('.addTagInput').focus();
+        $('.addLabelSelect').css({
+            'border': '1px solid #66afe9',
+            'box-shadow': 'inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6)'
+        })
+    }
+
+    // 关闭弹窗
+    function removeNode(add) {
+        lookList = [];
+        $(add).parents('.custom_tooltip').hide();
+        $(add).parents('.custom_tooltip').remove();
+        $('.addPic').hide();
+    }
+
+    // 删除标签
+    function removeList(add) {
+        var textList = $(add).prev().text();
+        $(add).parents('.addList').remove();
+        lookList.splice($.inArray(textList, lookList), 1);
+        labelList.splice($.inArray(textList, labelList), 1);
+    }
+
+    // 渲染标签到页面
+    function addListLabel() {
+        if(lookList.length > 10){
+            var customSkinSC = 'demoInfo';
+            var customContentSC = '<i class="fa fa-info-circle"></i><span>单个事件最多添加10个自定义标签！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return;
+        }
+        var ajaxData = {
+            eventId:$("#id").val(),
+            lmList:lookList,
+            riskLevel:$("input[name='optionsRadios']:checked").val()
+        };
+        $.ajax({
+            url:"/system/event/addEventLm",
+            type:"post",
+            data:JSON.stringify(ajaxData),
+            dataType:'json',
+            contentType:'application/json',
+            success:function (data) {
+                if(data.code == 0){
+                    var customSkinSC = 'demosuccess';
+                    var customContentSC = '<i class="fa fa-check-circle"></i><span>保存成功！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                    // recordDetails($("#id").val(),$("#componentId").val());
+                    onSearch();
+                }else{
+                    var customSkinSC = 'demoError';
+                    var customContentSC = '<i class="fa fa-times-circle"></i><span>'+ data.msg+'！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                }
+            }
+        });
+    }
+
+    // 自定义信息框 使用时必须给需要使用的dom元素添加class：custom-options，父元素添加style：position: relative
+    function addLabelInformation(addlabel) {
+        $('.addPic').css('display', 'inline-block');
+        labelList = [];
+        var information = '';
+        $.ajax({
+            url:"/system/event/queryEventLm",
+            type:"get",
+            data:{
+                id:$("#id").val()
+            },
+            success:function (data) {
+                if(data.code == 0){
+                    let hasLm = data.data.lmList;
+                    let allLm = data.data.allLm;
+                    let riskLevel = data.data.riskLevel;
+                    // 添加节点
+                    information = '<div class="custom_tooltip custom_label">' +
+                        '<p class="custom_tooltip-colse"><span>添加标签</span><i class="fa fa-close" onclick="removeNode(this)"></i></p>' +
+                        '<div class="custom_labelCenter"><div class="row">';
+                    if(riskLevel == '99'){
+                        information +='<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="1" id="optionsRadios1" name="optionsRadios">普通事件</label>\n' +
+                            '</div>\n' +
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="99" checked="" id="optionsRadios2" name="optionsRadios">重要事件</label>\n' +
+                            '</div>'+
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="999" id="optionsRadios3" name="optionsRadios">紧急事件</label>\n' +
+                            '</div>';
+                    }else if(riskLevel == '999'){
+                        information +='<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="1" id="optionsRadios1" name="optionsRadios">普通事件</label>\n' +
+                            '</div>\n' +
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="99" id="optionsRadios2" name="optionsRadios">重要事件</label>\n' +
+                            '</div>'+
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="999" checked="" id="optionsRadios3" name="optionsRadios">紧急事件</label>\n' +
+                            '</div>';
+                    }else{
+                        information +='<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" checked="" value="1" id="optionsRadios1" name="optionsRadios">普通事件</label>\n' +
+                            '</div>\n' +
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="99" id="optionsRadios2" name="optionsRadios">重要事件</label>\n' +
+                            '</div>'+
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="999" id="optionsRadios3" name="optionsRadios">紧急事件</label>\n' +
+                            '</div>';
+                    }
+                    information +='</div>'+
+                        '<ul class = "addLabelSelect" onclick="addLabelSelect()">' +
+                        '        <li class = "addInput">' +
+                        '            <input type = "text" class = "addTagInput" onblur="addTagInput();">' +
+                        '        </li>' +
+                        '</ul>'+
+                        '<div class = "allLabel">\n';
+                    for (let i = 0; i < hasLm.length; i++) {
+                        labelList.push({lmId:hasLm[i].lmId,lmName:hasLm[i].lmName});
+                    }
+                    for (let i = 0; i < allLm.length; i++) {
+                        information+='<span><em class = "addTag tag-add" data-id="'+allLm[i].lmId+'" onclick="addTag(this)">'+allLm[i].lmName+'</em></span>';
+                    }
+                    information+='</div></div>'+
+                        '<div class="labelFooter">' +
+                        '<button onclick="addListLabel()" class="btn btn-middle btn-primary">确定</button>' +
+                        '<button onclick="removeNode(this)" class="btn btn-middle btn-default">取消</button>' +
+                        '</div>' +
+                        '</div>';
+                    $('.custom_label').remove();
+                    $(addlabel).after(information);
+                    $(addlabel).next().show();
+                    see()
+                }
+            }
+        });
+    }
+
+
+
+    // 判断信息框是否存在
+    function outAdd(out) {
+        var addPicBlock = $(out).find('.custom_label').css('display')
+        if(addPicBlock=='block'){
+            $('.addPic').css('display','inline-block');
+        }else{
+            $('.addPic').hide();
+        }
+    }
+
+    //daterangepicker汉化
+    var locale = {
+        "format": 'YYYY-MM-DD HH:mm:ss',
+        "separator": "~",
+        "applyLabel": "确定",
+        "cancelLabel": "取消",
+        "fromLabel": "起始时间",
+        "toLabel": "结束时间'",
+        "customRangeLabel": "自定义",
+        "weekLabel": "W",
+        "daysOfWeek": ["日", "一", "二", "三", "四", "五", "六"],
+        "monthNames": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+        "firstDay": 1
+    };
+
+    $('#dateTime').daterangepicker(
+        {
+            'timePicker24Hour': true,//设置小时为24小时制 默认false
+            'timePicker': true,//可选中时分 默认false
+            'locale': locale,
+            //汉化按钮部分
+            ranges: {
+                '今日': [moment(), moment()],
+                '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                '最近7日': [moment().subtract(6, 'days'), moment()],
+                '最近30日': [moment().subtract(29, 'days'), moment()],
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            startDate: moment().subtract(6, 'days'),
+            endDate: moment(),
+
+        }
+    );
+    // 轮播切换按钮的显示隐藏
+    function prev() {
+        $('.carousel-control').css('opacity','1')
+    }
+
+    function next() {
+        $('.carousel-control').css('opacity', '0')
+    }
+
+    // 键盘enter查询事件
+    $('body').on('keyup', 'input.form-control', function (e) {
+        console.log(e.keyCode)
+        if (e.keyCode == 13) {
+            onSearch()
+        }
+    })
+      // layui弹出相册层
+    function showMorePic(imgSrc) {
+        var imgStr = imgSrc;
+        var arr = imgStr.split("|")
+        console.log(arr);
+        var jsonPic = {
+            "title": "", //相册标题
+            "id": 123, //相册id
+            "start": 0, //初始显示的图片序号，默认0
+            "data": [   //相册包含的图片，数组格式
+
+            ]
+        }
+        arr.forEach(item => {
+            let params = {
+                src: item
+            }
+            jsonPic.data.push(params)
+        })
+        console.log(jsonPic)
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            console.log('a')
+            // $.getJSON('jsonPic', function (json) {
+            layer.photos({
+                photos: jsonPic
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                , area: ['800px', '600px']
+                , shade: [0.3, '#000']//遮罩层颜色
+            });
+            // });
+        })
+    }
+
+    //按照逾期和正常事件区分
+    // 判断是否选中checkbox
+    $('input[name=yu]').on('click', function () {
+        console.log($(this))
+        var checkOne = false;                    //判断是否被选择条件
+        var chboxVal = [];                       //存入被选中项的值
+        var checkBox = $('input[name = yu]'); //获得得到所的复选框
+
+        for (var i = 0; i < checkBox.length; i++) {
+
+            //如果有1个被选中时，去判断checkbox是否被选中）
+            if (checkBox[i].checked) {
+                checkOne = true;
+                chboxVal.push(checkBox[i].value)//将被选择的值追加到
+            }
+        }
+        ;
+        if (checkOne) {
+            if (chboxVal == 1) {
+                overdueStatus = '1';
+            } else if (chboxVal == 2) {
+                overdueStatus = '0';
+            } else {
+                overdueStatus = '';
+            }
+            // onSearch()
+        } else if (!checkOne) {
+            // alert("您必须选择一项");
+            $(this).prop('checked', true)
+        }
+    })
+// 查看轮播图片
+    function customOpen(customSkin, customContent) {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: '',
+                offset: '60px',
+                time: 2000, //时间
+                skin: '' + customSkin + ' demo-class',//自定义class
+                content: customContent,
+                btn: [],
+                closeBtn: 0//不显示右上角图标
+                , resize: false//是否禁止拉伸
+                , shade: 0//是否显示遮罩层
+            });
+        })
+    }
+
+    $('.right-content-c').on('click','.evaluate span',function () {
+      // if(pleased==0){
+      if($(this).is('.pleased')){
+        // $('.unPleased').hide();
+        $(this).addClass('active');
+        $('.unPleased').removeClass("active");
+        pleased = 1;
+        let id = $("#id").val();
+        console.log(pleased);
+        $.ajax({
+          url:"/system/eventRecord/eventEvaluate",
+          type:"get",
+          data:{pleased:pleased,id:id},
+          success:function(data){
+            var customSkinSC = 'demosuccess';
+            var customContentSC = '<i class="fa fa-check-circle"></i><span>评价成功,感谢评价</span>';
+            customOpen(customSkinSC, customContentSC)
+          }
+        })
+      }else if($(this).is('.unPleased')){
+        $(this).addClass('active');
+        $('.pleased').removeClass("active");
+        // $('.pleased').hide();
+        pleased = 2;
+        let id = $("#id").val();
+        console.log(pleased);
+        $.ajax({
+          url:"/system/eventRecord/eventEvaluate",
+          type:"get",
+          data:{pleased:pleased,id:id},
+          success:function(data){
+            var customSkinSC = 'demosuccess';
+            var customContentSC = '<i class="fa fa-check-circle"></i><span>评价成功,感谢评价</span>';
+            customOpen(customSkinSC, customContentSC)
+          }
+        })
+      }
+      // }
+    })
+
+</script>
+</html>

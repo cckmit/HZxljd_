@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysUserPostRegionMapper">
+    
+    <resultMap type="SysUserPostRegion" id="SysUserPostRegionResult">
+        <result property="userId"    column="user_id"    />
+        <result property="postId"    column="post_id"    />
+        <result property="regionId"    column="region_id"    />
+    </resultMap>
+
+    <sql id="selectSysUserPostRegionVo">
+        select user_id, post_id, region_id from sys_user_post_region
+    </sql>
+
+    <select id="selectSysUserPostRegionList" parameterType="SysUserPostRegion" resultMap="SysUserPostRegionResult">
+        <include refid="selectSysUserPostRegionVo"/>
+        <where>
+            1 = 1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="postId != null and postId != ''">
+                and post_id = #{postId}
+            </if>
+            <if test="regionId != null and regionId != ''">
+                and region_id = #{regionId}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectSysUserPostRegionById" parameterType="Long" resultMap="SysUserPostRegionResult">
+        <include refid="selectSysUserPostRegionVo"/>
+        where user_id = #{userId}
+    </select>
+        
+    <insert id="insertSysUserPostRegion" parameterType="SysUserPostRegion">
+        insert into sys_user_post_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="postId != null ">post_id,</if>
+            <if test="regionId != null ">region_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="postId != null ">#{postId},</if>
+            <if test="regionId != null ">#{regionId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysUserPostRegion" parameterType="SysUserPostRegion">
+        update sys_user_post_region
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postId != null ">post_id = #{postId},</if>
+            <if test="regionId != null ">region_id = #{regionId},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteSysUserPostRegionById" parameterType="Long">
+        delete from sys_user_post_region where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteSysUserPostRegionByIds" parameterType="String">
+        delete from sys_user_post_region where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <select id="selectPostIdByUserId" resultType="java.lang.String">
+        select post_id as postId from sys_user_post_region where user_id = #{userId}
+        group by post_id
+    </select>
+
+
+    <select id="queryUserPostRegionInfo" resultType="com.ruoyi.system.domain.HkEntity.UserPostRegionVo">
+        select
+        sp.post_id as postId,
+        sp.post_name as postName,
+        sr.region_id as region_id,
+        sr.region_name as regionName
+        from sys_user su
+        left join sys_user_post_region upr on su.user_id = upr.user_id
+        left join sys_post sp on sp.post_id = upr.post_id
+        left join sys_region sr on sr.region_id = upr.region_id
+        where su.user_id = #{userId}
+        and su.del_flag = '0'
+        and sp.post_id is not null
+    </select>
+
+
+    
+</mapper>

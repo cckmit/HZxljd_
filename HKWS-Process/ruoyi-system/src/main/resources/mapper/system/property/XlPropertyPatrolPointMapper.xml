@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyPatrolPointMapper">
+
+    <resultMap type="XlPropertyPatrolPoint" id="XlPropertyPatrolPointResult">
+        <result property="pointId"    column="point_id"    />
+        <result property="pointName"    column="point_name"    />
+        <result property="qrCode"    column="qr_code"    />
+        <result property="locationRemark"    column="location_remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlPropertyPatrolPointVo">
+        select point_id, point_name, qr_code, location_remark, del_flag, village_id, create_by, create_time, update_by, update_time from xl_property_patrol_point
+    </sql>
+
+    <select id="selectXlPropertyPatrolPointList" parameterType="XlPropertyPatrolPoint" resultMap="XlPropertyPatrolPointResult">
+        <include refid="selectXlPropertyPatrolPointVo"/>
+        <where>
+            <if test="pointName != null  and pointName != ''"> and point_name like concat('%', #{pointName}, '%')</if>
+            <if test="qrCode != null  and qrCode != ''"> and qr_code = #{qrCode}</if>
+            <if test="locationRemark != null  and locationRemark != ''"> and location_remark like concat('%', #{locationRemark}, '%')</if>
+            <if test="delFlag != null">and del_flag = #{delFlag}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyPatrolPointById" parameterType="Long" resultMap="XlPropertyPatrolPointResult">
+        <include refid="selectXlPropertyPatrolPointVo"/>
+        where point_id = #{pointId}
+    </select>
+
+    <insert id="insertXlPropertyPatrolPoint" parameterType="XlPropertyPatrolPoint" useGeneratedKeys="true" keyProperty="pointId">
+        insert into xl_property_patrol_point
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pointName != null  and pointName != ''">point_name,</if>
+            <if test="qrCode != null  and qrCode != ''">qr_code,</if>
+            <if test="locationRemark != null  and locationRemark != ''">location_remark,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pointName != null  and pointName != ''">#{pointName},</if>
+            <if test="qrCode != null  and qrCode != ''">#{qrCode},</if>
+            <if test="locationRemark != null  and locationRemark != ''">#{locationRemark},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyPatrolPoint" parameterType="XlPropertyPatrolPoint">
+        update xl_property_patrol_point
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pointName != null  and pointName != ''">point_name = #{pointName},</if>
+            <if test="qrCode != null  and qrCode != ''">qr_code = #{qrCode},</if>
+            <if test="locationRemark != null  and locationRemark != ''">location_remark = #{locationRemark},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where point_id = #{pointId}
+    </update>
+
+    <delete id="deleteXlPropertyPatrolPointById" parameterType="Long">
+        delete from xl_property_patrol_point where point_id = #{pointId}
+    </delete>
+
+    <delete id="deleteXlPropertyPatrolPointByIds" parameterType="String">
+        delete from xl_property_patrol_point where point_id in
+        <foreach item="pointId" collection="array" open="(" separator="," close=")">
+            #{pointId}
+        </foreach>
+    </delete>
+
+    <!--删除巡更点 仅修改删除标识 保留数据 单删-->
+    <update id="deletePointById" parameterType="Long">
+        update xl_property_patrol_point
+        set del_flag = 1
+        where point_id = #{pointId}
+    </update>
+
+    <!--删除巡更点 仅修改删除标识 保留数据 批删-->
+    <update id="deletePointByIds" parameterType="String">
+        update xl_property_patrol_point
+        set del_flag = 1
+        where point_id in
+        <foreach item="pointId" collection="array" open="(" separator="," close=")">
+            #{pointId}
+        </foreach>
+    </update>
+</mapper>

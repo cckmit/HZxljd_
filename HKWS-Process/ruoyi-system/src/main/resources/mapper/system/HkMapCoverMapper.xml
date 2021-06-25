@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkMapCoverMapper">
+
+    <resultMap type="HkMapCover" id="HkMapCoverResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="region_name"/>
+        <result property="centerPoint" column="center_point"/>
+        <result property="markerPoints" column="marker_points"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="getHkMapCover" parameterType="Long" resultMap="HkMapCoverResult">
+        SELECT
+            hmc.id,
+            hmc.parent_id,
+            sd.region_name,
+            hmc.center_point,
+            hmc.marker_points,
+            hmc.del_flag,
+            hmc.create_by,
+            hmc.create_time,
+            hmc.update_by,
+            hmc.update_time
+        FROM
+            hk_map_cover hmc
+            LEFT JOIN sys_region sd ON hmc.parent_id = sd.region_id
+        WHERE
+            hmc.del_flag = 0 and hmc.parent_id = #{parentId}
+    </select>
+
+    <!-- 根据顶级地区,查询其子级地区所有地图覆盖物 -->
+    <select id="getChildHkMapCoverList" resultMap="HkMapCoverResult">
+        SELECT
+            hmc.id,
+            hmc.parent_id,
+            sd.region_name,
+            hmc.center_point,
+            hmc.marker_points,
+            hmc.del_flag,
+            hmc.create_by,
+            hmc.create_time,
+            hmc.update_by,
+            hmc.update_time
+        FROM
+            hk_map_cover hmc
+            left join sys_region sd on  hmc.parent_id = sd.region_id
+        WHERE
+            hmc.del_flag = 0 and
+            hmc.parent_id IN (
+            SELECT
+                region_id
+            FROM
+                sys_region
+            WHERE
+                STATUS = 0
+                AND del_flag = 0
+            AND parent_id = #{parentId} )
+    </select>
+
+    <!-- 根据当前地区,查询其兄弟节点地区地图覆盖物 -->
+    <select id="getBrotherHkMapCoverList" resultMap="HkMapCoverResult">
+        SELECT
+            hmc.id,
+            hmc.parent_id,
+            sd.region_name,
+            hmc.center_point,
+            hmc.marker_points,
+            hmc.del_flag,
+            hmc.create_by,
+            hmc.create_time,
+            hmc.update_by,
+            hmc.update_time
+        FROM
+            hk_map_cover hmc
+            LEFT JOIN sys_region sd ON hmc.parent_id = sd.region_id
+        WHERE
+            hmc.parent_id IN (
+            SELECT
+                region_id
+            FROM
+                sys_region
+            WHERE
+            parent_id = ( SELECT parent_id FROM sys_region WHERE region_id = #{parentId} )
+        AND region_id != #{parentId}) and hmc.del_flag = 0
+    </select>
+
+    <insert id="insertHkMapCover" parameterType="HkMapCover" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_map_cover
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null ">parent_id,</if>
+            <if test="centerPoint != null ">center_point,</if>
+            <if test="markerPoints != null ">marker_points,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="centerPoint != null ">#{centerPoint},</if>
+            <if test="markerPoints != null ">#{markerPoints},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+
+    <!--逻辑删除-->
+    <update id="updateDelFlagByParentId" parameterType="Long">
+        update hk_map_cover set del_flag =1 where parent_id = #{parentId}
+    </update>
+
+
+    <resultMap id="regionsMap" type="com.ruoyi.system.domain.dto.RegionDto">
+        <id property="id" column="region_id"></id>
+        <result property="name" column="region_name"></result>
+        <result property="parentId" column="parent_id"></result>
+        <collection property="childrenList" ofType="com.ruoyi.system.domain.dto.RegionDto" select="getAllRegions"
+                    column="{parentId = region_id}" fetchType="lazy"></collection>
+    </resultMap>
+
+    <!--获取所有的地区-->
+    <select id="getAllRegions" resultMap="regionsMap">
+        SELECT
+        region_id,
+        region_name,
+        parent_id
+        FROM
+        sys_region
+        where 1=1
+        and del_flag = 0
+        and status = 0
+        <choose>
+            <when test="parentId != null">
+                and parent_id = #{parentId}
+            </when>
+            <otherwise>
+                and parent_id = 0
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--获取当前地区父节点的覆盖物(获取上级地区覆盖物)-->
+    <select id="getParentHkMapCover" resultMap="HkMapCoverResult" parameterType="long">
+        SELECT
+            hmc.id,
+            hmc.parent_id,
+            sd.region_name,
+            hmc.center_point,
+            hmc.marker_points,
+            hmc.del_flag,
+            hmc.create_by,
+            hmc.create_time,
+            hmc.update_by,
+            hmc.update_time
+        FROM
+            hk_map_cover hmc
+            LEFT JOIN sys_region sd ON hmc.parent_id = sd.region_id
+        WHERE
+            hmc.parent_id = (
+            SELECT
+                parent_id
+            FROM
+                sys_region
+        WHERE
+            region_id = #{regionId}) and hmc.del_flag = 0
+    </select>
+
+    <select id="getALLMapCoverList" resultMap="HkMapCoverResult">
+        SELECT
+            hmc.id,
+            hmc.parent_id,
+            sr.region_name,
+            hmc.center_point,
+            hmc.marker_points,
+            hmc.del_flag,
+            hmc.create_by,
+            hmc.create_time,
+            hmc.update_by,
+            hmc.update_time
+        FROM
+            hk_map_cover hmc
+            left join sys_region sr on  hmc.parent_id = sr.region_id
+        WHERE hmc.del_flag = 0
+    </select>
+
+    <!-- 获取当前地区堂兄弟节点-->
+    <select id="getCousinHkMapCoverList" resultMap="HkMapCoverResult" parameterType="long">
+        SELECT
+            hmc.id,
+            hmc.parent_id,
+            sr.region_name,
+            hmc.center_point,
+            hmc.marker_points,
+            hmc.del_flag,
+            hmc.create_by,
+            hmc.create_time,
+            hmc.update_by,
+            hmc.update_time
+        FROM
+            hk_map_cover hmc
+            LEFT JOIN sys_region sr ON hmc.parent_id = sr.region_id
+        WHERE
+            hmc.parent_id IN (
+            SELECT
+                region_id
+            FROM
+                sys_region
+            WHERE
+                parent_id IN (
+                SELECT
+                    region_id
+                FROM
+                    sys_region
+                WHERE
+                parent_id IN ( SELECT region_id FROM sys_region WHERE parent_id = 0 ))
+                AND parent_id != ( SELECT parent_id FROM sys_region WHERE region_id = #{regionId} )
+            )
+            AND hmc.del_flag = 0
+    </select>
+
+
+</mapper>

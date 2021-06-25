@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlLeaseMapper">
+    
+    <resultMap type="XlLease" id="XlLeaseResult">
+        <result property="id"    column="id"    />
+        <result property="room"    column="room"    />
+        <result property="leaseName"    column="lease_name"    />
+        <result property="leaseIdentityNumber"    column="lease_identity_number"    />
+        <result property="leaseLandladyPhone"    column="lease_landlady_phone"    />
+        <result property="leaseAddress"    column="lease_address"    />
+        <result property="roomTypeStatus"    column="room_type_status"    />
+        <result property="roomType"    column="room_type"    />
+        <result property="leaseTypeStatus"    column="lease_type_status"    />
+        <result property="leaseType"    column="lease_type"    />
+        <result property="leaseNumber"    column="lease_number"    />
+        <result property="leaseResidentsNumber"    column="lease_residents_number"    />
+        <result property="leaseArea"    column="lease_area"    />
+        <result property="belongingCommunity"    column="belonging_community"    />
+        <result property="communityCode"    column="community_code"    />
+    </resultMap>
+
+    <sql id="selectXlLeaseVo">
+        select id, room, lease_name, lease_identity_number, lease_landlady_phone, lease_address, room_type_status, room_type, lease_type_status, lease_type, lease_number, lease_residents_number, lease_area, belonging_community, community_code from xl_lease
+    </sql>
+
+    <select id="selectXlLeaseList" parameterType="XlLease" resultMap="XlLeaseResult">
+        <include refid="selectXlLeaseVo"/>
+        <where>  
+            <if test="room != null  and room != ''"> and room like concat('%', #{room}, '%')</if>
+            <if test="leaseName != null  and leaseName != ''"> and lease_name like concat('%', #{leaseName}, '%')</if>
+            <if test="leaseLandladyPhone != null  and leaseLandladyPhone != ''"> and lease_landlady_phone like concat('%', #{leaseLandladyPhone}, '%')</if>
+            <if test="leaseAddress != null  and leaseAddress != ''"> and lease_address like concat('%', #{leaseAddress}, '%')</if>
+            <if test="roomType != null  and roomType != ''"> and room_type = #{roomType}</if>
+            <if test="roomTypeStatus != null  and roomTypeStatus != ''"> and room_type_status = #{roomTypeStatus}</if>
+            <if test="leaseType != null  and leaseType != ''"> and lease_type = #{leaseType}</if>
+            <if test="leaseTypeStatus != null  and leaseTypeStatus != ''"> and lease_type_status = #{leaseTypeStatus}</if>
+            <if test="leaseNumber != null  and leaseNumber != ''"> and lease_number = #{leaseNumber}</if>
+            <if test="leaseResidentsNumber != null  and leaseResidentsNumber != ''"> and lease_residents_number = #{leaseResidentsNumber}</if>
+            <if test="leaseArea != null  and leaseArea != ''"> and lease_area = #{leaseArea}</if>
+            <if test="belongingCommunity != null  and belongingCommunity != ''"> and belonging_community = #{belongingCommunity}</if>
+            <if test="communityCode != null  and communityCode != ''"> and community_code = #{communityCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlLeaseById" parameterType="Long" resultMap="XlLeaseResult">
+        <include refid="selectXlLeaseVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectXlLeaseByAddress" parameterType="String" resultType="XlLease">
+        <include refid="selectXlLeaseVo"/>
+        where lease_address = #{address}
+    </select>
+
+    <insert id="insertXlLease" parameterType="XlLease" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_lease
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="room != null  and room != ''">room,</if>
+            <if test="leaseName != null  and leaseName != ''">lease_name,</if>
+            <if test="leaseIdentityNumber != null  and leaseIdentityNumber != ''">lease_identity_number,</if>
+            <if test="leaseLandladyPhone != null  and leaseLandladyPhone != ''">lease_landlady_phone,</if>
+            <if test="leaseAddress != null  and leaseAddress != ''">lease_address,</if>
+            <if test="roomTypeStatus != null  and roomTypeStatus != ''">room_type_status,</if>
+            <if test="roomType != null  and roomType != ''">room_type,</if>
+            <if test="leaseTypeStatus != null  and leaseTypeStatus != ''">lease_type_status,</if>
+            <if test="leaseType != null  and leaseType != ''">lease_type,</if>
+            <if test="leaseNumber != null  and leaseNumber != ''">lease_number,</if>
+            <if test="leaseResidentsNumber != null  and leaseResidentsNumber != ''">lease_residents_number,</if>
+            <if test="leaseArea != null  and leaseArea != ''">lease_area,</if>
+            <if test="belongingCommunity != null  and belongingCommunity != ''">belonging_community,</if>
+            <if test="communityCode != null  and communityCode != ''">community_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="room != null  and room != ''">#{room},</if>
+            <if test="leaseName != null  and leaseName != ''">#{leaseName},</if>
+            <if test="leaseIdentityNumber != null  and leaseIdentityNumber != ''">#{leaseIdentityNumber},</if>
+            <if test="leaseLandladyPhone != null  and leaseLandladyPhone != ''">#{leaseLandladyPhone},</if>
+            <if test="leaseAddress != null  and leaseAddress != ''">#{leaseAddress},</if>
+            <if test="roomTypeStatus != null  and roomTypeStatus != ''">#{roomTypeStatus},</if>
+            <if test="roomType != null  and roomType != ''">#{roomType},</if>
+            <if test="leaseTypeStatus != null  and leaseTypeStatus != ''">#{leaseTypeStatus},</if>
+            <if test="leaseType != null  and leaseType != ''">#{leaseType},</if>
+            <if test="leaseNumber != null  and leaseNumber != ''">#{leaseNumber},</if>
+            <if test="leaseResidentsNumber != null  and leaseResidentsNumber != ''">#{leaseResidentsNumber},</if>
+            <if test="leaseArea != null  and leaseArea != ''">#{leaseArea},</if>
+            <if test="belongingCommunity != null  and belongingCommunity != ''">#{belongingCommunity},</if>
+            <if test="communityCode != null  and communityCode != ''">#{communityCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlLease" parameterType="XlLease">
+        update xl_lease
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="room != null  and room != ''">room = #{room},</if>
+            <if test="leaseName != null  and leaseName != ''">lease_name = #{leaseName},</if>
+            <if test="leaseIdentityNumber != null  and leaseIdentityNumber != ''">lease_identity_number = #{leaseIdentityNumber},</if>
+            <if test="leaseLandladyPhone != null  and leaseLandladyPhone != ''">lease_landlady_phone = #{leaseLandladyPhone},</if>
+            <if test="leaseAddress != null  and leaseAddress != ''">lease_address = #{leaseAddress},</if>
+            <if test="roomTypeStatus != null  and roomTypeStatus != ''">room_type_status = #{roomTypeStatus},</if>
+            <if test="roomType != null  and roomType != ''">room_type = #{roomType},</if>
+            <if test="leaseTypeStatus != null  and leaseTypeStatus != ''">lease_type_status = #{leaseTypeStatus},</if>
+            <if test="leaseType != null  and leaseType != ''">lease_type = #{leaseType},</if>
+            <if test="leaseNumber != null  and leaseNumber != ''">lease_number = #{leaseNumber},</if>
+            <if test="leaseResidentsNumber != null  and leaseResidentsNumber != ''">lease_residents_number = #{leaseResidentsNumber},</if>
+            <if test="leaseArea != null  and leaseArea != ''">lease_area = #{leaseArea},</if>
+            <if test="belongingCommunity != null  and belongingCommunity != ''">belonging_community = #{belongingCommunity},</if>
+            <if test="communityCode != null  and communityCode != ''">community_code = #{communityCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlLeaseById" parameterType="Long">
+        delete from xl_lease where id = #{id}
+    </delete>
+
+    <delete id="deleteXlLeaseByIds" parameterType="String">
+        delete from xl_lease where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryRoomListCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from xl_lease
+        <where>
+            1 = 1
+            <if test="housingEstate != null and housingEstate !=''">
+                and lease_address like concat('%', #{housingEstate}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

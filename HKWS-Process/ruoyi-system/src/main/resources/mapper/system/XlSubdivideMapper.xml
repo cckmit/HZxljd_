@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlSubdivideMapper">
+    
+    <resultMap type="XlSubdivide" id="XlSubdivideResult">
+        <result property="subdivideId"    column="subdivide_id"    />
+        <result property="subdivideName"    column="subdivide_name"    />
+        <result property="assessmentId"    column="assessment_id"    />
+        <result property="assessmentScore"    column="assessment_score"    />
+        <result property="assessmentCycle"    column="assessment_cycle"    />
+        <result property="workRequirement"    column="work_requirement"    />
+        <result property="dataSource"    column="data_source"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <association property="xlAssessmentItems"  column="assessmentId" javaType="XlAssessmentItems" resultMap="XlAssessmentItemsResult" />
+    </resultMap>
+
+    <resultMap type="XlAssessmentItems" id="XlAssessmentItemsResult">
+        <result property="assessmentId"    column="assessment_id"    />
+        <result property="assessmentName"    column="assessment_name"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateDate"    column="update_date"    />
+    </resultMap>
+
+    <sql id="selectXlSubdivideVo">
+        select xs.subdivide_id, xs.subdivide_name, xs.assessment_id, xs.assessment_score, xs.assessment_cycle, xs.work_requirement, xs.data_source, xs.create_date, xs.create_user, xs.update_date, xs.update_user, ai.assessment_id, ai.assessment_name from xl_subdivide xs
+        left join xl_assessment_items ai  on ai.assessment_id = xs.assessment_id
+    </sql>
+
+    <select id="selectXlSubdivideList" parameterType="XlSubdivide" resultMap="XlSubdivideResult">
+        <include refid="selectXlSubdivideVo"/>
+        <where>  
+            <if test="subdivideName != null  and subdivideName != ''"> and xs.subdivide_name like concat('%', #{subdivideName}, '%')</if>
+            <if test="assessmentId != null "> and xs.assessment_id = #{assessmentId}</if>
+            <if test="assessmentScore != null "> and xs.assessment_score = #{assessmentScore}</if>
+            <if test="assessmentCycle != null  and assessmentCycle != ''"> and xs.assessment_cycle = #{assessmentCycle}</if>
+            <if test="createDate != null "> and xs.create_date = #{createDate}</if>
+            <if test="createUser != null  and createUser != ''"> and xs.create_user = #{createUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlSubdivideById" parameterType="Long" resultMap="XlSubdivideResult">
+        <include refid="selectXlSubdivideVo"/>
+        where xs.subdivide_id = #{subdivideId}
+    </select>
+        
+    <insert id="insertXlSubdivide" parameterType="XlSubdivide" useGeneratedKeys="true" keyProperty="subdivideId">
+        insert into xl_subdivide
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subdivideName != null  and subdivideName != ''">subdivide_name,</if>
+            <if test="assessmentId != null ">assessment_id,</if>
+            <if test="assessmentScore != null ">assessment_score,</if>
+            <if test="assessmentCycle != null  and assessmentCycle != ''">assessment_cycle,</if>
+            <if test="workRequirement != null  and workRequirement != ''">work_requirement,</if>
+            <if test="dataSource != null  and dataSource != ''">data_source,</if>
+            create_date,
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="updateDate != null ">update_date,</if>
+            <if test="updateUser != null  and updateUser != ''">update_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="subdivideName != null  and subdivideName != ''">#{subdivideName},</if>
+            <if test="assessmentId != null ">#{assessmentId},</if>
+            <if test="assessmentScore != null ">#{assessmentScore},</if>
+            <if test="assessmentCycle != null  and assessmentCycle != ''">#{assessmentCycle},</if>
+            <if test="workRequirement != null  and workRequirement != ''">#{workRequirement},</if>
+            <if test="dataSource != null  and dataSource != ''">#{dataSource},</if>
+            sysdate(),
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">#{updateUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlSubdivide" parameterType="XlSubdivide">
+        update xl_subdivide
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="subdivideName != null  and subdivideName != ''">subdivide_name = #{subdivideName},</if>
+            <if test="assessmentId != null ">assessment_id = #{assessmentId},</if>
+            <if test="assessmentScore != null ">assessment_score = #{assessmentScore},</if>
+            <if test="assessmentCycle != null  and assessmentCycle != ''">assessment_cycle = #{assessmentCycle},</if>
+            <if test="workRequirement != null  and workRequirement != ''">work_requirement = #{workRequirement},</if>
+            <if test="dataSource != null  and dataSource != ''">data_source = #{dataSource},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateDate != null ">update_date = #{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+        </trim>
+        where subdivide_id = #{subdivideId}
+    </update>
+
+    <delete id="deleteXlSubdivideById" parameterType="Long">
+        delete from xl_subdivide where subdivide_id = #{subdivideId}
+    </delete>
+
+    <delete id="deleteXlSubdivideByIds" parameterType="String">
+        delete from xl_subdivide where subdivide_id in 
+        <foreach item="subdivideId" collection="array" open="(" separator="," close=")">
+            #{subdivideId}
+        </foreach>
+    </delete>
+
+    <select id="selectXlSubdivideByAssessmentId" parameterType="Long" resultMap="XlSubdivideResult">
+        <include refid="selectXlSubdivideVo"/>
+        where xs.assessment_id = #{assessmentId}
+    </select>
+
+    <select id="selectDeptNamesBySubdivideId" parameterType="Long" resultType="java.lang.String">
+        SELECT sd.`dept_name`  FROM xl_subdivide xs
+        LEFT JOIN xl_scoring_items xsi ON  xs.`subdivide_id`=xsi.`subdivide_id`
+        LEFT JOIN sys_dept sd ON xsi.`dept_id`=sd.`dept_id`  WHERE xs.`subdivide_id`= #{subdivideId}
+    </select>
+
+</mapper>

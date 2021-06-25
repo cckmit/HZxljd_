@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlEnterpriseInfoMapper">
+
+    <resultMap type="com.ruoyi.system.domain.XlEnterpriseInfo" id="XlEnterpriseInfoResult">
+        <result property="id"    column="id"    />
+        <result property="enterpriseName"    column="enterprise_name"    />
+        <result property="enterpriseAdress"    column="enterprise_adress"    />
+        <result property="enterpriseStatus"    column="enterprise_status"    />
+        <result property="enterpriseStatusName"    column="enterprise_status_name"    />
+        <result property="enterpriseType"    column="enterprise_type"    />
+        <result property="enterpriseTypeNum"    column="enterprise_type_num"    />
+        <result property="establishDate"    column="establish_date"    />
+        <result property="establishPerson"    column="establish_person"    />
+        <result property="enterpriseUpdateDate"    column="enterprise_update_date"    />
+        <result property="informationStatus"    column="information_status"    />
+        <result property="mailbox"    column="mailbox"    />
+        <result property="registeredCapital"    column="registered_capital"    />
+        <result property="registrationAuthority"    column="registration_authority"    />
+        <result property="unifiedCreditCode"    column="unified_credit_code"    />
+        <result property="registrationNumber"    column="registration_number"    />
+        <result property="organization"    column="organization"    />
+        <result property="natureBusiness"    column="nature_business"    />
+        <result property="termstart"    column="termStart"    />
+        <result property="teamend"    column="teamEnd"    />
+        <result property="checkdata"    column="checkdata"    />
+        <result property="enterpriseLogo"    column="enterprise_logo"    />
+        <result property="isOnStock"    column="isOnStock"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="regionId"    column="region_id"    />
+    </resultMap>
+
+     <sql id="selectXlEnterpriseInfoVo">
+        select id, enterprise_name, enterprise_adress, enterprise_status, enterprise_status_name,
+        enterprise_type, enterprise_type_num, establish_date, establish_person, enterprise_update_date,
+        information_status, mailbox, registered_capital, registration_authority, unified_credit_code,
+        registration_number, organization, nature_business, termStart, teamEnd, checkdata, enterprise_logo,
+        isOnStock, a.create_time, create_user, update_date, update_user,a.region_id,b.parent_id as parentId,
+        b.region_name as regionName,c.region_name as parentregionName,
+        d.`inspect_date` as inspectDate
+        from xl_enterprise_info a LEFT JOIN sys_region b  ON a.region_id=b.region_id
+		LEFT JOIN  sys_region c  ON   b.parent_id=c.region_id
+		 LEFT JOIN `xl_work_record` d ON a.id=d.`general_id`
+    </sql>
+
+    <select id="selectXlEnterpriseInfoList" parameterType="XlEnterpriseInfo" resultMap="XlEnterpriseInfoResult">
+        <include refid="selectXlEnterpriseInfoVo"/>
+        <where>
+    <if test="enterpriseTypeNum != null "> and enterprise_type_num = #{enterpriseTypeNum}</if>
+       <if test="enterpriseStatusName != null  and enterpriseStatusName != ''"> and enterprise_status_name like concat('%', #{enterpriseStatusName}, '%')</if>
+            <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName}, '%')</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''"> and enterprise_adress like concat('%', #{enterpriseAdress}, '%')</if>
+            <if test="enterpriseStatus != null "> and enterprise_status = #{enterpriseStatus}</if>
+            <if test="enterpriseType != null  and enterpriseType != ''"> and enterprise_type like concat('%',  #{enterpriseType}, '%')</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(establish_date,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(establish_date,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+            <if test="establishPerson != null  and establishPerson != ''"> and establish_person like concat('%', #{establishPerson}, '%')</if>
+            <if test="enterpriseUpdateDate != null "> and enterprise_update_date = #{enterpriseUpdateDate}</if>
+            <if test="informationStatus != null "> and information_status = #{informationStatus}</if>
+            <if test="mailbox != null  and mailbox != ''"> and mailbox like concat('%', #{mailbox}, '%')</if>
+            <if test="registeredCapital != null  and registeredCapital != ''"> and registered_capital like concat('%', #{registeredCapital}, '%')</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''"> and registration_authority like concat('%', #{registrationAuthority}, '%')</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''"> and unified_credit_code like concat('%', #{unifiedCreditCode}, '%')</if>
+            <if test="registrationNumber != null  and registrationNumber != ''"> and registration_number like concat('%', #{registrationNumber}, '%')</if>
+            <if test="organization != null  and organization != ''"> and organization like concat('%', #{organization}, '%')</if>
+            <if test="natureBusiness != null  and natureBusiness != ''"> and nature_business = #{natureBusiness}</if>
+            <if test="termstart != null "> and termStart = #{termstart}</if>
+            <if test="teamend != null "> and teamEnd = #{teamend}</if>
+            <if test="checkdata != null "> and checkdata = #{checkdata}</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''"> and enterprise_logo = #{enterpriseLogo}</if>
+            <if test="isOnStock != null "> and isOnStock = #{isOnStock}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+            <if test="updateUser != null  and updateUser != ''"> and update_user = #{updateUser}</if>
+            <if test="regionId != null "> and a.region_id = #{regionId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlEnterpriseInfoById" parameterType="Long" resultMap="XlEnterpriseInfoResult">
+        <include refid="selectXlEnterpriseInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlEnterpriseInfo" parameterType="XlEnterpriseInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_enterprise_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="enterpriseName != null  and enterpriseName != ''">enterprise_name,</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''">enterprise_adress,</if>
+            <if test="enterpriseStatus != null ">enterprise_status,</if>
+            <if test="enterpriseStatusName != null  and enterpriseStatusName != ''">enterprise_status_name,</if>
+            <if test="enterpriseType != null  and enterpriseType != ''">enterprise_type,</if>
+            <if test="enterpriseTypeNum != null ">enterprise_type_num,</if>
+            <if test="establishDate != null ">establish_date,</if>
+            <if test="establishPerson != null  and establishPerson != ''">establish_person,</if>
+            <if test="enterpriseUpdateDate != null ">enterprise_update_date,</if>
+            <if test="informationStatus != null ">information_status,</if>
+            <if test="mailbox != null  and mailbox != ''">mailbox,</if>
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital,</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''">registration_authority,</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''">unified_credit_code,</if>
+            <if test="registrationNumber != null  and registrationNumber != ''">registration_number,</if>
+            <if test="organization != null  and organization != ''">organization,</if>
+            <if test="natureBusiness != null  and natureBusiness != ''">nature_business,</if>
+            <if test="termstart != null ">termStart,</if>
+            <if test="teamend != null ">teamEnd,</if>
+            <if test="checkdata != null ">checkdata,</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''">enterprise_logo,</if>
+            <if test="isOnStock != null ">isOnStock,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="updateDate != null ">update_date,</if>
+            <if test="updateUser != null  and updateUser != ''">update_user,</if>
+            <if test="regionId != null ">region_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+         <if test="enterpriseName != null  and enterpriseName != ''">#{enterpriseName},</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''">#{enterpriseAdress},</if>
+            <if test="enterpriseStatus != null ">#{enterpriseStatus},</if>
+            <if test="enterpriseStatusName != null  and enterpriseStatusName != ''">#{enterpriseStatusName},</if>
+            <if test="enterpriseType != null  and enterpriseType != ''">#{enterpriseType},</if>
+            <if test="enterpriseTypeNum != null ">#{enterpriseTypeNum},</if>
+            <if test="establishDate != null ">#{establishDate},</if>
+            <if test="establishPerson != null  and establishPerson != ''">#{establishPerson},</if>
+            <if test="enterpriseUpdateDate != null ">#{enterpriseUpdateDate},</if>
+            <if test="informationStatus != null ">#{informationStatus},</if>
+            <if test="mailbox != null  and mailbox != ''">#{mailbox},</if>
+            <if test="registeredCapital != null  and registeredCapital != ''">#{registeredCapital},</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''">#{registrationAuthority},</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''">#{unifiedCreditCode},</if>
+            <if test="registrationNumber != null  and registrationNumber != ''">#{registrationNumber},</if>
+            <if test="organization != null  and organization != ''">#{organization},</if>
+            <if test="natureBusiness != null  and natureBusiness != ''">#{natureBusiness},</if>
+            <if test="termstart != null ">#{termstart},</if>
+            <if test="teamend != null ">#{teamend},</if>
+            <if test="checkdata != null ">#{checkdata},</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''">#{enterpriseLogo},</if>
+            <if test="isOnStock != null ">#{isOnStock},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">#{updateUser},</if>
+            <if test="regionId != null ">#{regionId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlEnterpriseInfo" parameterType="XlEnterpriseInfo">
+               update xl_enterprise_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseName != null  and enterpriseName != ''">enterprise_name = #{enterpriseName},</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''">enterprise_adress = #{enterpriseAdress},</if>
+            <if test="enterpriseStatus != null ">enterprise_status = #{enterpriseStatus},</if>
+            <if test="enterpriseStatusName != null  and enterpriseStatusName != ''">enterprise_status_name = #{enterpriseStatusName},</if>
+            <if test="enterpriseType != null  and enterpriseType != ''">enterprise_type = #{enterpriseType},</if>
+            <if test="enterpriseTypeNum != null ">enterprise_type_num = #{enterpriseTypeNum},</if>
+            <if test="establishDate != null ">establish_date = #{establishDate},</if>
+            <if test="establishPerson != null  and establishPerson != ''">establish_person = #{establishPerson},</if>
+            <if test="enterpriseUpdateDate != null ">enterprise_update_date = #{enterpriseUpdateDate},</if>
+            <if test="informationStatus != null ">information_status = #{informationStatus},</if>
+            <if test="mailbox != null  and mailbox != ''">mailbox = #{mailbox},</if>
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital = #{registeredCapital},</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''">registration_authority = #{registrationAuthority},</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''">unified_credit_code = #{unifiedCreditCode},</if>
+            <if test="registrationNumber != null  and registrationNumber != ''">registration_number = #{registrationNumber},</if>
+            <if test="organization != null  and organization != ''">organization = #{organization},</if>
+            <if test="natureBusiness != null  and natureBusiness != ''">nature_business = #{natureBusiness},</if>
+            <if test="termstart != null ">termStart = #{termstart},</if>
+            <if test="teamend != null ">teamEnd = #{teamend},</if>
+            <if test="checkdata != null ">checkdata = #{checkdata},</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''">enterprise_logo = #{enterpriseLogo},</if>
+            <if test="isOnStock != null ">isOnStock = #{isOnStock},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateDate != null ">update_date = #{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+            <if test="regionId != null ">region_id = #{regionId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlEnterpriseInfoById" parameterType="Long">
+        delete from xl_enterprise_info where id = #{id}
+    </delete>
+
+    <delete id="deleteXlEnterpriseInfoByIds" parameterType="String">
+        delete from xl_enterprise_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkEnterpriseNameUnique" parameterType="String" resultType="int">
+		select count(1) from xl_enterprise_info where enterprise_name=#{enterpriseName}
+	</select>
+	<select id="selectXlEstateManagementByEnterpriseName" parameterType="String" resultType="com.ruoyi.system.domain.XlEnterpriseInfo">
+	    <include refid="selectXlEnterpriseInfoVo"/>
+        where enterprise_name = #{enterpriseName}
+	 </select>
+	 <select id="selectXlEnterpriseInfoInIds" resultMap="XlEnterpriseInfoResult" parameterType="string">
+	 <include refid="selectXlEnterpriseInfoVo"></include>
+	 WHERE id  in <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+	  </select>
+
+    <select id="selectenterpriseType" resultMap="XlEnterpriseInfoResult">
+        select unified_credit_code,registration_number,enterprise_name,id from xl_enterprise_info where ISNULL(enterprise_type) limit 100
+    </select>
+
+    <update id="updateenterprisesCode" parameterType="XlEnterpriseInfo">
+        update xl_enterprise_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseName != null  and enterpriseName != ''">enterprise_name = #{enterpriseName},</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''">enterprise_adress = #{enterpriseAdress},</if>
+            <if test="enterpriseStatus != null ">enterprise_status = #{enterpriseStatus},</if>
+            <if test="enterpriseType != null  and enterpriseType != ''">enterprise_type = #{enterpriseType},</if>
+            <if test="establishDate != null ">establish_date = #{establishDate},</if>
+            <if test="establishPerson != null  and establishPerson != ''">establish_person = #{establishPerson},</if>
+            <if test="enterpriseUpdateDate != null ">enterprise_update_date = #{enterpriseUpdateDate},</if>
+            <if test="informationStatus != null ">information_status = #{informationStatus},</if>
+            <if test="enterpriseStatusName != null ">enterprise_status_name = #{enterpriseStatusName},</if>
+            <if test="mailbox != null  and mailbox != ''">mailbox = #{mailbox},</if>
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital = #{registeredCapital},</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''">registration_authority = #{registrationAuthority},</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''">unified_credit_code = #{unifiedCreditCode},</if>
+            <if test="registrationNumber != null  and registrationNumber != ''">registration_number = #{registrationNumber},</if>
+            <if test="organization != null  and organization != ''">organization = #{organization},</if>
+            <if test="natureBusiness != null  and natureBusiness != ''">nature_business = #{natureBusiness},</if>
+            <if test="termstart != null">termStart = #{termstart},</if>
+            <if test="teamend != null">teamEnd = #{teamend},</if>
+            <if test="checkdata != null ">checkdata = #{checkdata},</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''">enterprise_logo = #{enterpriseLogo},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+            isOnStock = #{isOnStock}
+
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateenterprises" parameterType="XlEnterpriseInfo">
+        update xl_enterprise_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseName != null  and enterpriseName != ''">enterprise_name = #{enterpriseName},</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''">enterprise_adress = #{enterpriseAdress},</if>
+            <if test="enterpriseStatus != null ">enterprise_status = #{enterpriseStatus},</if>
+            <if test="enterpriseType != null  and enterpriseType != ''">enterprise_type = #{enterpriseType},</if>
+            <if test="establishDate != null ">establish_date = #{establishDate},</if>
+            <if test="establishPerson != null  and establishPerson != ''">establish_person = #{establishPerson},</if>
+            <if test="enterpriseUpdateDate != null ">enterprise_update_date = #{enterpriseUpdateDate},</if>
+            <if test="informationStatus != null ">information_status = #{informationStatus},</if>
+            <if test="enterpriseStatusName != null ">enterprise_status_name = #{enterpriseStatusName},</if>
+            <if test="mailbox != null  and mailbox != ''">mailbox = #{mailbox},</if>
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital = #{registeredCapital},</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''">registration_authority = #{registrationAuthority},</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''">unified_credit_code = #{unifiedCreditCode},</if>
+            <if test="registrationNumber != null  and registrationNumber != ''">registration_number = #{registrationNumber},</if>
+            <if test="organization != null  and organization != ''">organization = #{organization},</if>
+            <if test="natureBusiness != null  and natureBusiness != ''">nature_business = #{natureBusiness},</if>
+            <if test="termstart != null">termStart = #{termstart},</if>
+            <if test="teamend != null">teamEnd = #{teamend},</if>
+            <if test="checkdata != null">checkdata = #{checkdata},</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''">enterprise_logo = #{enterpriseLogo},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+            isOnStock = #{isOnStock}
+        </trim>
+        where unified_credit_code = #{unifiedCreditCode}
+    </update>
+
+    <update id="updateenterprisesNumber" parameterType="XlEnterpriseInfo">
+        update xl_enterprise_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseName != null  and enterpriseName != ''">enterprise_name = #{enterpriseName},</if>
+            <if test="enterpriseAdress != null  and enterpriseAdress != ''">enterprise_adress = #{enterpriseAdress},</if>
+            <if test="enterpriseStatus != null ">enterprise_status = #{enterpriseStatus},</if>
+            <if test="enterpriseType != null  and enterpriseType != ''">enterprise_type = #{enterpriseType},</if>
+            <if test="establishDate != null ">establish_date = #{establishDate},</if>
+            <if test="establishPerson != null  and establishPerson != ''">establish_person = #{establishPerson},</if>
+            <if test="enterpriseUpdateDate != null ">enterprise_update_date = #{enterpriseUpdateDate},</if>
+            <if test="informationStatus != null ">information_status = #{informationStatus},</if>
+            <if test="enterpriseStatusName != null ">enterprise_status_name = #{enterpriseStatusName},</if>
+            <if test="mailbox != null  and mailbox != ''">mailbox = #{mailbox},</if>
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital = #{registeredCapital},</if>
+            <if test="registrationAuthority != null  and registrationAuthority != ''">registration_authority = #{registrationAuthority},</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''">unified_credit_code = #{unifiedCreditCode},</if>
+            <if test="registrationNumber != null  and registrationNumber != ''">registration_number = #{registrationNumber},</if>
+            <if test="organization != null  and organization != ''">organization = #{organization},</if>
+            <if test="natureBusiness != null  and natureBusiness != ''">nature_business = #{natureBusiness},</if>
+            <if test="termstart != null">termStart = #{termstart},</if>
+            <if test="teamend != null">teamEnd = #{teamend},</if>
+            <if test="checkdata != null">checkdata = #{checkdata},</if>
+            <if test="enterpriseLogo != null  and enterpriseLogo != ''">enterprise_logo = #{enterpriseLogo},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+            isOnStock = #{isOnStock}
+        </trim>
+        where registration_number = #{registrationNumber}
+    </update>
+
+    <select id="queryEnterpriseAll" resultType="java.lang.Integer">
+        select count(*) from xl_enterprise_info
+        <where>
+            <!--    enterprise_type_num =1-->
+            <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName},'%')</if>
+            <if test="enterpriseTypeNum != null  and enterpriseTypeNum != ''"> and enterprise_type_num = #{enterpriseTypeNum}</if>
+            <if test="natureBusiness != null  and natureBusiness != ''"> and nature_business like concat('%',  #{natureBusiness},'%')</if>
+        </where>
+    </select>
+
+    <select id="queryListedEnterprise" resultType="java.lang.Integer">
+        select count(*) from xl_enterprise_info
+        <where>
+            <!--    enterprise_type_num =1-->
+            <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName},'%')</if>
+            <if test="enterpriseTypeNum != null  and enterpriseTypeNum != ''"> and enterprise_type_num = #{enterpriseTypeNum}</if>
+            <if test="natureBusiness != null  and natureBusiness != ''"> and nature_business like concat('%',  #{natureBusiness},'%')</if>
+            and  IsOnStock = 1
+        </where>
+    </select>
+
+    <select id="queryListGeTiEnterprise" resultType="java.lang.Integer">
+        select count(*) from xl_enterprise_info
+        <where>
+            <!--    enterprise_type_num =1-->
+            <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName},'%')</if>
+            <if test="enterpriseTypeNum != null  and enterpriseTypeNum != ''"> and enterprise_type_num = #{enterpriseTypeNum}</if>
+            <if test="natureBusiness != null  and natureBusiness != ''"> and nature_business like concat('%',  #{natureBusiness},'%')</if>
+            and  enterprise_type_num = 1
+        </where>
+    </select>
+
+    <select id="selectXlEnterpriseInfo" resultMap="XlEnterpriseInfoResult" parameterType="XlEnterpriseInfo">
+        select * from xl_enterprise_info
+        <where>
+            <!--    enterprise_type_num =1-->
+            <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName},'%')</if>
+            <if test="enterpriseTypeNum != null  and enterpriseTypeNum != ''"> and enterprise_type_num = #{enterpriseTypeNum}</if>
+            <if test="isOnStock != null  and isOnStock != ''"> and isOnStock = #{isOnStock}</if>
+            <if test="enterpriseStatus != null  and enterpriseStatus != ''"> and enterprise_status =#{enterpriseStatus}</if>
+            <if test="unifiedCreditCode != null  and unifiedCreditCode != ''"> and unified_credit_code like concat('%',  #{unifiedCreditCode},'%')</if>
+            <if test="establishPerson != null  and establishPerson != ''"> and establish_person like concat('%',  #{establishPerson},'%')</if>
+            <if test="startTime !=null and startTime !=''">
+                and date_format(establish_date,'%Y-%m-%d %H:%i:%S') &gt;= #{startTime}
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                and date_format(establish_date,'%Y-%m-%d %H:%i:%S') &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--    <select id="queryGeTiList" resultMap="XlEnterpriseInfoResult">
+            select * from xl_enterprise_info where enterprise_type_num = 1
+        </select>-->
+
+</mapper>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+    <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <th:block th:include="include :: header('队伍列表')" />
+        <link th:href = "@{/layui/css/layui.css}" rel = "stylesheet" />
+        <link th:href = "@{/css/bootstrap.min.css}" rel = "stylesheet" />
+        <link th:href = "@{/icon/iconfont.css}" rel = "stylesheet" />
+        <link th:href = "@{/css/public.css}" rel = "stylesheet" />
+        <link th:href = "@{/css/duiwu.css}" rel = "stylesheet" />
+        <style type="text/css">
+            .contant {
+                /*position: fixed;
+                top: 55px;
+                left: 267px;*/
+                bottom: 0;
+                right: 0;
+                padding: 15px;
+                /*background-color: #dedede;*/
+                background-color: #F5F5F5;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="contant">
+            <!-- 人员管理start -->
+            <div class = "ranksPerson">
+                <div class = "row ranksPerson-one">
+                    <div class = "col-lg-9">
+                        <p class = "font-16">人员管理</p>
+                    </div>
+                    <div class = "col-lg-3">
+                        <input type = "text" name="ranksName" class = "form-control" placeholder = "请输入姓名">
+                        <button type = "button" class = "btn btn-primary" onclick="search()">
+                            <span class = "glyphicon glyphicon-search"></span> 搜索
+                        </button>
+                    </div>
+                </div>
+                <div class = "ranksPerson-two">
+                    <div class = "row ranksPerson-two-community">
+                        <div class = "col-lg-1 font-14">社区：</div>
+                        <div class = "col-lg-11 font-14 padding0 dept-list">
+                            <!--<div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 全部
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox"> 相府社区
+                                </label>
+                            </div>-->
+                        </div>
+                    </div>
+                    <div class = "row ranksPerson-two-post">
+                        <div class = "col-lg-1 font-14">岗位：</div>
+                        <div class = "col-lg-11 font-14 padding0 station_list" >
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox" id="station" onclick="checkOrCancelAll('station','station')"> 全选
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox" name="station"> 网格员
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox" name = "station"> 综合执法
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox" name = "station"> 城管
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox" name = "station"> 交警
+                                </label>
+                            </div>
+                            <div class = "community col-lg-2">
+                                <label>
+                                    <input type = "checkbox" name = "station"> 公安
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 人员管理end -->
+            <!-- 人物信息卡片start -->
+            <div class = "ranksCard">
+                <!--<div class = "col-lg-4 ranksCard-text">
+                    <div class = "row">
+                        <div class = "col-lg-4 ranksCardImg">
+                            <img src = "../static/gonganganjing.png" alt = "" th:src = "@{/img/gonganganjing.png}">
+                        </div>
+                        <div class = "col-lg-8 font-14">
+                            <div class = "ranksCardTextName font-20">蔡国庆</div>
+                            <div class = "ranksCardTextPosition">
+                                <i class = "iconfont">&#xe63d;</i>
+                                <div style = "display: flex;">
+                                    <span>青山湖街道</span>
+                                    <div id = "info" class = "info">
+                                        <div class = "inner">
+                                            <p class = "txt">文字如果超出了自动向左滚动文字如果超出了自动向左滚动</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class = "ranksCardTextAddress">
+                                <i class = "iconfont" title = "科室">&#xe60e;</i>
+                                <span>科室</span>
+                            </div>
+                            <div class = "ranksCardTextPhone">
+                                <i class = "iconfont">&#xe773;</i>
+                                <span>15213444553</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "ranksCardDetail font-14">
+                        <p> 查看详情>></p>
+                    </div>
+                </div>
+                <div class = "col-lg-4 ranksCard-text">
+                    <div class = "row">
+                        <div class = "col-lg-4 ranksCardImg">
+                            <img  alt = "" th:src = "@{/img/jiaojing2.png}">
+                        </div>
+                        <div class = "col-lg-8 font-14">
+                            <div class = "ranksCardTextName font-20">蔡国庆</div>
+                            <div class = "ranksCardTextPosition">
+                                <i class = "iconfont">&#xe63d;</i>
+                                <span>青山湖街道 <em>鹤亭社区交警</em></span>
+                            </div>
+                            <div class = "ranksCardTextAddress">
+                                <i class = "iconfont" title = "科室">&#xe60e;</i>
+                                <span>鹤亭街1551号</span>
+                            </div>
+                            <div class = "ranksCardTextPhone">
+                                <i class = "iconfont">&#xe773;</i>
+                                <span>15213444553</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "ranksCardDetail font-14">
+                        <p> 查看详情>></p>
+                    </div>
+                </div>
+                <div class = "col-lg-4 ranksCard-text">
+                    <div class = "row">
+                        <div class = "col-lg-4 ranksCardImg">
+                            <img  alt = "" th:src = "@{/img/wanggeyuan.png}">
+                        </div>
+                        <div class = "col-lg-8 font-14">
+                            <div class = "ranksCardTextName font-20">蔡国庆</div>
+                            <div class = "ranksCardTextPosition">
+                                <i class = "iconfont">&#xe63d;</i>
+                                <span>青山湖街道 <em>鹤亭社区网格员</em></span>
+                            </div>
+                            <div class = "ranksCardTextAddress">
+                                <i class = "iconfont" title = "科室">&#xe60e;</i>
+                                <span>鹤亭街1551号</span>
+                            </div>
+                            <div class = "ranksCardTextPhone">
+                                <i class = "iconfont">&#xe773;</i>
+                                <span>15213444553</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "ranksCardDetail font-14">
+                        <p> 查看详情>></p>
+                    </div>
+                </div>
+                <div class = "col-lg-4 ranksCard-text">
+                    <div class = "row">
+                        <div class = "col-lg-4 ranksCardImg">
+                            <img alt = "" th:src = "@{/img/zhifayuan.png}">
+                        </div>
+                        <div class = "col-lg-8 font-14">
+                            <div class = "ranksCardTextName font-20">蔡国庆</div>
+                            <div class = "ranksCardTextPosition">
+                                <i class = "iconfont">&#xe63d;</i>
+                                <span>青山湖街道 <em>鹤亭社区综合执法</em></span>
+                            </div>
+                            <div class = "ranksCardTextAddress">
+                                <i class = "iconfont" title = "科室">&#xe60e;</i>
+                                <span>鹤亭街1551号</span>
+                            </div>
+                            <div class = "ranksCardTextPhone">
+                                <i class = "iconfont">&#xe773;</i>
+                                <span>15213444553</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "ranksCardDetail font-14">
+                        <p> 查看详情>></p>
+                    </div>
+                </div>
+                <div class = "col-lg-4 ranksCard-text">
+                    <div class = "row">
+                        <div class = "col-lg-4 ranksCardImg">
+                            <img alt = "" th:src = "@{/img/zhihuichengguan.png}">
+                        </div>
+                        <div class = "col-lg-8 font-14">
+                            <div class = "ranksCardTextName font-20">蔡国庆</div>
+                            <div class = "ranksCardTextPosition">
+                                <i class = "iconfont">&#xe63d;</i>
+                                <span>青山湖街道 <em>鹤亭社区城管</em></span>
+                            </div>
+                            <div class = "ranksCardTextAddress">
+                                <i class = "iconfont" title = "科室">&#xe60e;</i>
+                                <span>鹤亭街1551号</span>
+                            </div>
+                            <div class = "ranksCardTextPhone">
+                                <i class = "iconfont">&#xe773;</i>
+                                <span>15213444553</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "ranksCardDetail font-14">
+                        <p> 查看详情>></p>
+                    </div>
+                </div>
+                <div class = "col-lg-4 ranksCard-text">
+                    <div class = "row">
+                        <div class = "col-lg-4 ranksCardImg">
+                            <img alt = "" th:src = "@{/img/wanggeyuan.png}">
+                        </div>
+                        <div class = "col-lg-8 font-14">
+                            <div class = "ranksCardTextName font-20">蔡国庆</div>
+                            <div class = "ranksCardTextPosition">
+                                <i class = "iconfont">&#xe63d;</i>
+                                <span>青山湖街道 <em>鹤亭社区网格员</em></span>
+                            </div>
+                            <div class = "ranksCardTextAddress">
+                                <i class = "iconfont" title = "科室">&#xe60e;</i>
+                                <span>鹤亭街1551号</span>
+                            </div>
+                            <div class = "ranksCardTextPhone">
+                                <i class = "iconfont">&#xe773;</i>
+                                <span>15213444553</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "ranksCardDetail font-14">
+                        <p> 查看详情>></p>
+                    </div>
+                </div>-->
+            </div>
+            <!-- 人物信息卡片end -->
+            <!-- 分页start -->
+            <div id = "ranksPage"></div>
+            <!-- 分页end -->
+        </div>
+    </body>
+    <script th:src = "@{/js/jquery.min.js}"></script>
+    <script th:src = "@{/layui/layui.js}"></script>
+
+
+    <script>
+        <!--    从右侧弹出js-->
+        // layui.config({
+        //     base: './right_layui.js',
+        // }).extend({
+        //     treeTable: 'treeTable/treeTable',
+        //     rightPopup: 'rightPopup/rightPopup',
+        // })
+        var ranksDataList={}
+        layui.use(["laydate", "element", "form", "laypage", 'layer'], function () {
+            var laypage = layui.laypage;
+            var laydate = layui.laydate;
+            var element = layui.element;
+            var layer = layui.layer;
+            var form = layui.form;
+            ranksDataList = {
+                totalPageAllAppoint: 0,//总页数
+                limitAllAppoint: 6,//一页多少条
+                currentPage: location.hash.replace('#!page=', '') || 1,//当前页
+                userName: '',
+                run: function () {
+                    this.getDeptData();
+                    this.getPageData(this.ajaxData());
+                },
+                //整理参数
+                ajaxData: function () {
+                    var _ajaxData = {};
+                    var param = [];
+                    var child = $(".dept-list input[type='checkbox']");
+                    child.each(function (index, item) {
+                        if (item.checked) {
+                            if (item.value == "0") {
+                                param = [];
+                                return false;
+                            } else {
+                                param.push(parseInt(item.value));
+                            }
+                        }
+                    });
+                    _ajaxData.ranksName = $("input[name='ranksName']").val();
+                    _ajaxData.deptIds = param.join(",");
+                    // _ajaxData.station = this.currentPage;
+                    _ajaxData.pageNum = this.currentPage;
+                    _ajaxData.pageSize = this.limitAllAppoint;
+                    return _ajaxData;
+                },
+                // 请求社区接口
+                getDeptData: function () {
+                        var _that = this;
+                        $.ajax({
+                            type: "POST",
+                            url: "/system/region/list",
+                            data: {"level": 2},
+                            success: function (result) {
+                                layer.close(index);
+                                if (result && result.length > 0) {
+                                    var data = result;
+                                    $(".dept-list").empty();
+                                    _that.getDeptHtmlList(data);
+                                } else {
+                                    layer.msg("请求社区出错，请联系客服！");
+                                }
+                                ;
+                            },
+                            error: function () {
+                                layer.msg("请求社区数据出错，请联系客服！");
+                            },
+                            beforeSend: function () {
+                                index = layer.load(2, {
+                                    shade: [0.8, '#eee'] //0.1透明度的白色背景
+                                });
+                            }
+                        });
+                },
+                /**请求接口**/
+                getPageData: function (_DATA) {
+                    var _that = this;
+                    layui.use(['layer'], function () {
+                        var layer = layui.layer;
+                        var index;
+                        $.ajax({
+                            type: "POST",
+                            url: "/system/ranks/list",
+                            data: _DATA,
+                            success: function (result) {
+                                layer.close(index);
+                                if (result.code == 0) {
+                                    var data = result.rows;
+                                    _that.totalPageAllAppoint = result.total;//获取总页数
+                                    $(".ranksCard").empty();
+                                    _that.getHtmlList(data);
+                                    _that.toPage();//分页调取
+                                } else {
+                                    $("#ranksPage").hide();
+                                    layer.msg(result.msg + "，请联系客服！");
+                                }
+                                ;
+                            },
+                            error: function () {
+                                layer.close(index);
+                                $("#ranksPage").hide();
+                                layer.msg("请求列表出错，请联系客服！");
+                            },
+                            beforeSend: function () {
+                                index = layer.load(2, {
+                                    shade: [0.8, '#eee'] //0.1透明度的白色背景
+                                });
+                            }
+                        });
+                    });
+                },
+                /**社区数据动态拼接**/
+                getDeptHtmlList: function (datas) {
+                    var _html = [],
+                        _that = this;
+                    _html.push('<div class = "community col-lg-2">\n' +
+                        '                                <label>\n' +
+                        '                                    <input type = "checkbox" id="communityAll"  onclick="checkOrCancelAll(\'communityAll\',\'community\')"> 全部\n' +
+                        '                                </label>\n' +
+                        '                            </div>')
+                    if (datas.length > 0) {
+                        for (var i in datas) {
+                            _html.push('<div class = "community col-lg-2">\n' +
+                                '                                <label>\n' +
+                                '                                    <input type = "checkbox" name="community" value="' + datas[i].regionId + '" > '+datas[i].regionName+'\n' +
+                                '                                </label>\n' +
+                                '                            </div>')
+                        }
+                    }
+                    $(".dept-list").append(_html.join(" "));
+                    form.render();
+                },
+                /**动态拼接列表**/
+                getHtmlList: function (datas) {
+                    var _html = [],
+                        _that = this;
+                    if (datas.length == 0) {
+                        $("#ranksPage").hide();
+                    } else {
+                        $("#ranksPage").show();
+                        for (var i in datas) {
+                            var station = "";
+                            var ranksName = datas[i].ranksName;
+                            var phone = datas[i].phonenumber;
+                            var userName = datas[i].userName;
+                            var deptName = datas[i].deptName;
+                            if (!deptName || deptName.length < 1) {
+                                deptName = "无";
+                            }
+                            var addr = datas[i].addr;
+                            if (!addr || addr.length < 1) {
+                                addr = "";
+                            }
+                            switch (datas[i].station) {//判断列表还是图表
+                                case "1":
+                                    station = "网格员";
+                                    break;
+                                case "2":
+                                    station = "民警";
+                                    break;
+                                default:
+                                    station = "其他";
+                                    break;
+                            }
+                            _html.push('<div class = "col-lg-4 ranksCard-text">\n' +
+                                '<div class= "row" > \n' +
+                                '<div class= "col-lg-4 ranksCardImg" >\n' +
+                                '<img alt = ""  src = "../img/wanggeyuan.png" >\n' +
+                                '</div>\n' +
+                                '<div class="col-lg-8 font-14">\n' +
+                                '<div class="ranksCardTextName font-20">' + ranksName + '</div>\n' +
+                                '<div class="ranksCardTextPosition">\n' +
+                                '<i class="iconfont">&#xe63d;</i>\n' +
+                                ' <span>青山湖街道\n' +
+                                '<em>鹤亭社区网格员</em>\n' +
+                                '</span>\n' +
+                                '</div>\n' +
+                                '<div class="ranksCardTextAddress">\n' +
+                                '<i class="iconfont" title="科室">&#xe60e;</i>\n' +
+                                '<span>鹤亭街1551号</span>\n' +
+                                '</div>\n' +
+                                '<div class="ranksCardTextPhone">\n' +
+                                '<i class="iconfont">&#xe773;</i>\n' +
+                                '<span>' + phone + '</span>\n' +
+                                '</div>\n' +
+                                '</div>\n' +
+                                '</div>\n' +
+                                '<div class = "ranksCardDetail font-14">\n' +
+                                '<p> 查看详情>></p>\n' +
+                                '</div>\n' +
+                                '</div>');
+                        }
+                        $(".ranksCard").append(_html.join(" "));
+                    }
+                },
+
+                /**分页**/
+                toPage: function () {
+                    var _that = this;
+                    layui.use(['laypage'], function () {
+                        var laypage = layui.laypage;
+                        laypage.render({
+                            elem: 'ranksPage',
+                            count: _that.totalPageAllAppoint,//总页数
+                            layout: ['prev', 'page', 'next', 'skip', 'count'],
+                            prev: '<',//自定义上一页
+                            next: '>',//自定义下一页
+                            curr: _that.currentPage,//当前页
+                            limit: _that.limitAllAppoint,//一页多少条
+                            hash: 'page', //自定义hash值
+                            jump: function (obj, first) {
+                                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                                    // $('html, body').animate({scrollTop: "200px"}, 'fast');
+                                    _that.currentPage = obj.curr;
+                                    _that.getPageData(_that.ajaxData());//一定要把翻页的ajax请求放到这里，不然会请求两次。
+                                }
+                                ;
+                            }
+                        })
+                    })
+                },
+            };
+
+            //服务列表启动
+            ranksDataList.run();
+
+            $('.ranksCard').on('mouseover','.ranksCard-text', function () {
+                $(this).find('.ranksCardDetail').show()
+            })
+            $('.ranksCard').on('mouseout', '.ranksCard-text', function () {
+                $(this).find('.ranksCardDetail').hide()
+            })
+
+// 弹出框内容
+            $('.ranksCard').on('click', '.ranksCard-text p', function () {
+                var dataCenter = `<form class="right-content layui-form">
+                    <div class="layui-col-md12 right-content-c-line">
+                      <div class="layui-row">
+                        <h5>详细详细</h5>
+                        <div class="layui-col-md6">
+
+                          <div class="detail layui-form-item">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-block">
+                              <input type="text" name="title" required lay-verify="required" placeholder="请输入姓名" autocomplete="off"
+                                class="layui-input">
+                            </div>
+                          </div>
+                          <div class="detail layui-form-item">
+                            <label class="layui-form-label">是否党员</label>
+                            <div class="layui-input-block">
+                              <input type="radio" name="partyMembers" value="是" title="是">
+                              <input type="radio" name="partyMembers" value="否" title="否">
+                            </div>
+                          </div>
+                          <div class="detail layui-form-item">
+                            <label class="layui-form-label">部门</label>
+                            <div class="layui-input-block">
+                              <select name="city" lay-verify="required">
+                                <option value="">部门1</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="layui-col-md6">
+                          <div class="detail layui-form-item">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block">
+                              <input type="radio" name="sex" value="男" title="男">
+                              <input type="radio" name="sex" value="女" title="女" checked>
+                            </div>
+                          </div>
+                          <div class="detail layui-form-item">
+                            <label class="layui-form-label">是否团员</label>
+                            <div class="layui-input-block">
+                              <input type="radio" name="LeagueMembers" value="是" title="是">
+                              <input type="radio" name="LeagueMembers" value="否" title="否">
+                            </div>
+                          </div>
+                          <div class="detail layui-form-item">
+                            <label class="layui-form-label">用户地址</label>
+                            <div class="layui-input-block">
+                              <input type="text" name="title" required lay-verify="required" placeholder="请输入地址" autocomplete="off"
+                                class="layui-input">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="layui-row">
+                        <div class="detail layui-form-item layui-form-text">
+                          <label class="layui-form-label">备注</label>
+                          <div class="layui-input-block">
+                            <textarea name="desc" placeholder="..." class="layui-textarea"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="layui-col-md12 right-content-c-line">
+                      <div class="layui-row">
+                        <h5>个人职能</h5>
+                        <div class="layui-row">
+                          <div class="layui-col-md6">
+                            <div class="detail layui-form-item">
+                              <label class="layui-form-label">职能</label>
+                              <div class="layui-input-block">
+                                <input type="text" name="title" required lay-verify="required" placeholder="请输入职能" autocomplete="off"
+                                  class="layui-input">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="layui-col-md6">
+                            <div class="detail layui-form-item">
+                              <label class="layui-form-label">区域</label>
+                              <div class="layui-input-block">
+                                <input type="text" name="title" required lay-verify="required" placeholder="请输入区域" autocomplete="off"
+                                  class="layui-input">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>`;
+
+                    //执行一个laypage实例
+                    layer.open({
+                        title: ['人员信息', 'line-height:64px;height:64px;font-size:16px']
+                        , offset: 'rb'
+                        , area: ['1000px', '100%']
+                        , anim: -1
+                        , skin: 'layui-anim layui-anim-rl layui-layer-adminRight'
+                        , content: dataCenter
+                        , move: false//禁止拖动
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            layer.close(index)
+                            dataCenter = '';
+                        }, cancel: function (index, layero) {
+                            layer.close(index)
+                            return false;
+                        }
+
+                    });
+                    form.render(); //更新全部
+            })
+
+            //页面加载的时候,所有的复选框都是未选中的状态
+
+        })
+        function checkOrCancelAll(id,name) {
+//1.获取checkbo的元素对象
+            var chElt = document.getElementById(id);
+//2.获取选中状态
+            var checkedElt = chElt.checked;
+            console.log(checkedElt)
+//3.若checked=true,将所有的复选框选中,checked=false,将所有的复选框取消
+            var allCheck = document.getElementsByName(name);
+//4.循环遍历取出每一个复选框中的元素
+//var mySpan=document.getElementById("mySpan");
+            if (checkedElt) {
+//全选
+                for (var i = 0; i < allCheck.length; i++) {
+//设置复选框的选中状态
+                    allCheck[i].checked = true;
+                }
+//mySpan.innerHTML="取消全选";
+            } else {
+//取消全选
+                for (var i = 0; i < allCheck.length; i++) {
+                    allCheck[i].checked = false;
+                }
+//mySpan.innerHTML="全选";
+            }
+        }
+
+        $(".dept-list").on('click','input[name=community]', function () {//子复选框，
+            if (!$(this).is(":checked")) {//如果有一个没选则父复选框设为不选中的状态
+                $("#communityAll").prop("checked", false);
+            } else {
+                click('community','communityAll');
+            }
+
+        });
+        $(".station_list").on('click','input[name=station]', function () {//子复选框，
+            if (!$(this).is(":checked")) {//如果有一个没选则父复选框设为不选中的状态
+                $("#station").prop("checked", false);
+            } else {
+                click('station','station');
+            }
+
+        });
+        function click(data,id) {
+            // len ++;
+            var len = 0;//设置初始值
+            for (var i = 0; i < $("input[name="+data+"]").length; i++) {
+                if ($("input[name=" + data + "]").eq(i).is(":checked")) {
+                    len++;//计算子复选框选中的数量
+                }
+            }
+            console.log(len)
+            console.log($("input[name=" + data + "]").length)
+
+            if (len == $("input[name=" + data + "]").length) {//选中子复选框的数量和 总的子复选框 的数量相比  相等的话父复选框置成选中状态
+                $("#"+ id+"").prop("checked", true)
+            } else {
+                $("#" + id + "").prop("checked", false);
+            }
+        }
+        /**搜索**/
+        function search(){
+            var data = ranksDataList.ajaxData();
+            ranksDataList.getPageData(data);
+        }
+    </script>
+</html>

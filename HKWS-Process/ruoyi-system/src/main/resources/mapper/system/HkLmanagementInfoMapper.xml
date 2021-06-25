@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkLmanagementInfoMapper">
+    
+    <resultMap type="HkLmanagementInfo" id="HkLmanagementInfoResult">
+        <result property="lmId"    column="lm_id"    />
+        <result property="lmName"    column="lm_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="lmRegion"    column="lm_region"    />
+        <result property="lmEventType"    column="lm_event_type"    />
+        <result property="lmAuth"    column="lm_auth"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectHkLmanagementInfoVo">
+        select lm_id, lm_name, remark, lm_region, lm_event_type, lm_auth, create_time, update_time, create_by, update_by from hk_lmanagement_info
+    </sql>
+
+    <select id="selectHkLmanagementInfoList" parameterType="HkLmanagementInfo" resultMap="HkLmanagementInfoResult">
+        <include refid="selectHkLmanagementInfoVo"/>
+        <where>  
+            <if test="lmName != null  and lmName != ''"> and lm_name like concat('%', #{lmName}, '%')</if>
+            <if test="lmRegion != null  and lmRegion != ''"> and lm_region = #{lmRegion}</if>
+            <if test="lmEventType != null  and lmEventType != ''"> and lm_event_type = #{lmEventType}</if>
+            <if test="lmAuth != null  and lmAuth != ''"> and lm_auth = #{lmAuth}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkLmanagementInfoById" parameterType="Long" resultMap="HkLmanagementInfoResult">
+        <include refid="selectHkLmanagementInfoVo"/>
+        where lm_id = #{lmId}
+    </select>
+        
+    <insert id="insertHkLmanagementInfo" parameterType="HkLmanagementInfo" useGeneratedKeys="true" keyProperty="lmId">
+        insert into hk_lmanagement_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="lmName != null  and lmName != ''">lm_name,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="lmRegion != null  and lmRegion != ''">lm_region,</if>
+            <if test="lmEventType != null  and lmEventType != ''">lm_event_type,</if>
+            <if test="lmAuth != null  and lmAuth != ''">lm_auth,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="lmName != null  and lmName != ''">#{lmName},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="lmRegion != null  and lmRegion != ''">#{lmRegion},</if>
+            <if test="lmEventType != null  and lmEventType != ''">#{lmEventType},</if>
+            <if test="lmAuth != null  and lmAuth != ''">#{lmAuth},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkLmanagementInfo" parameterType="HkLmanagementInfo">
+        update hk_lmanagement_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lmName != null  and lmName != ''">lm_name = #{lmName},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="lmRegion != null  and lmRegion != ''">lm_region = #{lmRegion},</if>
+            <if test="lmEventType != null  and lmEventType != ''">lm_event_type = #{lmEventType},</if>
+            <if test="lmAuth != null  and lmAuth != ''">lm_auth = #{lmAuth},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where lm_id = #{lmId}
+    </update>
+
+    <delete id="deleteHkLmanagementInfoById" parameterType="Long">
+        delete from hk_lmanagement_info where lm_id = #{lmId}
+    </delete>
+
+    <delete id="deleteHkLmanagementInfoByIds" parameterType="String">
+        delete from hk_lmanagement_info where lm_id in
+        <foreach item="lmId" collection="array" open="(" separator="," close=")">
+            #{lmId}
+        </foreach>
+    </delete>
+
+
+
+
+
+
+
+    <select id="checkLmNameUnique" resultType="java.lang.Integer">
+        select COUNT(*) from hk_lmanagement_info
+        where
+        lm_name = #{lmName}
+        <if test="lmId != null and lmId != ''">
+            and lm_id &lt;&gt; #{lmId}
+        </if>
+    </select>
+
+    <!--查询标签关联的角色信息-->
+    <select id="queryLmRole" parameterType="java.lang.Long" resultType="com.ruoyi.system.domain.SysRole">
+        select
+        sr.role_id as roleId,
+        sr.role_name as roleName
+        from
+        hk_lmanagement_info cli
+        left join sys_role sr on FIND_IN_SET(sr.role_id,cli.lm_auth) &gt; 0
+        where cli.lm_id = #{lmId}
+    </select>
+
+    <!--查询标签关联的区域信息-->
+    <select id="queryLmRegion" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.SysRegion">
+      select
+      sr.region_id as regionId,
+      sr.region_name as regionName,
+      sr.parent_id as parentId
+      from
+        hk_lmanagement_info cli
+      left join sys_region sr on FIND_IN_SET(sr.region_id,cli.lm_region) &gt; 0
+      where cli.lm_id = #{lmId}
+        <if test="level != null and level != ''">
+            and sr.level = #{level}
+        </if>
+    </select>
+
+    <!--查询标签关联的区域信息-->
+    <select id="queryLmEventType" parameterType="java.lang.Long" resultType="com.ruoyi.system.domain.HkEClassification">
+      select
+      he.ec_name_type,
+      he.ec_name
+      from
+      hk_lmanagement_info cli
+      left join hk_EClassification he on FIND_IN_SET(he.ec_name_type,cli.lm_event_type) &gt; 0
+      where cli.lm_id = #{lmId}
+    </select>
+
+    <select id="queryLmByEvent" parameterType="java.lang.Long" resultMap="HkLmanagementInfoResult">
+        select
+        hl.lm_id,
+        hl.lm_name,
+        hl.remark
+        FROM hk_lmanagement_info hl
+        left join hk_event_lmanagement hel on hel.lm_id = hl.lm_id
+        left join hk_event_info he on hel.event_id = he.id
+        where
+        he.id = #{eventId}
+    </select>
+
+    <insert id="insertEventLmanager">
+        insert into hk_event_lmanagement
+        (event_id,lm_id)
+        values
+        <foreach collection="list" item="list" separator=",">
+            (#{list.eventId},#{list.lmId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteEventLmanager" parameterType="java.util.Map">
+        delete from hk_event_lmanagement
+        where
+        event_id = #{eventId}
+        <if test="lmId != null and lmId != ''">
+            and lm_id = #{lmId}
+        </if>
+    </delete>
+
+    <insert id="insertHkLmanagementBackPriKey" parameterType="com.ruoyi.system.domain.HkLmanagementInfo" useGeneratedKeys="true" keyProperty="lmId">
+        insert into hk_lmanagement_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="lmName != null  and lmName != ''">lm_name,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="lmRegion != null  and lmRegion != ''">lm_region,</if>
+            <if test="lmEventType != null  and lmEventType != ''">lm_event_type,</if>
+            <if test="lmAuth != null  and lmAuth != ''">lm_auth,</if>
+            create_time,
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="lmName != null  and lmName != ''">#{lmName},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="lmRegion != null  and lmRegion != ''">#{lmRegion},</if>
+            <if test="lmEventType != null  and lmEventType != ''">#{lmEventType},</if>
+            <if test="lmAuth != null  and lmAuth != ''">#{lmAuth},</if>
+            NOW(),
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+        </trim>
+    </insert>
+</mapper>

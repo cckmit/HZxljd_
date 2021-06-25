@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRanksDeptMapper">
+
+	<resultMap type="SysRanksDept" id="SysRanksDeptResult">
+		<result property="deptId"     column="dept_id"      />
+		<result property="ranksId"     column="ranks_id"      />
+	</resultMap>
+	
+	<select id="selectRanksDeptByRanksId" parameterType="Long" resultMap="SysRanksDeptResult">
+		select dept_id, ranks_id from sys_ranks_dept where ranks_id = #{ranksId}
+	</select>
+
+	<delete id="deleteRanksDeptByRanksId" parameterType="Long">
+		delete from sys_ranks_dept where ranks_id = #{ranksId}
+	</delete>
+	
+	<select id="countRanksDeptByDeptId" resultType="Integer">
+	    select count(1) from sys_ranks_dept where dept_id = #{deptId}
+	</select>
+	
+	<delete id="deleteRanksDept" parameterType="Long">
+ 		delete from sys_ranks_dept where ranks_id in
+ 		<foreach collection="array" item="ranksId" open="(" separator="," close=")">
+ 			#{ranksId}
+        </foreach> 
+ 	</delete>
+
+	<insert id="batchRanksDept">
+		insert into sys_ranks_dept(ranks_id, dept_id) values
+		<foreach item="item" index="index" collection="list" separator=",">
+			(#{item.ranksId},#{item.deptId})
+		</foreach>
+	</insert>
+
+	<delete id="deleteRanksDeptInfo" parameterType="SysRanksDept">
+		delete from sys_ranks_dept where ranks_id=#{ranksId} and dept_id=#{deptId}
+	</delete>
+
+	<delete id="deleteRanksDeptInfos">
+	    delete from sys_ranks_dept where dept_id=#{deptId} and ranks_id in
+ 	    <foreach collection="ranksIds" item="ranksId" open="(" separator="," close=")">
+ 	        #{ranksId}
+            </foreach> 
+	</delete>
+
+	<insert id="insertRanksDept" parameterType="SysRanksDept">
+		insert into sys_ranks_dept(
+		ranks_id,
+		dept_id
+		)values (
+		#{ranksId},
+		#{deptId}
+		)
+	</insert>
+</mapper> 

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ding.DingFileBaseMapper">
+
+    <resultMap type="HkFileBase" id="HkFileBaseResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="originalName"    column="original_name"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="realPath"    column="real_path"    />
+        <result property="url"    column="url"    />
+        <result property="size"    column="size"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="shareFlag"    column="share_flag"    />
+        <result property="md5"    column="md5"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectHkFileBaseVo">
+        select id, user_id, original_name, file_name, real_path, url, size, file_type, del_flag, share_flag, md5, create_time, update_time, create_by, update_by from hk_file_base
+    </sql>
+
+    <select id="selectHkFileBaseList" parameterType="HkFileBase" resultMap="HkFileBaseResult">
+        <include refid="selectHkFileBaseVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="originalName != null  and originalName != ''"> and original_name like concat('%', #{originalName}, '%')</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="realPath != null  and realPath != ''"> and real_path = #{realPath}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="size != null "> and size = #{size}</if>
+            <if test="fileType != null  and fileType != ''"> and file_type = #{fileType}</if>
+            <if test="shareFlag != null "> and share_flag = #{shareFlag}</if>
+            <if test="md5 != null  and md5 != ''"> and md5 = #{md5}</if>
+        </where>
+    </select>
+
+    <select id="selectHkFileBaseById" parameterType="Long" resultMap="HkFileBaseResult">
+        <include refid="selectHkFileBaseVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getMyFileListByUserId" resultMap="HkFileBaseResult">
+        <include refid="selectHkFileBaseVo"/>
+        where user_id = #{userId} and del_flag = 0 order by id desc
+    </select>
+
+    <select id="getMyFileHomeByUserId" resultMap="HkFileBaseResult">
+        <include refid="selectHkFileBaseVo"/>
+        where user_id = #{userId} and del_flag = 0 order by id desc limit 4
+    </select>
+
+
+    <select id="getShareFileList" resultType="com.ruoyi.system.domain.HkFileBase">
+        <include refid="selectHkFileBaseVo"/>
+        where share_flag = 1 and del_flag = 0 and user_id != #{userId}
+    </select>
+
+
+    <insert id="insertHkFileBase" parameterType="HkFileBase" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_file_base
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="originalName != null  and originalName != ''">original_name,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="realPath != null  and realPath != ''">real_path,</if>
+            <if test="url != null  and url != ''">url,</if>
+            <if test="size != null ">size,</if>
+            <if test="fileType != null  and fileType != ''">file_type,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="shareFlag != null ">share_flag,</if>
+            <if test="md5 != null  and md5 != ''">md5,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="originalName != null  and originalName != ''">#{originalName},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="realPath != null  and realPath != ''">#{realPath},</if>
+            <if test="url != null  and url != ''">#{url},</if>
+            <if test="size != null ">#{size},</if>
+            <if test="fileType != null  and fileType != ''">#{fileType},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="shareFlag != null ">#{shareFlag},</if>
+            <if test="md5 != null  and md5 != ''">#{md5},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHkFileBase" parameterType="HkFileBase">
+        update hk_file_base
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="originalName != null  and originalName != ''">original_name = #{originalName},</if>
+            <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
+            <if test="realPath != null  and realPath != ''">real_path = #{realPath},</if>
+            <if test="url != null  and url != ''">url = #{url},</if>
+            <if test="size != null ">size = #{size},</if>
+            <if test="fileType != null  and fileType != ''">file_type = #{fileType},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+            <if test="shareFlag != null ">share_flag = #{shareFlag},</if>
+            <if test="md5 != null  and md5 != ''">md5 = #{md5},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkFileBaseById" parameterType="Long">
+        delete from hk_file_base where id = #{id}
+    </delete>
+
+    <delete id="deleteHkFileBaseByIds" parameterType="String">
+        delete from hk_file_base where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

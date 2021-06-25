@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlCheckItemsMapper">
+    
+    <resultMap type="XlCheckItems" id="XlCheckItemsResult">
+        <result property="checkId"    column="check_id"    />
+        <result property="eclassCode"    column="eclass_code"    />
+        <result property="checkName"    column="check_name"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="status"    column="status"    />
+        <association property="hkEClassification"    column="eclassCode" javaType="HkEClassification" resultMap="hkEClassificationsResult" />
+    </resultMap>
+
+    <resultMap id="hkEClassificationsResult" type="HkEClassification">
+        <id     property="ec_id"       column="ec_id"        />
+        <result property="ec_type"     column="ec_type"      />
+        <result property="ec_category"     column="ec_category"      />
+        <result property="ec_name_type"     column="ec_name_type"      />
+        <result property="ec_name"     column="ec_name"      />
+        <result property="ec_ids"     column="ec_ids"      />
+    </resultMap>
+
+    <sql id="selectXlCheckItemsVo">
+        select ch.check_id, ch.check_name, ch.eclass_code, ch.create_date, ch.create_user, ch.update_date, ch.update_user, ch.status, ec.ec_name as ec_name from xl_check_items ch
+        left join hk_eclassification ec on ch.eclass_code = ec.ec_name_type
+    </sql>
+
+    <select id="selectXlCheckItemsList" parameterType="XlCheckItems" resultMap="XlCheckItemsResult">
+        <include refid="selectXlCheckItemsVo"/>
+        <where>  
+            <if test="checkName != null  and checkName != ''">and ch.check_name like concat('%', #{checkName}, '%')</if>
+            <if test="params.beginCreateDate != null and params.beginCreateDate !='' ">
+                and date_format(ch.create_date,'%y%m%d') &gt;= date_format(#{params.beginCreateDate},'%y%m%d')
+            </if>
+            <if test="createUser != null  and createUser != ''"> and ch.create_user like concat('%', #{createUser}, '%')</if>
+            <if test="params.endCreateDate != null and params.endCreateDate !='' ">
+                and ch.create_date &lt;= #{params.endCreateDate}
+            </if>
+            <if test="updateUser != null  and updateUser != ''"> and ch.update_user like concat('%', #{updateUser}, '%')</if>
+            <if test="status != null  and status != ''"> and ch.status= #{status} </if>
+        </where>
+    </select>
+    
+    <select id="selectXlCheckItemsById" parameterType="Long" resultMap="XlCheckItemsResult">
+        <include refid="selectXlCheckItemsVo"/>
+        where ch.check_id = #{checkId}
+    </select>
+        
+    <insert id="insertXlCheckItems" parameterType="XlCheckItems" useGeneratedKeys="true" keyProperty="checkId">
+        insert into xl_check_items
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="checkName != null  and checkName != ''">check_name,</if>
+            <if test="eclassCode != null and eclassCode !=''">eclass_code,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="updateDate != null ">update_date,</if>
+            <if test="updateUser != null  and updateUser != ''">update_user,</if>
+            <if test="status != null  and status != ''">status,</if>
+            create_date
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="checkName != null  and checkName != ''">#{checkName},</if>
+            <if test="eclassCode != null ">#{eclassCode},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">#{updateUser},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateXlCheckItems" parameterType="XlCheckItems">
+        update xl_check_items
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="checkName != null  and checkName != ''">check_name = #{checkName},</if>
+            <if test="eclassCode != null and eclassCode !=''">eclass_code = #{eclassCode},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+            update_date = sysdate()
+        </trim>
+        where check_id = #{checkId}
+    </update>
+
+    <delete id="deleteXlCheckItemsById" parameterType="Long">
+        delete from xl_check_items where check_id = #{checkId}
+    </delete>
+
+    <delete id="deleteXlCheckItemsByIds" parameterType="String">
+        delete from xl_check_items where check_id in 
+        <foreach item="checkId" collection="array" open="(" separator="," close=")">
+            #{checkId}
+        </foreach>
+    </delete>
+
+    <select id="selectXlCheckedList" parameterType="long" resultMap="XlCheckItemsResult">
+        SELECT * FROM xl_check_items  WHERE check_id IN (SELECT check_id  FROM  xl_team_check
+        WHERE team_id = #{teamId})
+    </select>
+    
+</mapper>

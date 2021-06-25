@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta Staing="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数智闲林·统一门户管理平台</title>
+
+  <link th:href="@{/css/index.css}" rel="stylesheet"/>
+  <link th:href = "@{/css/public.css}" rel = "stylesheet" />
+  <link th:href="@{/css/step.css}" rel="stylesheet"/>
+  <link th:href="@{/css/font/element-icons.woff}"
+        rel="stylesheet"/>
+</head>
+<style>
+  .timeline{
+    position: relative;
+  }
+  .timeline-con{
+    position: absolute;
+    left: -50px;
+    top: 40px;
+    /*z-index: 1;*/
+  }
+  .timeline-con .el-timeline-item__node--normal{
+    width: 16px;
+    height: 16px;
+  }
+  .timeline-con .el-timeline-item__content{
+    font-size:16px
+  }
+</style>
+<body style="background-color: #fff">
+<div id="app">
+
+  <el-row>
+    <!--行动链基本信息-->
+    <el-col :span="24">
+      <el-form class="step-form timeline" ref="form" :model="form" label-width="150px" v-show="showTable">
+        <template>
+          <el-timeline :reverse="reverse" class="timeline-con">
+            <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </template>
+        <el-form-item label="行动链名称：" >
+          <el-input v-model="form.actionName" name="actionName" id="actionName" placeholder="例如:垃圾堆积/机动车违停/游商摊贩等"></el-input>
+        </el-form-item>
+
+        <el-form-item label="事件类型：" >
+          <el-select v-model="form.ecNameType" placeholder="请选择事件类型" id="ecNameType">
+            <el-option th:each="eClass: ${eClassifications}" th:value="${eClass.ec_name_type}" th:text="${eClass.ec_name}" th:label="${eClass.ec_name}"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="设置超时时间：" >
+          <el-col :span="11">
+            <el-select v-model="form.overTimeType" placeholder="请选择分钟/小时" id="expectedEvents">
+              <el-option th:value="按分钟"></el-option>
+              <el-option th:value="按小时"></el-option>
+            </el-select>
+          </el-col>
+          <el-col class="line" :span="2">&nbsp;</el-col>
+          <el-col :span="11">
+            <el-input v-model="form.overTimeNum"  name="expectedEvents1" id="expectedEvents1" placeholder="请输入指定的时间"></el-input>
+          </el-col>
+        </el-form-item>
+
+        <el-form-item label="网格组织：" >
+          <a href="javascript:void(0)" @click="selectDeptTree()">
+            <el-input v-model="form.actionRegion" name="deptName" id="deptName" placeholder="请选择网格组织" required readonly="readonly"/>
+            <el-input v-model="form.actionRegionCode" name="deptId" class="hidden"/>
+          </a>
+          <span class="input-group-addon"><i class="fa fa-search"></i></span>
+        </el-form-item>
+        <el-form-item label="描述：">
+          <el-input v-model="form.actionRemark" name="actionRemark" id="actionRemark"></el-input>
+        </el-form-item>
+        <el-form-item style="position: fixed; bottom: 20px; right:180px">
+          <el-button class = "btn-lager btn-primary" type="primary" style="margin-top: 12px" @click="nextTable()">下一步</el-button>
+        </el-form-item>
+      </el-form>
+    </el-col>
+
+    <el-col :span="24">
+      <!--添加处理人-->
+      <el-form class="step-form timeline" ref="form"  :model="form" label-width="150px" v-show="showFormOne">
+        <template>
+          <el-timeline :reverse="reverse" class="timeline-con">
+            <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </template>
+        <el-form-item label="标准动作：" >
+          <el-select v-model="form.standard1" placeholder="请选择标准动作">
+            <el-option th:each="config: ${aConfigurations}" th:value="${config.uuid}" th:label="${config.actionName}"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="网格组织：" >
+          <el-input v-model="form.actionRegion" name="deptName" placeholder="请选择网格组织" required readonly="readonly"/>
+        </el-form-item>
+
+        <el-form-item label="指派职能/人：" >
+          <el-select v-model="form.post1" placeholder="请选择职能">
+            <el-option v-for="item in postArray" :value="item.postId" :label="item.postName" :key="item.postId">
+              <span style="float: left">{{ item.postName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.regionPostUserCount }}(人)</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="position: fixed; bottom: 20px; right:180px">
+          <el-button type="primary" style="margin-top: 12px" @click="upperOne()">上一步</el-button>
+          <el-button type="primary" style="margin-top: 12px" @click="nextOne()">下一步</el-button>
+          <el-button type="success" style="margin-top: 12px" @click="endOne()">结束</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-col>
+
+    <el-col :span="24">
+      <!--表单2-->
+      <el-form class="step-form" ref="form"  :model="form" label-width="150px" v-show="showFormTwo">
+        <template>
+          <el-timeline :reverse="reverse" class="timeline-con">
+            <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </template>
+        <el-form-item label="标准动作：" >
+          <el-select v-model="form.standard2" placeholder="请选择标准动作" id="actionStandard">
+            <el-option th:each="config: ${aConfigurations}" th:value="${config.uuid}" th:label="${config.actionName}"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="网格组织：" >
+          <a href="javascript:void(0)" @click="selectDeptTree()">
+            <el-input v-model="form.actionRegion" name="deptName" id="deptName" placeholder="请选择网格组织" required readonly="readonly"/>
+            <el-input v-model="form.actionRegionCode" name="deptId" class="hidden"/>
+          </a>
+          <span class="input-group-addon"><i class="fa fa-search"></i></span>
+        </el-form-item>
+        <el-form-item label="指派职能/人：" >
+          <el-select v-model="form.post2" placeholder="请选择职能">
+            <el-option v-for="item in postArray" :value="item.postId" :label="item.postName" :key="item.postId">
+              <span style="float: left">{{ item.postName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.regionPostUserCount }}(人)</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="position: fixed; bottom: 20px; right:180px">
+          <el-button type="primary" style="margin-top: 12px" @click="upperTwo()">上一步</el-button>
+          <el-button type="primary" style="margin-top: 12px" @click="nextTwo()">下一步</el-button>
+          <el-button type="success" style="margin-top: 12px" @click="endTwo()">结束</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-col>
+
+    <el-col :span="24">
+      <!--表单3-->
+      <el-form class="step-form" ref="form"  :model="form" label-width="150px" v-show="showFormThree">
+        <template>
+          <el-timeline :reverse="reverse" class="timeline-con">
+            <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </template>
+        <el-form-item label="标准动作：" >
+          <el-select v-model="form.standard3" placeholder="请选择标准动作">
+            <el-option th:each="config: ${aConfigurations}" th:value="${config.uuid}" th:label="${config.actionName}"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="网格组织：" >
+          <a href="javascript:void(0)" @click="selectDeptTree()">
+            <el-input v-model="form.actionRegion" name="deptName" id="deptName" placeholder="请选择网格组织" required readonly="readonly"/>
+            <el-input v-model="form.actionRegionCode" name="deptId" class="hidden"/>
+          </a>
+          <span class="input-group-addon"><i class="fa fa-search"></i></span>
+        </el-form-item>
+
+        <el-form-item label="指派职能/人：" >
+          <el-select v-model="form.post3" placeholder="请选择职能">
+            <el-option v-for="item in postArray" :value="item.postId" :label="item.postName" :key="item.postId">
+              <span style="float: left">{{ item.postName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.regionPostUserCount }}(人)</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="position: fixed; bottom: 20px; right:180px">
+          <el-button type="primary" style="margin-top: 12px" @click="upperThree()">上一步</el-button>
+          <el-button type="primary" style="margin-top: 12px" @click="nextThree()">下一步</el-button>
+          <el-button type="success" style="margin-top: 12px" @click="endThree()">结束</el-button>
+        </el-form-item>
+      </el-form>
+    </el-col>
+
+    <el-col :span="24">
+      <!--表单4-->
+      <el-form class="step-form" ref="form"  :model="form" label-width="150px" v-show="showFormFour">
+        <template>
+          <el-timeline :reverse="reverse" class="timeline-con">
+            <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </template>
+        <el-form-item label="标准动作：" >
+          <el-select v-model="form.standard4" placeholder="请选择标准动作" id="actionStandard">
+            <el-option th:each="config: ${aConfigurations}" th:value="${config.uuid}" th:label="${config.actionName}"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="网格组织：" >
+          <a href="javascript:void(0)" @click="selectDeptTree()">
+            <el-input v-model="form.actionRegion" name="deptName" id="deptName" placeholder="请选择网格组织" required readonly="readonly"/>
+            <el-input v-model="form.actionRegionCode" name="deptId" class="hidden"/>
+          </a>
+          <span class="input-group-addon"><i class="fa fa-search"></i></span>
+        </el-form-item>
+
+        <el-form-item label="指派职能/人：" >
+          <el-select v-model="form.post4" placeholder="请选择职能">
+            <el-option v-for="item in postArray" :value="item.postId" :label="item.postName" :key="item.postId">
+              <span style="float: left">{{ item.postName }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.regionPostUserCount }}(人)</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="position: fixed; bottom: 20px; right:180px">
+          <el-button type="primary" style="margin-top: 12px" @click="upperFour()">上一步</el-button>
+          <el-button type="success" style="margin-top: 12px" @click="endFour()">结束</el-button>
+        </el-form-item>
+      </el-form>
+    </el-col>
+  </el-row>
+</div>
+</body>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+<script th:src="@{/layui/layui.all.js}"></script>
+<script th:inline="javascript">
+</script>
+<script>
+  new Vue({
+    el: "#app",
+    data: function () {
+      return {
+        list:[],
+        postArray:[],//职能数组
+        reverse: false,//时间线默认正序
+        activities: [{
+          content: '基本信息',
+        }],
+        // 添加字段的title位置
+        tabPosition:'left',
+        // 表单数据
+        form: {
+          actionName: "",
+          ecNameType: "",
+          overTimeType: "",
+          overTimeNum: "",
+          actionRegion:'',
+          actionRegionCode:'',//网格区域
+          actionRemark:"",
+          standard1:"",
+          standard2:"",
+          standard3:"",
+          standard4:"",
+          post1:"",
+          post2:"",
+          post3:"",
+          post4:"",
+        },
+        clrArray:[],//处理人集合
+        showFormOne:false,
+        showFormTwo: false,
+        showFormThree: false,
+        showFormFour: false,
+        showTable: true,
+        formIndex:0//表单下标
+      };
+    },
+    methods: {
+      /*
+      * 行动链首页
+      * */
+      nextTable:function(){
+        var reg = /^\d+$|^\d+[.]?\d+$/;
+        var actionName = this.form.actionName;
+        if (actionName == '') {
+          this.$message.error('请输入行动链(事件)名称');
+          return;
+        }
+        var overTimeType = this.form.overTimeType;
+        if (overTimeType == '') {
+          this.$message.error('请选择预期处理时长');
+          return;
+        }
+        var ecNameType=this.form.ecNameType;
+        if(ecNameType == ""){
+          this.$message.error('请选择事件类型');
+          return;
+        }
+        let expectedEvents1 = this.form.overTimeNum;
+        if(expectedEvents1 == ""){
+          this.$message.error('请按照选择,填写分钟/小时');
+          return;
+        }else if(!reg.test(expectedEvents1)){
+          this.$message.error('填写处置时间，请填写数字');
+          return;
+        }
+        var actionRegionCode=this.form.actionRegionCode;
+        if (actionRegionCode == '') {
+          this.$message.error('请选择网格');
+          return;
+        }
+
+        var _that = this;
+        $.ajax({
+          url:"/system/workFlow/ajaxCheckActionName",
+          type : 'post',
+          data:{
+            "actionName":actionName,
+            "actionRegionCode":actionRegionCode,
+            "ecNameType":ecNameType
+          },
+          success:function (data) {
+            if(data.code == '301'){
+              $.modal.alertError(data.msg)
+            }else{
+              _that.showFormOne = true;
+              _that.showTable = false;
+              _that.formIndex++;
+              _that.activities.push({
+                content: '添加处理人',
+              });
+            }
+          }
+        })
+      },
+      /*用户管理-新增-选择部门树*/
+      selectDeptTree() {
+        var url = "/system/region/selectRegionTree/100";
+        var options = {
+          title: '选择区域',
+          width: "380",
+          url: url,
+          callBack: this.doSubmit
+        };
+        $.modal.openOptions(options);
+      },
+
+      doSubmit(index, layero){
+        var body = layer.getChildFrame('body', index);
+        //判断网格下是否有网格员
+        this.changefour(body.find('#treeId').val(),body.find('#treeName').val());
+        layer.close(index);
+      },
+
+      changefour(regionId,regionName){
+        var _that = this;
+        $.ajax({
+          url:"/system/workFlow/chooseEventOwer",
+          type:"GET",
+          data:{
+            "regionId":regionId
+          },
+          success:function (data) {
+            var userFour= data.data;
+            if(!userFour || userFour.length == 0){
+              _that.$message.error('对不起,该网格区域下没有网格员,请先配置网格员');
+            }else{
+              _that.form.actionRegionCode = regionId;
+              _that.form.actionRegion = regionName;
+              _that.postArray=[];
+              for(var i=0;i<userFour.length;i++){
+                var obj = {
+                  "postId" : userFour[i].postId,
+                  "postName" : userFour[i].postName,
+                  "regionPostUserCount" : userFour[i].regionPostUserCount
+                };
+                _that.postArray.push(obj);
+              }
+            }
+          }
+        })
+      },
+
+      /*表单1 下一步*/
+      nextOne: function () {
+        var actionStandardId = this.form.standard1;
+        if(actionStandardId ==""){
+          this.$message.error('请选择标准动作');
+          return;
+        }
+        var postOne = this.form.post1;
+        if (postOne == '') {
+          this.$message.error('请选择指派职能');
+          return;
+        }
+        var obj = {
+          "actionStandardId":actionStandardId,
+          "postId":postOne,
+          "executionIndex":1
+        };
+        this.clrArray.push(obj);
+        this.showFormOne = false;//添加处理人1
+        this.showFormTwo = true;//添加处理人2
+        this.activities.push({
+          content: '添加处理人',
+        });
+        this.formIndex++;
+      },
+
+      //表单2 下一步
+      nextTwo:function () {
+        var standard2 = this.form.standard2;
+        var post2 = this.form.post2;
+
+        if(standard2 ==""){
+          this.$message.error('请选择标准动作');
+          return;
+        }
+        if (post2 == "") {
+          this.$message.error('请选择指派职能');
+          return;
+        }
+        var obj = {
+          "actionStandardId":standard2,
+          "postId":post2,
+          "executionIndex":2
+        };
+        this.clrArray.push(obj)
+        this.showFormTwo = false;//添加处理人2
+        this.showFormThree = true;//添加处理人3
+        this.activities.push({
+          content: '添加处理人',
+        });
+        this.formIndex++;
+      },
+      //表单3 下一步
+      nextThree:function () {
+        var standard3 = this.form.standard3;
+        var post3 = this.form.post3;
+
+        if(standard3 ==""){
+          this.$message.error('请选择标准动作');
+          return;
+        }
+        if (post3 == "") {
+          this.$message.error('请选择指派职能');
+          return;
+        }
+        var obj = {
+          "actionStandardId":standard3,
+          "postId":post3,
+          "executionIndex":3
+        };
+        this.clrArray.push(obj)
+        this.showFormThree = false;//添加处理人3
+        this.showFormFour = true;//添加处理人4
+        this.activities.push({
+          content: '添加处理人',
+        });
+        this.formIndex++;
+      },
+      //表单1结束
+      endOne:function(){
+        this.ajaxAddActioChain(1);
+      },
+
+      //表单2结束
+      endTwo:function(){
+        this.ajaxAddActioChain(2);
+      },
+      //表单3结束
+      endThree:function(){
+        this.ajaxAddActioChain(3);
+      },
+      //表单4结束
+      endFour:function(){
+        this.ajaxAddActioChain(4);
+      },
+
+      ajaxAddActioChain:function(index){ //ajax统一请求
+        var obj1 = "standard"+index
+        var standard = this.form[obj1];
+        var obj2 = "post"+index
+        var post = this.form[obj2];
+
+        if(standard ==""){
+          this.$message.error('请选择标准动作');
+          return;
+        }
+        if (post == "") {
+          this.$message.error('请选择指派职能');
+          return;
+        }
+        var obj = {
+          "actionStandardId":standard,
+          "postId":post,
+          "executionIndex":index
+        };
+        this.clrArray.push(obj);
+        this.form.clrArray = this.clrArray;
+        console.log("处理人"+index+"："+JSON.stringify(this.form));
+        var _that = this;
+        $.ajax({
+          url:"/system/workFlow/addHkActionChainAndDefini",
+          type : 'post',
+          data:JSON.stringify(this.form),
+          contentType:"application/json",
+          success:function (data) {
+            if (data.code == 0) {
+              _that.clrArray.length = 0;//清空
+              $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+            } else {
+              $.modal.alertError(data.msg);
+            }
+          }
+        });
+      },
+
+      //返回上一步
+      upperOne(){
+        this.showFormOne=false;
+        this.showTable = true;
+        this.activities.splice(this.formIndex,1);
+        this.formIndex--;
+      },
+      //返回上一步
+      upperTwo(){
+        this.showFormTwo=false;
+        this.showFormOne = true;
+        this.deleteClrArray(1,1);//删除第一层级处理
+        this.activities.splice(this.formIndex,1);
+        this.formIndex--;
+      },
+      //返回上一步
+      upperThree(){
+        this.showFormThree=false;
+        this.showFormTwo=true;
+        this.activities.splice(this.formIndex,1);
+        this.deleteClrArray(2,1);//删除第二层级处理
+        this.formIndex--;
+      },
+      //返回上一步
+      upperFour(){
+        this.showFormFour=false;
+        this.showFormThree=true;
+        this.activities.splice(this.formIndex,1);
+        this.deleteClrArray(3,1);//删除第三层级处理
+        this.formIndex--;
+      },
+      deleteClrArray:function (index,size) { //删除指定的处理人明细
+        var arr = this.clrArray;
+        var deleteIndex; //指定删除索引
+        for (var i = 0; i <arr.length ; i++) {
+          if (arr[i].executionIndex == index){
+            deleteIndex = i;
+            break;
+          }
+        }
+        this.clrArray.splice(deleteIndex,size);
+      }
+    }
+  });
+
+
+</script>
+</html>

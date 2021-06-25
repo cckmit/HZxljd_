@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改人员信息')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-personnel-edit" th:object="${xlPersonnel}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">姓名：</label>
+                <div class="col-sm-8">
+                    <input name="name" th:field="*{name}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">性别：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_user_sex')}">
+                        <input type="radio" th:id="${'gender_' + dict.dictCode}" name="gender" th:value="${dict.dictValue}" th:field="*{gender}" required>
+                        <label th:for="${'gender_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">民族：</label>
+                <div class="col-sm-8">
+                    <select name="nation" th:field="*{nation}" class="form-control m-b" th:with="type=${@dict.getType('nation')}">
+                        <option value="">--请选择--</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div id="element" class="form-group">
+                <label class="col-sm-3 control-label is-required">籍贯：</label>
+                <div class="col-sm-2">
+                    <select name="province"  class="province form-control m-b">
+                        <option th:value="*{province}">[[*{province}]]</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select name="city"  class="city form-control m-b">
+                        <option th:value="*{city}">[[*{city}]]</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">户籍地住址：</label>
+                <div class="col-sm-8">
+                    <input name="nativeAddress" th:field="*{nativeAddress}" placeholder="请输入户籍地住址" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">出生日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="birthDate" th:value="${#dates.format(xlPersonnel.birthDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">电话：</label>
+                <div class="col-sm-8">
+                    <input name="phone" th:field="*{phone}"  placeholder="请输入电话号码" isPhone="true" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">身份证号：</label>
+                <div class="col-sm-8">
+                    <input name="idcard" th:field="*{idcard}" class="form-control" placeholder="请输入身份证号" isIdentity="true" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">学历：</label>
+                <div class="col-sm-8">
+                    <select name="education" class="form-control m-b" th:with="type=${@dict.getType('education')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{education}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">婚姻状况：</label>
+                <div class="col-sm-8">
+                    <select name="marry" class="form-control m-b" th:with="type=${@dict.getType('marry')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{marry}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">工作单位：</label>
+                <div class="col-sm-8">
+                    <input name="workUnit" th:field="*{workUnit}" placeholder="请输入工作单位" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">所属网格：</label>
+                <div class="col-sm-8">
+                    <select name="deptId" class="form-control select-list" required>
+                        <option th:each="region:${regionList}" th:value="${region.regionId}" th:text="${region.regionName}"  th:selected="*{deptId} == ${region.regionId}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">所属小区：</label>
+                <div class="col-sm-8">
+                    <select name="villageId"  class="form-control select-list" required>
+                        <option th:each="village:${villageList}" th:value="${village.id}" th:text="${village.name}"  th:selected="${xlPersonnel.villageId eq village.id}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">所属楼幢：</label>
+                <div class="col-sm-8">
+                    <input name="building" th:field="*{building}" class="form-control" placeholder="如8幢" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">所属单元：</label>
+                <div class="col-sm-8">
+                    <input name="unit" th:field="*{unit}" class="form-control" placeholder="如3单元" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">所属房屋：</label>
+                <div class="col-sm-8">
+                    <input name="room" th:field="*{room}" class="form-control" placeholder="如201室" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">房屋类型：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('room_type')}">
+                        <input type="radio" th:id="${'roomType_' + dict.dictCode}" name="roomType" th:value="${dict.dictValue}" th:field="*{roomType}" required>
+                        <label th:for="${'roomType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">居住类型：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('live_type')}">
+                        <input type="radio" th:id="${'liveType_' + dict.dictCode}" name="liveType" th:value="${dict.dictValue}" th:field="*{liveType}" required>
+                        <label th:for="${'liveType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">政治面貌：</label>
+                <div class="col-sm-8">
+                    <select name="polity" class="form-control m-b" th:with="type=${@dict.getType('polity')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{polity}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">党组织领导：</label>
+                <div class="col-sm-8">
+                    <input name="communist" th:field="*{communist}" class="form-control" placeholder="请输入党组织" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">支部名称：</label>
+                <div class="col-sm-8">
+                    <input name="branch" th:field="*{branch}" class="form-control" placeholder="请输入支部名称" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">入党时间：</label>
+                <div class="col-sm-8">
+                    <input name="joinTime" th:field="*{joinTime}" class="form-control" placeholder="请输入党时间" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">与户主关系：</label>
+                <div class="col-sm-8">
+                    <select name="householderRelation" class="form-control m-b" th:with="type=${@dict.getType('householder_relation')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{householderRelation}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">是否产权人：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('property_right')}">
+                        <input type="radio" th:id="${'propertyRight_' + dict.dictCode}" name="propertyRight" th:value="${dict.dictValue}" th:field="*{propertyRight}">
+                        <label th:for="${'propertyRight_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <!--日期-->
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <!--多级联动-->
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <script th:src="@{/ajax/libs/cxselect/my-cxselect.js}"></script>
+    <script type="text/javascript">
+        var prefix = ctx + "system/personnel";
+        $("#form-xlpersonnel-edit").validate({
+            onkeyup: false,
+            rules:{
+                idcard:{
+                    isIdentity:true,
+                    remote: {
+                        url: prefix + "/checkIdcardUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "idcard": function () {
+                                return $.common.trim($("#idcard").val());
+                            },
+                            "id": function () {
+                                return $.common.trim($("#id").val());
+                            },
+                        },
+                        dataFilter: function (data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+                },
+                phone:{
+                    isPhone:true,
+                    remote: {
+                        url: prefix + "/checkPhoneUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "phone": function () {
+                                return $.common.trim($("#phone").val());
+                            },
+                            "id": function () {
+                                return $.common.trim($("#id").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+                },
+            },
+            messages: {
+                "idcard": {
+                    remote: "身份证号已经存在"
+                },
+                "phone":{
+                    remote: "手机号码已经存在"
+                },
+            },
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-personnel-edit').serialize());
+            }
+        }
+
+        $("input[name='birthDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

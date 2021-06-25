@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8"/>
+    <meta Staing="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>数智闲林·统一门户管理平台</title>
+    <link th:href="@{/css/index.css}" rel="stylesheet"/>
+    <link th:href = "@{/css/public.css}" rel = "stylesheet" />
+    <link th:href="@{/css/step.css}" rel="stylesheet"/>
+</head>
+<body>
+<div id="app">
+    <!-- 步骤条 -->
+    <el-steps :active="active" finish-status="success" align-center>
+        <el-step title="填写基本信息"></el-step>
+        <el-step title="设置表单信息"></el-step>
+        <el-step title="完成"></el-step>
+    </el-steps>
+
+
+    <!-- 表单 -->
+    <el-form class="step-form"  :model="form" label-width="100px" v-if="showForm" >
+        <el-form-item label="行动名称">
+            <el-input name="actionName" id="actionName" v-model="form.actionName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="事件类型">
+            <el-select placeholder="请选择事件类型" id="actionType" v-model="form.actionType">
+                <el-option th:each="type: ${hkEClassificationList}" th:value="${type.ec_name}" th:text="${type.ec_name}"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="修改人">
+            <el-input name="createUser" id="updateUser" v-model="form.updateUser"  autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+            <el-input
+                    type="textarea"
+                    placeholder="200字以内"
+                    style="height: 100px" id="actionRemarks" v-model="form.actionRemarks"
+            ></el-input>
+        </el-form-item>
+        <el-form-item style="text-align: right;">
+            <el-button type="primary" style="margin-top: 12px" @click="next()" class = "btn-lager btn-primary">下一步</el-button>
+            <!-- <el-button type="primary" @click="onSubmit">立即创建</el-button> -->
+            <el-button @click="prim2()" class = "btn-lager btn-default">取消</el-button>
+        </el-form-item>
+
+        <el-input id="id" type="hidden" v-model="form.id"></el-input>
+        <el-input id="uuid" type="hidden" v-model="form.uuid"></el-input>
+    </el-form>
+    <!-- 表格 -->
+    <div class="step_tab" v-if="showTable">
+        <el-table
+                ref="multipleTable"
+                :data="tableData"
+                tooltip-effect="dark"
+                @selection-change="handleSelectionChange"
+                border
+                align='center'
+        >
+
+            <el-table-column label="字段名称" align='center' width="130"  prop="fieldName">
+                <template slot-scope="fieldName" >{{ fieldName.row.fieldName }}</template>
+            </el-table-column>
+            <el-table-column prop="fieldType" label="字段类型" width="130" align='center'>
+            </el-table-column>
+            <el-table-column prop="fieldNull" label="是否必填" width="130" align='center'>
+            </el-table-column>
+            <el-table-column label="操作" align='center' width="130">
+                <template slot-scope="scope">
+<!--                    <span @click="handleEdit(scope.$index, scope.row,logTableVisible = true)">编辑</span>-->
+                    <span @click="handleDelete(scope.$index, scope.row)">删除</span>
+                </template>
+            </el-table-column>
+
+            <el-input prop="id" type="hidden" v-model="tableData.id"></el-input>
+            <el-input prop="uuid" type="hidden" v-model="tableData.uuid"></el-input>
+        </el-table>
+        <el-button type="text" @click="dialogTableVisible = true">添加字段</el-button>
+        <div class="step_button">
+            <el-button type="primary" @click="prep" class = "btn-lager btn-primary">上一步</el-button>
+            <el-button type="primary" @click="prim3" class = "btn-lager btn-primary">完成</el-button>
+            <el-button @click="prim2" class = "btn-lager btn-default">取消</el-button>
+        </div>
+    </div>
+
+
+    <!-- 添加字段 -->
+    <div class="step-tab">
+        <el-dialog title="添加字段" :visible.sync="dialogTableVisible">
+            <span class="step-navtitle">常用字段</span>
+            <el-tabs :tab-position="tabPosition">
+                <el-form :model="Tabform" label-width="100px" ref="Tabform" :rules="Rules">
+                    <el-form-item label="字段中文名称" prop="name">
+                        <el-input v-model="Tabform.name" id="fieldName" name="fieldName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="字段英文名称" prop="EnglishName">
+                        <el-input v-model="Tabform.EnglishName" id="fieldEnglishName" name="fieldEnglishName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文本长度" prop="leng">
+                        <el-radio-group v-model="Tabform.leng" id="fieldLength" name="fieldLength">
+                            <el-radio label="不限"></el-radio>
+                            <el-radio label="限制"></el-radio>
+                        </el-radio-group>
+                        <el-input v-model="Tabform.lengName" style="width: 56%;margin-left: 22px;"
+                                  id="fieldLengName" name="fieldLengName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文本类型" prop="rejet" >
+                        <el-radio-group v-model="Tabform.rejet"  id="fieldType" name="fieldType" @change="agreeChange"  >
+                            <el-radio label="单行文本"></el-radio>
+                            <el-radio label="备注"></el-radio>
+                            <el-radio label="单选框"></el-radio>
+                            <el-radio label="图片"></el-radio>
+                            <el-input v-model="Tabform.inputValue" v-if="Tabform.rejet =='单选框' "   placeholder="说明单选内容，例如（男,女）"></el-input>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="是否必填" prop="reque">
+                        <el-radio-group v-model="Tabform.reque" id="fieldReqirue" name="fieldReqirue">
+                            <el-radio label="是"></el-radio>
+                            <el-radio label="否"></el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="排序" prop="sort">
+                        <el-input v-model="Tabform.sort" id="fieldSort" name="fieldSort"></el-input>
+                    </el-form-item>
+                </el-form>
+
+            </el-tabs>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogTableVisible = false" class = "btn-lager btn-default">取 消</el-button>
+               <el-button type="primary" @click="submitForm('Tabform')" class = "btn-lager btn-primary">确 定</el-button>
+<!--               <el-button type="primary" @click="dialogTableVisible = false;prim2();AddList()">确 定</el-button>-->
+            </span>
+        </el-dialog>
+        <el-input id="uuid" type="hidden" th:value="*{commid}" ></el-input>
+    </div>
+
+
+
+</div>
+</body>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:inline="javascript">
+    // 表格的json
+    var tableData = [[${tableData}]];
+    tableData = JSON.parse(tableData);
+    // 行动的json
+    var form = [[${form}]];
+    form     = JSON.parse(form);
+    // 字段的json
+    var UpdateTabform = [[${UpdateTabform}]];
+    UpdateTabform     = JSON.parse(UpdateTabform);
+</script>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            var validateLeng = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("请选择文本长度"));
+                }else{
+                    callback();
+                }
+
+            };
+            var validateName = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("字段名称不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            var validateReque = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("是否必填不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            var validateType = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("请选择文本类型"));
+                }else{
+                    callback();
+                }
+            };
+            var validateEnglishName = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("字段英文名称不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            var validateSort = (rule, value, callback) => {
+                if(value === ''){
+                    return callback(new Error("字段排序不能为空"));
+                }else{
+                    callback();
+                }
+            };
+            return {
+                inputValue:'',
+                // 添加字段的title位置
+                tabPosition: 'left',
+                // 控制步骤条
+                active: 0,
+                // 添加字段数据
+                Tabform:{
+                    leng:'',
+                    name:'',
+                    EnglishName:'',
+                    reque:'',
+                    rejet:'',
+                    sort:'',
+
+                },
+                UpdateTabform:UpdateTabform,
+                // 表单数据
+                form:form,
+                // 表单验证
+                Rules: {
+                    leng: [{required: true,validator: validateLeng, trigger: "blur"}],
+                    name: [{required: true,validator: validateName, trigger: "blur"}],
+                    EnglishName: [{required: true,validator: validateEnglishName, trigger: "blur"}],
+                    rejet: [{required: true,validator: validateType, trigger: "blur"}],
+                    reque: [{required: true,validator: validateReque, trigger: "blur"}],
+                    sort: [{required: true,validator: validateSort, trigger: "blur"}],
+                },
+                tableData: tableData,
+                multipleSelection: [],
+                // 添加字段页面显示
+                dialogTableVisible: false,
+                logTableVisible: false,
+                // 表单显示隐藏
+                showForm: true,
+                // 表格显示隐藏
+                showTable: false,
+            };
+        },
+
+        methods: {
+            agreeChange:function(val){
+               console.log(val,'val')
+               console.log(this.inputValue,'input的值')
+            },
+
+            // 表格添加
+            AddList() {
+                console.log(this.Tabform.name);
+                this.tableData.push({
+                    fieldName: this.Tabform.name,
+                    fieldType: this.Tabform.rejet,
+                    fieldNull: this.Tabform.reque,
+                })
+            },
+
+
+
+            // 当表格选择项发生变化时会触发该事件
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+
+            // 表格删除
+            handleDelete(index, row) {
+                console.log(index, row);
+                this.tableData.splice(index, 1);
+                var id = row.id;
+                $.ajax({
+                    type: 'POST',
+                    url: "/system/gzhi/deleteHKfield",
+                    data: {
+                        "id": id,
+                    },
+                    success: function (result) {
+                    }
+                });
+            },
+            next() {
+                var id = $("#id").val();
+                var uuid = $("#uuid").val();
+                var actionName = $("#actionName").val();
+                var actionType = $("#actionType").val();
+                var actionRemarks = $("#actionRemarks").val();
+                var updateUser = $("#updateUser").val();
+                var _that = this
+                if(actionName== ''){
+                    this.$message.error('请输入行动名称');
+                    return;
+                }
+                if(actionType== ''){
+                    this.$message.error('请输入事件类型');
+                    return;
+                }
+
+                if(actionRemarks== ''){
+                    this.$message.error('请输入行动备注');
+                    return;
+                }
+                if(updateUser== ''){
+                    this.$message.error('请输入修改人');
+                    return;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "/system/gzhi/editHKAconfiguration",
+                    data: {
+                        "id": id,
+                        "uuid": uuid,
+                        "actionName": actionName,
+                        "actionType": actionType,
+                        "actionRemarks": actionRemarks,
+                        "updateUser": updateUser,
+                    },
+                    success: function (result) {
+                        if(result.code == 301){
+                            _that.$alert('行动名称已存在', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+
+                                }
+                            });
+                        }else if(result.code == 500) {
+                            _that.$alert('事件类型已存在', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+
+                                }
+                            });
+                        }else {
+                            _that.showForm = false
+                            _that.showTable = true
+                            _that.active = 1
+                        }
+                    }
+                });
+            },
+            prep() {
+                if (this.active-- < 0) this.active = 2;
+                this.showForm = true
+                this.showTable = false
+            },
+            // 添加字段
+            prim2() {
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+            },
+
+            prim1() {
+                this.active = 3;
+            },
+            prim3() {
+                parent.location.reload()
+            },
+            // 添加字段表单验证
+            submitForm(Tabform) {
+                this.$refs[Tabform].validate((valid) => {
+                    if (valid) {
+                        this.dialogTableVisible = false;
+
+                        var id = $("#id1").val();
+                        var commonlyId = $("#uuid").val();
+                        var fieldName = this.Tabform.name;
+                        var fieldEnglishName = this.Tabform.EnglishName;
+                        var fieldLength = this.Tabform.leng;
+                        var updateUser = $("#updateUser").val();
+                        var _that = this;
+                        if (fieldLength == '不限') {
+                            var fieldLength = "255"
+                        } else {
+                            var fieldLength = this.Tabform.lengName;
+                        }
+                        var fieldType = this.Tabform.rejet;
+                        var fieldNull = this.Tabform.reque;
+                        var fieldSort = this.Tabform.sort;
+                        var fieldContent=this.Tabform.inputValue;
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "/system/gzhi/addField",
+                            data: {
+                                "commonlyId": commonlyId,
+                                "fieldName": fieldName,
+                                "fieldLength": fieldLength,
+                                "fieldType": fieldType,
+                                "fieldNull": fieldNull,
+                                "fieldEnglishName": fieldEnglishName,
+                                "fieldSort": fieldSort,
+                                "fieldContent": fieldContent
+                            },
+                            success: function (result) {
+                                if(result.code == 301){
+                                    _that.$alert('字段名称已存在', {
+                                        confirmButtonText: '确定',
+
+                                    });
+                                }else {
+                                    _that.tableData.push({
+                                        fieldName: _that.Tabform.name,
+                                        fieldType: _that.Tabform.rejet,
+                                        fieldNull: _that.Tabform.reque,
+                                    })
+                                }
+                            }
+                        });
+                        this.active = 2;
+
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+
+        },
+    });
+
+
+</script>
+</html>

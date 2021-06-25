@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlAppealRecordMapper">
+
+    <resultMap type="XlAppealRecord" id="XlAppealRecordResult">
+        <result property="id"    column="id"    />
+        <result property="eventType"    column="event_type"    />
+        <result property="eventContent"    column="event_content"    />
+        <result property="appealPerson"    column="appeal_person"    />
+        <result property="appealTime"    column="appeal_time"    />
+        <result property="appealContent"    column="appeal_content"    />
+        <result property="appealPersonPhone"    column="appeal_person_phone"    />
+        <result property="appealImage"    column="appeal_image"    />
+        <result property="quartersName"    column="quarters_name"    />
+        <result property="appealProperty"    column="appeal_property"    />
+        <result property="appealPropertyTime"    column="appeal_property_time"    />
+        <result property="appealPropertyContent"    column="appeal_property_content"    />
+        <result property="appealPropertyImage"    column="appeal_property_image"    />
+        <result property="appealStage"    column="appeal_stage"    />
+        <result property="appealResult"    column="appeal_result"    />
+        <result property="appealResultTime"    column="appeal_result_time"    />
+    </resultMap>
+
+    <sql id="selectXlAppealRecordVo">
+        select id, event_type, event_content, appeal_person, appeal_time, appeal_content, appeal_person_phone, appeal_image, quarters_name, appeal_property, appeal_property_time, appeal_property_content, appeal_property_image, appeal_stage, appeal_result, appeal_result_time from xl_appeal_record
+    </sql>
+
+    <select id="selectXlAppealRecordList" parameterType="XlAppealRecord" resultMap="XlAppealRecordResult">
+        <include refid="selectXlAppealRecordVo"/>
+        <where>
+            <if test="eventType != null  and eventType != ''"> and event_type = #{eventType}</if>
+            <if test="eventContent != null  and eventContent != ''"> and event_content = #{eventContent}</if>
+            <if test="appealPerson != null  and appealPerson != ''"> and appeal_person like concat('%', #{appealPerson}, '%')</if>
+            <if test="appealTime != null "> and appeal_time = #{appealTime}</if>
+            <if test="appealContent != null  and appealContent != ''"> and appeal_content = #{appealContent}</if>
+            <if test="appealPersonPhone != null  and appealPersonPhone != ''"> and appeal_person_phone = #{appealPersonPhone}</if>
+            <if test="appealImage != null  and appealImage != ''"> and appeal_image = #{appealImage}</if>
+            <if test="quartersName != null  and quartersName != ''"> and quarters_name like concat('%', #{quartersName}, '%')</if>
+            <if test="appealProperty != null  and appealProperty != ''"> and appeal_property = #{appealProperty}</if>
+            <if test="appealPropertyTime != null "> and appeal_property_time = #{appealPropertyTime}</if>
+            <if test="appealPropertyContent != null  and appealPropertyContent != ''"> and appeal_property_content = #{appealPropertyContent}</if>
+            <if test="appealPropertyImage != null  and appealPropertyImage != ''"> and appeal_property_image = #{appealPropertyImage}</if>
+            <if test="appealStage != null  and appealStage != ''"> and appeal_stage = #{appealStage}</if>
+            <if test="appealResult != null  and appealResult != ''"> and appeal_result = #{appealResult}</if>
+            <if test="appealResultTime != null "> and appeal_result_time = #{appealResultTime}</if>
+        </where>
+    </select>
+
+    <select id="selectXlAppealRecordById" parameterType="Long" resultMap="XlAppealRecordResult">
+        <include refid="selectXlAppealRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlAppealRecord" parameterType="XlAppealRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_appeal_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventType != null  and eventType != ''">event_type,</if>
+            <if test="eventContent != null  and eventContent != ''">event_content,</if>
+            <if test="appealPerson != null  and appealPerson != ''">appeal_person,</if>
+            <if test="appealTime != null ">appeal_time,</if>
+            <if test="appealContent != null  and appealContent != ''">appeal_content,</if>
+            <if test="appealPersonPhone != null  and appealPersonPhone != ''">appeal_person_phone,</if>
+            <if test="appealImage != null  and appealImage != ''">appeal_image,</if>
+            <if test="quartersName != null  and quartersName != ''">quarters_name,</if>
+            <if test="appealProperty != null  and appealProperty != ''">appeal_property,</if>
+            <if test="appealPropertyTime != null ">appeal_property_time,</if>
+            <if test="appealPropertyContent != null  and appealPropertyContent != ''">appeal_property_content,</if>
+            <if test="appealPropertyImage != null  and appealPropertyImage != ''">appeal_property_image,</if>
+            <if test="appealStage != null  and appealStage != ''">appeal_stage,</if>
+            <if test="appealResult != null  and appealResult != ''">appeal_result,</if>
+            <if test="appealResultTime != null ">appeal_result_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventType != null  and eventType != ''">#{eventType},</if>
+            <if test="eventContent != null  and eventContent != ''">#{eventContent},</if>
+            <if test="appealPerson != null  and appealPerson != ''">#{appealPerson},</if>
+            <if test="appealTime != null ">#{appealTime},</if>
+            <if test="appealContent != null  and appealContent != ''">#{appealContent},</if>
+            <if test="appealPersonPhone != null  and appealPersonPhone != ''">#{appealPersonPhone},</if>
+            <if test="appealImage != null  and appealImage != ''">#{appealImage},</if>
+            <if test="quartersName != null  and quartersName != ''">#{quartersName},</if>
+            <if test="appealProperty != null  and appealProperty != ''">#{appealProperty},</if>
+            <if test="appealPropertyTime != null ">#{appealPropertyTime},</if>
+            <if test="appealPropertyContent != null  and appealPropertyContent != ''">#{appealPropertyContent},</if>
+            <if test="appealPropertyImage != null  and appealPropertyImage != ''">#{appealPropertyImage},</if>
+            <if test="appealStage != null  and appealStage != ''">#{appealStage},</if>
+            <if test="appealResult != null  and appealResult != ''">#{appealResult},</if>
+            <if test="appealResultTime != null ">#{appealResultTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlAppealRecord" parameterType="XlAppealRecord">
+        update xl_appeal_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventType != null  and eventType != ''">event_type = #{eventType},</if>
+            <if test="eventContent != null  and eventContent != ''">event_content = #{eventContent},</if>
+            <if test="appealPerson != null  and appealPerson != ''">appeal_person = #{appealPerson},</if>
+            <if test="appealTime != null ">appeal_time = #{appealTime},</if>
+            <if test="appealContent != null  and appealContent != ''">appeal_content = #{appealContent},</if>
+            <if test="appealPersonPhone != null  and appealPersonPhone != ''">appeal_person_phone = #{appealPersonPhone},</if>
+            <if test="appealImage != null  and appealImage != ''">appeal_image = #{appealImage},</if>
+            <if test="quartersName != null  and quartersName != ''">quarters_name = #{quartersName},</if>
+            <if test="appealProperty != null  and appealProperty != ''">appeal_property = #{appealProperty},</if>
+            <if test="appealPropertyTime != null ">appeal_property_time = #{appealPropertyTime},</if>
+            <if test="appealPropertyContent != null  and appealPropertyContent != ''">appeal_property_content = #{appealPropertyContent},</if>
+            <if test="appealPropertyImage != null  and appealPropertyImage != ''">appeal_property_image = #{appealPropertyImage},</if>
+            <if test="appealStage != null  and appealStage != ''">appeal_stage = #{appealStage},</if>
+            <if test="appealResult != null  and appealResult != ''">appeal_result = #{appealResult},</if>
+            <if test="appealResultTime != null ">appeal_result_time = #{appealResultTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlAppealRecordById" parameterType="Long">
+        delete from xl_appeal_record where id = #{id}
+    </delete>
+
+    <delete id="deleteXlAppealRecordByIds" parameterType="String">
+        delete from xl_appeal_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

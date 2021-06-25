@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>数智闲林·统一门户管理平台</title>
+      <link th:href = "@{/layui/css/layui.css}" rel = "stylesheet" />
+      <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+      <link th:href="@{/icon/iconfont.css}" rel="stylesheet"/>
+      <link th:href="@{/css/public.css}" rel="stylesheet"/>
+      <link th:href="@{/css/work.css}" rel="stylesheet"/>
+      <style>
+
+      </style>
+  </head>
+  <body>
+<div class="mediaCont">
+    <div th:insert = "common/header :: header"></div>
+    <div th:include = "common/sidebar::sidebar(activeUri='work')" class = "nav_sider"></div>
+</div>
+<div class = "mediaCont mediaCenter">
+    <div class = "container-fluid  nav-stacked" style="padding-right: 0;">
+
+        <div class = "main row tab-conten">
+            <!-- 工作台（3） -->
+            <div role = "tabpanel" class = "tab-pane fade in active workbg">
+                <div class = "row">
+                    <div class = "col-sm-6 padR padL">
+                        <div class = "work-conbg">
+                            <div class = "info-title">
+                                <span>队伍建设</span>
+                                <a href="#" onclick="turnToRanks()"><i class = "iconfont">&#xe670;</i></a>
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work1.png" th:src = "@{/img/work1.png}">
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>党建组织</span>
+                                        <p id="organization">0</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work2.png" th:src = "@{/img/work2.png}">
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>党员人数</span>
+                                        <p id="person">0</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work3.png" th:src = "@{/img/work3.png}">
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>社区数量</span>
+                                        <p id="communityNum">0</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work4.png" th:src = "@{/img/work4.png}">
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>网格数量</span>
+                                        <p id="gridNum">0</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class = "col-sm-6 padL">
+                        <div class = "work-conbg">
+                            <div class = "info-title">
+                                <span>事件管理</span>
+                                <i class = "iconfont" onClick="javaScript:location.href = '/system/archives/ThingEventList'" >&#xe670;</i>
+                            </div>
+                            <ul class = "work-ul">
+                                <li onClick = "thingList()">
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work8.png" th:src = "@{/img/work8.png}">
+
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>总告警数</span>
+                                        <p id="totalNum">0</p>
+                                    </div>
+                                </li>
+                                <li onClick = "thingList()">
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work7.png" th:src = "@{/img/work7.png}">
+
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>已完成总数</span>
+                                        <p id="completeTotal">0</p>
+                                    </div>
+                                </li>
+
+                                <li onClick = "thingList()">
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work6.png" th:src = "@{/img/work6.png}">
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>有效流转率</span>
+                                        <p><em id="circulation">0</em>%</p>
+                                    </div>
+                                </li>
+                                <li onClick = "thingList()">
+                                    <div class = "col-sm-4">
+                                        <img src = "../static/work5.png" th:src = "@{/img/work5.png}">
+                                    </div>
+                                    <div class = "col-sm-8">
+                                        <span>共治率</span>
+                                        <p><em id="treatmentRate">0</em>%</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class = "row">
+                    <div class = "col-sm-4 padR padL" style = "width: 22%;">
+                        <div class = "work-conbt work-new ">
+                            <div class = "info-title">
+                                <span>消息通知</span>
+                            </div>
+                            <div class = "bcon">
+                                <div class = "list_lh list_new">
+                                    <ul>
+                                        <li>
+                                            <a href = "#">
+                                                方家山社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                北山社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                翡翠社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                竹韵社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                方家山社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                北山社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                翡翠社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                竹韵社区未绑定网格员
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href = "#">
+                                                翡翠社区未绑定网格员
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style = "clear: both"></div>
+                        </div>
+                        <div class = "work-conbt work-warning">
+                            <div class = "info-title">
+                                <span>完结归档</span>
+                            </div>
+                            <div class = "bcon">
+                                <div class = "list_lh list_waring" th:fragment = "refresh2" id = "localRefresh1">
+                                    <ul>
+                                        <li th:each = "endList:${endList}">
+                                            <a href = "#" th:title = "${endList.eventAddress}+'的'+${endList.eventTypeName}+'已处理完成'" th:onclick = "targetUrl([[${endList.id}]],2)">
+                                                <div th:switch = "${endList.eventAlertStatus}">
+                                                    <div th:case = "'6'">
+                                                        <em>【网格】</em>
+                                                        <span><b th:text = "${endList.eventAddress}"></b>的<b th:text = "${endList.eventTypeName}"></b>已处理完成</span>
+                                                        <div th:switch = "${endList.eventRead}" class = "logos">
+                                                            <div th:case = "'0'">
+                                                                <i class = "iconfont info_new">&#xe741;</i>
+                                                            </div>
+                                                            <div th:case = "'1'">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div th:case = "'9'">
+                                                        <em>【机器】</em>
+                                                        <span><b th:text = "${endList.eventTypeName}"></b>已自动处理完成</span>
+                                                        <div th:switch = "${endList.eventRead}" class = "logos">
+                                                            <div th:case = "'0'">
+                                                                <i class = "iconfont info_new">&#xe741;</i>
+                                                            </div>
+                                                            <div th:case = "'1'">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                            <span th:text = "${endList.dateNow}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div style = "clear: both"></div>
+                        </div>
+                        <div class = "work-conbt work-end">
+                            <div class = "info-title">
+                                <span>预警信息</span>
+                            </div>
+                            <div class = "list_lh list_end" th:fragment = "refresh1" id = "localRefresh2">
+                                <ul>
+                                    <li th:each = "list:${list}">
+                                        <a href = "#" th:title = "${list.eventAddress}+'发生'+${list.eventTypeName}+'事件,请尽快处理'" th:onclick = "targetUrl([[${list.id}]],1)">
+                                            <div th:switch = "${list.reportType}">
+                                                <div th:case = "'1'">
+                                                    <em>【智能】</em>
+                                                </div>
+                                                <div th:case = "'2'">
+                                                    <em>【人工】</em>
+                                                </div>
+                                            </div>
+                                            <span><b th:text = "${list.eventAddress}"></b>发生<b th:text = "${list.eventTypeName}"></b>事件,请尽快处理</span>
+                                            <div th:switch = "${list.eventRead}" class = "logos">
+                                                <div th:case = "'0'">
+                                                    <i class = "iconfont info_new">&#xe741;</i>
+                                                </div>
+                                                <div th:case = "'1'">
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <span th:text = "${list.date}"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div style = "clear: both"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-8 padR padL" style="width: 78%;">
+                        <div class = "col-sm-6 padR" style="padding-left: 0;">
+                            <div class = "work-conbt">
+                                <div class = "info-title">
+                                    <span>一事一档</span>
+                                    <a href = "/system/archives/Thinglist"><i class = "iconfont">&#xe670;</i></a>
+                                </div>
+                                <div class = "bing_title">近一天事件趋势</div>
+                                <div class = "bing-con">
+                                    <div id = "bing" style = "width: 100%; height:100%; float: left"></div>
+                                    <div style = "clear: both"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class = "col-sm-6 padR padL">
+                            <div class = "work-conbt">
+                                <div class = "info-title">
+                                    <span>一域一档</span>
+                                    <a href = "/system/archives/Fieldlist"><i class = "iconfont">&#xe670;</i></a>
+                                </div>
+                                <div class = "bing_title">近一天各社区预警事件发生数</div>
+                                <div class = "bing-con">
+                                    <div id = "zhuOne" style = "width: 100%; height: 100%;"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class = "col-sm-6 padL padR" style = "padding-left: 0;" >
+                            <div class = "work-conbt">
+                                <div class = "info-title">
+                                    <span>一人一档</span>
+                                    <a href = "/system/archives/Personlist"><i class = "iconfont">&#xe670;</i></a>
+                                </div>
+                                <div class = "bing_title">近一天网格员处理事件个数</div>
+                                <div class = "bing-con">
+                                    <div id = "zhuTwo" style = "width: 100%; height: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class = "col-sm-6 padL padR">
+                            <div class = "work-conbt">
+                                <div class = "info-title">
+                                    <span>一期一档</span>
+                                    <a href = "/system/archives/Stagelist"><i class = "iconfont">&#xe670;</i></a>
+                                </div>
+                                <div class = "bing_title">近一天各类型事件发生数</div>
+                                <div class = "bing-con statistics-type-info" style="display:flex;">
+                                    <ul>
+                                        <li>
+                                            <b class = "b-color1"></b>
+                                            <span class = "span ">总告警数</span>
+                                            <span class = "event-count-1">0</span>
+                                        </li>
+                                        <li>
+                                            <b class = "b-color3"></b>
+                                            <span class = "span">高频告警数</span>
+                                            <span class = "event-count-2">0</span>
+                                        </li>
+                                        <li>
+                                            <b class = "b-color4"></b>
+                                            <span class = "span">异常告警数</span>
+                                            <span class = "event-count-3">0</span>
+                                        </li>
+                                        <li>
+                                            <b class = "b-color2"></b>
+                                            <span class = "span">本日告警数</span>
+                                            <span class = "event-count-4">0</span>
+                                        </li>
+                                    </ul>
+                                    <div id = "zhuThree" style = "width: 50%; height: 100%;"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+<!--                <div class = "row">-->
+<!--                    <div class = "col-sm-4 padR padL" style = "width: 22%;">-->
+<!--                        -->
+<!--                    </div>-->
+
+<!--                    -->
+<!--                </div>-->
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+  </body>
+
+  <script th:src="@{/js/echarts.min.js}"></script>
+  <script th:src = "@{/layui/layui.js}"></script>
+  <script src = "../static/js/public.js" th:src = "@{/js/public.js}"></script>
+  <script>
+      (function ($) {
+          $.fn.myScroll = function (options) {
+              //默认配置
+              var defaults = {
+                  speed: 40,  //滚动速度,值越大速度越慢
+                  rowHeight: 24 //每行的高度
+              };
+              var opts = $.extend({}, defaults, options), intId = [];
+
+              function marquee(obj, step) {
+                  obj.find("ul").animate({
+                      marginTop: '-=1'
+                  }, 0, function () {
+                      var s = Math.abs(parseInt($(this).css("margin-top")));
+                      if (s >= step) {
+                          $(this).find("li").slice(0, 1).appendTo($(this));
+                          $(this).css("margin-top", 0);
+                      }
+                  });
+              }
+
+              this.each(function (i) {
+                  var sh = opts["rowHeight"], speed = opts["speed"], _this = $(this);
+                  intId[i] = setInterval(function () {
+                      if (_this.find("ul").height() <= _this.height()) {
+                          clearInterval(intId[i]);
+                      } else {
+                          marquee(_this, sh);
+                      }
+                  }, speed);
+                  _this.hover(function () {
+                      clearInterval(intId[i]);
+                  }, function () {
+                      intId[i] = setInterval(function () {
+                          if (_this.find("ul").height() <= _this.height()) {
+                              clearInterval(intId[i]);
+                          } else {
+                              marquee(_this, sh);
+                          }
+                      }, speed);
+                  });
+
+              });
+          }
+      })(jQuery);
+  </script>
+<script>
+    numScroll('organization', 140, 1000)
+    numScroll('person', 2917, 1000)
+    numScroll('communityNum', 21, 1000)
+    numScroll('gridNum', 70, 1000)
+
+    // 数字增加
+    function numScroll(id, maxNum, time) {
+        var numDom = document.getElementById(id);
+        var numInit = 0;
+        var addNum = maxNum / (time / 10);
+        var minTime = time / maxNum;
+        var t = setInterval(function () {
+            if (numInit >= maxNum) {
+                clearInterval(t);
+                numDom.innerText = maxNum;
+            } else {
+                numInit += addNum;
+                numDom.innerText = Math.round(numInit);
+            }
+        }, 10);
+    }
+
+
+    window.onload = function () {
+
+            $.ajax({
+                url: "/system/work/eventInfoStatistics",
+                type: "get",
+                success: function (data) {
+                    if(data.code == 0){
+                        numScroll('totalNum', data.data.eventCount, 1000);
+                        numScroll('completeTotal',  data.data.doneCount, 1000);
+                        numScroll('circulation', data.data.transferRate, 1000);
+                        numScroll('treatmentRate', data.data.governanceRate, 1000);
+                        $(".event-count-1").text(data.data.eventCount);
+                        $(".event-count-2").text(data.data.repetitionCount);
+                        $(".event-count-3").text(data.data.errorCount);
+                        $(".event-count-4").text(data.data.dayEventCount);
+                    }else{
+                        layer.msg("事件统计失败，请稍候再试")
+                    }
+                }
+            })
+
+            $.ajax({
+                url: "/system/archives/eventTrend",
+                data: {
+                    "type": 'day'
+                },
+                type: "get",
+                success: function (data) {
+                    if (data.code == '0') {
+                        // console.log(data.data)
+                        var totalX = data.data.eventTrendDate;
+                        var totalY1 = data.data.eventTrend;//街面违规事件
+                        var totalY2 = data.data.eventPlaceTypeTrends;//店外违规事件
+                        if (totalY1.length == 0) {
+                            totalX.forEach(item => {
+                                totalY1.push(0)
+                            })
+                        }
+                        if (totalY2.length == 0) {
+                            totalX.forEach(item => {
+                                totalY2.push(0)
+                            })
+                        }
+                        // console.log(totalY1)
+                        var total = echarts.init(document.getElementById("bing"));
+                        var Toption = {
+                            tooltip: {
+                                trigger: "axis",
+                                axisPointer: {
+                                    type: "cross",
+                                },
+                            },
+                            legend: {
+                                top: "bottom",
+                                itemWidth: 15,
+                                itemHeight: 15,
+                                textStyle: {
+                                    color: '#555'
+                                }
+                            },
+                            grid: {
+                                left: "5%",
+                                top: "5%",
+                                right: "5%",
+                                bottom: "10%",
+                                containLabel: true,
+                            },
+                            xAxis: {
+                                type: "category",
+                                axisLine: {
+                                    lineStyle: {
+                                        color: "#888",
+                                    },
+                                },
+                                axisTick: {
+                                    show: false,
+                                },
+                                axisLabel: {
+                                    interval: 1,
+                                    textStyle: {
+                                        color: "#333",
+                                    },
+                                },
+
+                                //事件趋势时间
+                                data: data.data.eventTrendDate,
+                            },
+                            yAxis: {
+                                type: "value",
+                                axisLine: {
+                                    show: false,
+                                },
+                                axisTick: {
+                                    show: false,
+                                },
+                                splitLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        type: "dashed",
+                                    },
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: "#333",
+                                    },
+                                },
+                                // boundaryGap: [0, 0.01],
+                            },
+                            color: ["#0070CC", "#2ACA96"],
+                            series: [
+                                {
+                                    name: "店外违规事件",
+                                    type: "line",
+                                    data: totalY2,
+                                    smooth: true,
+                                    itemStyle: {
+                                        borderWidth: 2,
+                                        color: {
+                                            type: "linear",
+                                            x: 0,
+                                            y: 0,
+                                            x2: 0,
+                                            y2: 1,
+                                            colorStops: [
+                                                {
+                                                    offset: 0,
+                                                    color: "rgba(0,112,204,0.5)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: "rgba(0,112,204,0.3)", // 100% 处的颜色
+                                                },
+                                            ],
+                                            global: false, // 缺省为 false
+                                        },
+                                    },
+                                    // symbolSize: 0,
+                                    lineStyle: {
+                                        width: 2,
+                                        color: {
+                                            type: "linear",
+                                            x: 0,
+                                            y: 0,
+                                            x2: 1,
+                                            y2: 1,
+                                            colorStops: [
+                                                {
+                                                    offset: 0,
+                                                    color: "rgba(0,112,204)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 0.5,
+                                                    color: "rgba(0,112,204)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: "rgba(0,112,204)", // 100% 处的颜色
+                                                },
+                                            ],
+                                            global: true, // 缺省为 false
+                                        },
+                                    },
+                                    areaStyle: [],
+                                },
+                                {
+                                    name: "街面违规事件",
+                                    type: "line",
+                                    data: totalY1,
+                                    smooth: true,
+                                    itemStyle: {
+                                        borderWidth: 2,
+                                        color: {
+                                            type: "linear",
+                                            x: 0,
+                                            y: 0,
+                                            x2: 0,
+                                            y2: 1,
+                                            colorStops: [
+                                                {
+                                                    offset: 0,
+                                                    color: "rgba(66,202,154,0.5)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: "rgba(66,202,154,0.3)", // 100% 处的颜色
+                                                },
+                                            ],
+                                            global: false, // 缺省为 false
+                                        },
+                                    },
+                                    // symbolSize: 0,
+                                    lineStyle: {
+                                        width: 2,
+                                        color: {
+                                            type: "linear",
+                                            x: 0,
+                                            y: 0,
+                                            x2: 1,
+                                            y2: 1,
+                                            colorStops: [
+                                                {
+                                                    offset: 0,
+                                                    color: "rgba(66,202,154)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 0.5,
+                                                    color: "rgba(66,202,154)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: "rgba(66,202,154)", // 100% 处的颜色
+                                                },
+                                            ],
+                                            global: true, // 缺省为 false
+                                        },
+                                    },
+                                    areaStyle: [],
+                                },
+                            ],
+                        };
+                        total.setOption(Toption);
+
+                        // 动效
+                        var myChartPieIndex = 0;
+                        var c = setInterval(function () {
+                            // 人口总数
+                            var dataLen1 = Toption.series[0].data.length;
+                            // 取消之前高亮的图形
+                            total.dispatchAction({
+                                type: "downplay",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            myChartPieIndex = (myChartPieIndex + 1) % dataLen1;
+                            // 高亮当前图形
+                            total.dispatchAction({
+                                type: "highlight",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            total.dispatchAction({
+                                type: "showTip",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                        }, 2500);
+                        setInterval(() => {
+                            // 清除数据
+                            total.clear();
+                            // 重新加载
+                            total.setOption(Toption);
+                        }, 120000);
+                    }
+                }
+            })
+
+
+
+            $.ajax({
+                url: "/system/archives/regionChange",
+                data: {
+                    "type": 'day'
+                },
+                type: "get",
+                success: function (data) {
+                    if (data.code == '0') {
+                        var total = echarts.init(document.getElementById("zhuOne"));
+                        var Toption = {
+                            tooltip: {
+                                trigger: "axis",
+                                axisPointer: {
+                                    type: "line",
+                                },
+                                formatter: function (params) {
+                                    // console.log(params)
+                                    var str = '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#0070cc;"></span>' + params[0].name + '：' + params[0].value;
+                                    return str;
+                                }
+                            },
+                            legend: {
+                                top: "bottom",
+                                itemWidth: 15,
+                                itemHeight: 15,
+                                textStyle: {
+                                    color: '#555'
+                                }
+                            },
+                            grid: {
+                                left: "5%",
+                                top: "5%",
+                                right: "5%",
+                                bottom: "10%",
+                                containLabel: true,
+                            },
+                            xAxis: {
+                                type: "category",
+                                axisLine: {
+                                    lineStyle: {
+                                        color: "#888",
+                                    },
+                                },
+                                axisTick: {
+                                    show: false,
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: "#333",
+                                    },
+                                    interval: 0,
+                                    rotate: 40,
+                                },
+                                data: data.data.eventChangeNames.slice(0,21),
+                            },
+                            yAxis: {
+                                type: "value",
+                                axisLine: {
+                                    show: false,
+                                },
+                                axisTick: {
+                                    show: false,
+                                },
+                                splitLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        type: "dashed",
+                                    },
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: "#333",
+                                    },
+                                },
+                                // boundaryGap: [0, 0.01],
+                            },
+                            color: ["#0070CC", "#B7CFFF"],
+                            series: [
+                                {
+                                    name: "预警事件发生数",
+                                    type: "bar",
+                                    data: data.data.eventChangeCounts,
+                                    barGap: 0,
+                                    barWidth: 15,
+
+                                },
+                            ],
+                        };
+                        total.setOption(Toption);
+                        // 动效
+                        var myChartPieIndex = 0;
+                        var c = setInterval(function () {
+                            // 人口总数
+                            var dataLen1 = Toption.series[0].data.length;
+                            // 取消之前高亮的图形
+                            total.dispatchAction({
+                                type: "downplay",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            myChartPieIndex = (myChartPieIndex + 1) % dataLen1;
+                            // 高亮当前图形
+                            total.dispatchAction({
+                                type: "highlight",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            total.dispatchAction({
+                                type: "showTip",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                        }, 3000);
+                        setInterval(() => {
+                            // 清除数据
+                            total.clear();
+                            // 重新加载
+                            total.setOption(Toption);
+                        }, 120000);
+                    }
+                }
+            })
+
+
+
+            $.ajax({
+                url: "/system/archives/peopleDisposalEfficiency",
+                data: {
+                    "type": 'day'
+                },
+                type: "get",
+                success: function (data) {
+                    if (data.code == '0') {
+                        // console.log(data.data);
+                        var totalX = data.data.eventTrendDate;
+                        var totalY1 = data.data.eventTrend;//
+                        var totalY2 = data.data.eventPlaceTypeTrends;//街面违规事件
+                        if (totalY2.length == 0) {
+                            totalX.forEach(item => {
+                                totalY2.push(0)
+                            })
+                        }
+                        if (totalY1.length == 0) {
+                            totalX.forEach(item => {
+                                totalY1.push(0)
+                            })
+                        }
+                        var total = echarts.init(document.getElementById("zhuTwo"));
+                        var Toption = {
+                            tooltip: {
+                                trigger: "axis",
+                                axisPointer: {
+                                    type: "line",
+                                },
+                                formatter: function (params) {
+                                    // console.log(params)
+                                    var str = '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#0070cc;"></span>' + params[0].name + '：' + params[0].value;
+                                    return str;
+                                }
+                            },
+                            legend: {
+                                top: "bottom",
+                                itemWidth: 15,
+                                itemHeight: 15,
+                                icon: "circle",
+                                textStyle: {
+                                    color: '#555'
+                                }
+                            },
+                            grid: {
+                                left: "5%",
+                                top: "5%",
+                                right: "5%",
+                                bottom: "10%",
+                                containLabel: true,
+                            },
+                            xAxis: {
+                                type: "category",
+                                axisLine: {
+                                    lineStyle: {
+                                        color: "#888",
+                                    },
+                                },
+                                axisTick: {
+                                    show: false,
+                                },
+                                axisLabel: {
+                                    interval: 1,
+                                    textStyle: {
+                                        color: "#333",
+                                    },
+                                },
+                                data: totalX,
+                            },
+                            yAxis: {
+                                type: "value",
+                                axisLine: {
+                                    show: false,
+                                },
+                                axisTick: {
+                                    show: false,
+                                },
+                                splitLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        type: "dashed",
+                                    },
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        color: "#333",
+                                    },
+                                },
+                                // boundaryGap: [0, 0.01],
+                            },
+                            color: ["#6395F9", "#B7CFFF"],
+                            series: [
+                                {
+                                    name: "街面违规事件",
+                                    type: "line",
+                                    data: totalY2,
+                                    smooth: true,
+                                    itemStyle: {
+                                        borderWidth: 2,
+                                        color: {
+                                            type: "linear",
+                                            x: 0,
+                                            y: 0,
+                                            x2: 0,
+                                            y2: 1,
+                                            colorStops: [
+                                                {
+                                                    offset: 0,
+                                                    color: "rgba(0,112,204)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: "rgba(0,112,204,0.2)", // 100% 处的颜色
+                                                },
+                                            ],
+                                            global: false, // 缺省为 false
+                                        },
+                                    },
+                                    symbolSize: 8,
+                                    lineStyle: {
+                                        width: 2,
+                                        color: {
+                                            type: "linear",
+                                            x: 0,
+                                            y: 0,
+                                            x2: 1,
+                                            y2: 1,
+                                            colorStops: [
+                                                {
+                                                    offset: 0,
+                                                    color: "rgba(0,112,204)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 0.5,
+                                                    color: "rgba(0,112,204)", // 0% 处的颜色
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: "rgba(0,112,204)", // 100% 处的颜色
+                                                },
+                                            ],
+                                            global: true, // 缺省为 false
+                                        },
+                                    },
+                                    areaStyle: [],
+                                },
+                            ],
+                        };
+                        total.setOption(Toption);
+                        // 动效
+                        var myChartPieIndex = 0;
+                        var c = setInterval(function () {
+                            // 人口总数
+                            var dataLen1 = Toption.series[0].data.length;
+                            // 取消之前高亮的图形
+                            total.dispatchAction({
+                                type: "downplay",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            myChartPieIndex = (myChartPieIndex + 1) % dataLen1;
+                            // 高亮当前图形
+                            total.dispatchAction({
+                                type: "highlight",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            total.dispatchAction({
+                                type: "showTip",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                        }, 3500);
+                        setInterval(() => {
+                            // 清除数据
+                            total.clear();
+                            // 重新加载
+                            total.setOption(Toption);
+                        }, 120000);
+                    }
+                }
+            })
+
+
+
+            $.ajax({
+                url: "/system/archives/eventType",
+                data: {
+                    "type": 'day'
+                },
+                type: "get",
+                success: function (data) {
+                    if (data.code == '0') {
+                        console.log(data.data)
+                        var total = echarts.init(document.getElementById("zhuThree"));
+                        var Toption = {
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: function (params) {
+                                    var result = '';
+                                    result += params.marker + params.data.name + '：' + params.data.value + '(' + params.percent + '%)';
+                                    return result
+                                }
+                            },
+                            series: [
+                                {
+                                    name: '类型统计',
+                                    type: 'pie',
+                                    label: {
+                                        normal: {
+                                            position: 'inner',
+                                            show: false
+                                        },
+                                        show: false,
+                                        position: 'center'
+                                    },
+
+
+                                    data: data.data,
+
+                                    color: [ //自定义的颜色
+                                        '#217FCD',
+                                        '#44CCA0',
+                                        '#F8C721',
+                                        '#6E7E9B',
+                                        '#F98A65',
+
+                                    ]
+                                }
+                            ],
+
+                        };
+                        total.setOption(Toption);
+                        // 动效
+                        var myChartPieIndex = 0;
+                        var c = setInterval(function () {
+                            // 人口总数
+                            var dataLen1 = Toption.series[0].data.length;
+                            // 取消之前高亮的图形
+                            total.dispatchAction({
+                                type: "downplay",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            myChartPieIndex = (myChartPieIndex + 1) % dataLen1;
+                            // 高亮当前图形
+                            total.dispatchAction({
+                                type: "highlight",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                            total.dispatchAction({
+                                type: "showTip",
+                                seriesIndex: 0,
+                                dataIndex: myChartPieIndex,
+                            });
+                        }, 4000);
+                        setInterval(() => {
+                            // 清除数据
+                            total.clear();
+                            // 重新加载
+                            total.setOption(Toption);
+                        },60000);
+                    }
+                }
+            })
+
+
+    };
+
+
+    setInterval(function(){
+        // 装载局部刷新返回的页面
+        $('#localRefresh1').load("/system/work/refresh1");
+        $('#localRefresh2').load("/system/work/refresh2");
+    }, 60000);
+
+
+    //窗口缩放后重新调整图标尺寸
+    window.onresize = function () {
+        echarts.init(document.getElementById("bing")).resize();
+        echarts.init(document.getElementById("zhuOne")).resize();
+        echarts.init(document.getElementById("zhuTwo")).resize();
+        echarts.init(document.getElementById("zhuThree")).resize();
+    };
+
+    function turnToRanks() {
+        storage.set("targetUrl", "/system/ranks");
+        location.href = '/index';
+    }
+
+    function targetUrl(id,type){
+        localStorage.setItem("targetId",id);
+        if(type == 1){
+            location.href = '/system/event'
+        }else{
+            location.href = '/system/eventRecord';
+        }
+    }
+    layui.use(['laydate', 'layer'], function () {
+        var laydate = layui.laydate;
+        var $ = layui.jquery,
+            layer = layui.layer;
+
+        $('#strongBase').on('click', function () {
+            layer.msg('暂未开放')
+        });
+        $('#zongzhi').on('click', function () {
+            layer.msg('暂未开放')
+        });
+        $('#zhian').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#quyu').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#sheqing').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#minsheng').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#zhihui').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#pingtai').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $("#shugan").on('click',function () {
+            layer.msg('暂未开放');
+        })
+    })
+
+    $("div.list_new").myScroll({
+        speed: 40, //数值越大，速度越慢
+        rowHeight: 52 //li的高度
+    });
+    $("div.list_waring").myScroll({
+        speed: 40, //数值越大，速度越慢
+        rowHeight: 72 //li的高度
+    });
+    $("div.list_end").myScroll({
+        speed: 40, //数值越大，速度越慢
+        rowHeight: 72 //li的高度
+    });
+
+    // 右侧跳转事件
+    function thingList() {
+        location.href = '/system/archives/ThingEventList';
+    }
+</script>
+
+</html>

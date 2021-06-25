@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.appMyWorkMapper">
+
+	<resultMap type="HkActionProcess" id="HkActionProcessResult">
+		<id     property="id"     				column="id"     />
+		<result property="actionChainId"     	column="action_chain_id"     />
+		<result property="eventId"   			column="event_id"   />
+		<result property="handlerUserId"   		column="handler_user_id"   />
+		<result property="actionStandardId"     column="action_standard_id"     />
+		<result property="handlerOrder"     	column="handler_order"      />
+		<result property="isComplete"     		column="is_complete"      />
+		<result property="createUser"      		column="create_user"       />
+		<result property="createTime"      		column="create_time"       />
+		<result property="updateUser"      		column="update_user"       />
+		<result property="updateTime"      		column="update_time"       />
+		<result property="isGovernance"      	column="is_governance"       />
+		<result property="returnFlag"      	column="return_flag"       />
+	</resultMap>
+
+	<!-- 统计待处理事件的总数(普通人员) -->
+	<select id="pendingCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		WHERE
+		 NOW() &lt; e.time_out
+		AND hap.handler_user_id = #{userId}
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		)
+	</select>
+	<!-- 统计已完成事件的总数(普通人员) -->
+	<!--<select id="CompletedCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		a.handler_user_id = #{userId} and
+		e.event_alert_status = 6
+		<if test="nowDay!=null and nowDay!=''" >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+	</select>-->
+
+	<!-- 统计已完成事件的总数(普通人员)  处置事件页面选择未处置提交的事件也算到该用户的已处置事件列表-->
+	<select id="completedCount" parameterType="map" resultType="int">
+		select count(1) FROM
+		(SELECT
+		DISTINCT
+		a.event_id AS eventId
+		FROM
+		hk_event_info AS a
+		LEFT JOIN hk_action_process AS b ON a.event_id = b.event_id
+		LEFT JOIN hk_event_process_record pr ON pr.event_id = a.event_id
+		and b.handler_user_id = pr.handler_index_code
+		WHERE
+		b.handler_user_id = #{userId}
+		and b.return_flag = 0
+		and (a.event_alert_status = 6 or pr.process_status = '4')
+		<if test="nowDay!=null and nowDay!=''" >
+			AND a.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		) tt
+	</select>
+	<!-- 统计已逾期事件的总数(普通人员) -->
+	<select id="overdueCount" parameterType="map" resultType="int">
+
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		WHERE
+		NOW() &gt; e.time_out
+		AND hap.handler_user_id = #{userId}
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		)
+
+
+	</select>
+
+	<!-- 统计待处理事件的总数(管理员) -->
+	<select id="adminPendingCount" parameterType="map" resultType="int">
+<!--		SELECT-->
+<!--		count(1)-->
+<!--		FROM-->
+<!--		hk_action_process a-->
+<!--		LEFT JOIN hk_event_info e ON a.event_id = e.event_id-->
+<!--		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id-->
+<!--		WHERE-->
+<!--		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})-->
+<!--		AND NOW() &lt;  e.time_out-->
+<!--		AND (e.event_alert_status = 3-->
+<!--		OR e.event_alert_status = 5)-->
+<!--		AND a.is_complete=0-->
+<!--		<if test="nowDay!=null and nowDay!='' " >-->
+<!--			AND e.create_time  between #{lastDay} and #{nowDay}-->
+<!--		</if>-->
+
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		LEFT JOIN sys_user u ON u.user_id = hap.handler_user_id
+		AND d.ho = hap.handler_order
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND NOW() &lt; e.time_out
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		)
+
+	</select>
+	<!-- 统计已完成事件的总数(管理员) -->
+	<select id="adminCompletedCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND
+		e.event_alert_status = 6
+		<if test="nowDay!=null and nowDay!=''" >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+
+	</select>
+
+	<!-- 统计已逾期事件的总数(普通人员) -->
+	<select id="adminOverdueCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		LEFT JOIN sys_user u ON u.user_id = hap.handler_user_id
+		AND d.ho = hap.handler_order
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND NOW() &gt; e.time_out
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		)
+
+	</select>
+
+	<insert id="insertProcess" parameterType="com.ruoyi.system.domain.Action.HkActionProcess">
+		insert into hk_action_process(
+		action_chain_id,
+		event_id,
+		handler_user_id,
+		create_time,
+		handler_order,
+		action_standard_id,
+		create_user,
+		is_governance
+		)values (
+		#{actionChainId},
+		#{eventId},
+		#{handlerUserId},
+		#{createTime},
+		#{handlerOrder},
+		#{actionStandardId},
+		#{createUser},
+		#{isGovernance}
+		)
+	</insert>
+
+	<select id="findactionChainId" resultMap="HkActionProcessResult" parameterType="com.ruoyi.system.domain.Action.HkActionProcess">
+		select * from hk_action_process where action_chain_id = #{actionChainId} AND event_id=#{eventId}
+	</select>
+
+	<select id="queryActionProcessInfo" resultMap="HkActionProcessResult" parameterType="com.ruoyi.system.domain.Action.HkActionProcess">
+		select * from hk_action_process
+		where
+		event_id=#{eventId}
+		<if test="handlerOrder != null and handlerOrder !=''">
+			and handler_order = #{handlerOrder}
+		</if>
+		<if test="isComplete != null and isComplete !=''">
+			and is_complete = #{isComplete}
+		</if>
+		<if test="returnFlag != null and returnFlag !=''">
+			and return_flag = #{returnFlag}
+		</if>
+		<if test="actionChainId != null and actionChainId !=''">
+			and action_chain_id = #{actionChainId}
+		</if>
+		<if test="actionStandardId != null and actionStandardId !=''">
+			and action_standard_id = #{actionStandardId}
+		</if>
+		<if test="handlerUserId != null and handlerUserId !=''">
+			and handler_user_id = #{handlerUserId}
+		</if>
+	</select>
+	<update id="updateHkActionProcess" parameterType="com.ruoyi.system.domain.Action.HkActionProcess">
+		update hk_action_process
+		set
+		handler_user_id = #{handlerUserId},
+		return_flag = 0
+		where
+		event_id=#{eventId}
+		<if test="actionChainId != null and actionChainId !=''">
+			AND action_chain_id = #{actionChainId}
+		</if>
+		AND handler_order = #{handlerOrder}
+		AND is_complete = #{isComplete}
+	</update>
+
+	<select id="findHkActionProcess" resultMap="HkActionProcessResult">
+		select * from hk_action_process where event_id = #{eventId}
+	</select>
+
+	<select id="findHandLerId" resultMap="HkActionProcessResult" parameterType="HkActionProcess">
+		select * from hk_action_process where action_chain_id = #{actionChainId} AND event_id = #{eventId}
+	</select>
+
+	<select id="findUserName" resultMap="HkActionProcessResult" parameterType="com.ruoyi.system.domain.Action.HkActionProcess">
+		select * from hk_action_process where  return_flag = 0 and event_id=#{eventId}
+	</select>
+<!--	查询指派人和指派时间-->
+	<select id="findActionChainEventId" resultMap="HkActionProcessResult" parameterType="java.lang.String">
+		select * from hk_action_process where event_id=#{eventId}
+	</select>
+
+	<select id="queryActionProcessByParams" parameterType="java.util.Map" resultMap="HkActionProcessResult">
+		select * from hk_action_process
+		where
+		event_id=#{eventId}
+		<if test="handlerOrder != null and handlerOrder !=''">
+			and handler_order = #{handlerOrder}
+		</if>
+		<if test="isComplete != null and isComplete !=''">
+			and is_complete = #{isComplete}
+		</if>
+		<if test="returnFlag != null and returnFlag !=''">
+			and return_flag = #{returnFlag}
+		</if>
+		<if test="actionChainId != null and actionChainId !=''">
+			and action_chain_id = #{actionChainId}
+		</if>
+		<if test="actionStandardId != null and actionStandardId !=''">
+			and action_standard_id = #{actionStandardId}
+		</if>
+		<if test="handlerUserId != null and handlerUserId !=''">
+			and handler_user_id = #{handlerUserId}
+		</if>
+	</select>
+</mapper> 

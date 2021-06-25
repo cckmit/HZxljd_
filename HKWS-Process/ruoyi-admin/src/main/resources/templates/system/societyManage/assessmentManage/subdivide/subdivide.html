@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('网格员--考核细分项列表')" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>细分项名称：</label>
+                                <input type="text" name="subdivideName"/>
+                            </li>
+                            <li>
+                                <label>所属考核项：</label>
+                                <select name="assessmentId" id="assessmentId" class="form-control"></select>
+                            </li>
+                            <li>
+                                <label>分值：</label>
+                                <input type="text" name="assessmentScore"/>
+                            </li>
+                            <li>
+                                <label>考核周期：</label>
+                                <select name="assessmentCycle" >
+                                    <option value="">所有</option>
+                                    <option value="月度">月度</option>
+                                    <option value="季度">季度</option>
+                                    <option value="年度">年度</option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary" onclick="$.operate.add()" shiro:hasPermission="system:subdivide:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:subdivide:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:subdivide:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-primary" onclick="$.table.exportExcel()" shiro:hasPermission="system:subdivide:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js"/>
+    <script th:inline="javascript">
+        var detailFlag = [[${@permission.hasPermi('system:subdivide:detail')}]];
+        var editFlag = [[${@permission.hasPermi('system:subdivide:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:subdivide:remove')}]];
+        var prefix = ctx + "system/societyManage/assessmentManage/subdivide";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                detailUrl: prefix + "/detail/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "网格员--考核细分项",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'subdivideId', 
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'subdivideName', 
+                    title: '细分项名称'
+                },
+                {
+                    field: 'xlAssessmentItems.assessmentName',
+                    title: '所属考核项'
+                },
+                {
+                    field: 'assessmentScore',
+                    title: '分值'
+                },
+                {
+                    field: 'assessmentCycle',
+                    title: '考核周期'
+                },
+                {
+                    field: 'createDate', 
+                    title: '创建时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.subdivideId + '\')"><i class="fa fa-search"></i>详情</a> ');
+                        actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.subdivideId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.subdivideId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+
+        //ajax实现的带搜索下拉框
+        $(function() {
+            $.ajax({
+                type:"GET",
+                url:prefix + "/assessmentList",
+                dataType:"json",
+                success:function(data){
+                    // debugger
+                    var t2 = $("#assessmentId").empty();
+                    t2.append("<option value='' selected hidden>"+"请选择"+"</option>");
+                    for ( var i = 0; i < data.length; i++) {
+                        t2.append("<option value='"+data[i].assessmentId+"'>"+ data[i].assessmentName+"</option>");
+                    }
+                },
+                error:function(jqXHR){
+                    alert("发生错误："+ jqXHR.status);
+                }
+            });
+
+        })
+    </script>
+</body>
+</html>

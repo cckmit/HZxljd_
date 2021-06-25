@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta Staing="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数智闲林·统一门户管理平台</title>
+
+  <link th:href="@{/css/index.css}" rel="stylesheet"/>
+  <link th:href="@{/css/step.css}" rel="stylesheet"/>
+  <link th:href="@{/css/font/element-icons.woff}"
+        rel="stylesheet"/>
+</head>
+<style>
+  .timeline{
+    position: relative;
+  }
+  .timeline-con{
+    position: absolute;
+    left: -50px;
+    top: 40px;
+    /*z-index: 1;*/
+  }
+  .timeline-con .el-timeline-item__node--normal{
+    width: 16px;
+    height: 16px;
+  }
+  .timeline-con .el-timeline-item__content{
+    font-size:16px
+  }
+</style>
+<body style="background-color: #fff">
+<div id="app">
+  <el-row>
+    <!--行动链基本信息-->
+    <el-col :span="24">
+      <el-form class="step-form timeline" ref="form" :model="form" label-width="150px">
+        <template>
+          <el-timeline :reverse="reverse" class="timeline-con">
+            <el-timeline-item>基本信息</el-timeline-item>
+          </el-timeline>
+        </template>
+        <el-form-item label="行动链名称：" >
+          <el-input  v-model="form.actionName" name="actionName" id="actionName"  autocomplete="off" :readonly="true"></el-input>
+        </el-form-item>
+        <el-form-item label="事件类型：">
+          <el-input  v-model="ecName" name = "ecName" autocomplete="off" :readonly="true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="超时时间：" >
+          <el-col :span="11">
+            <el-input v-model="form.time" name = "time" autocomplete="off" :readonly="true"></el-input>
+          </el-col>
+          <el-col class="line" :span="2">&nbsp;</el-col>
+          <el-col :span="11">
+            <el-input v-model="form.num"  name="num" id="num" :readonly="true"></el-input>
+          </el-col>
+        </el-form-item>
+
+        <el-form-item label="网格组织：" >
+          <el-input v-model="form.actionRegion"  name="actionRegion" id="actionRegion"  :readonly="true"></el-input>
+        </el-form-item>
+        <el-form-item label="描述：">
+          <el-input v-model="form.actionRemark" name="actionRemark" id="actionRemark" :readonly="true"></el-input>
+        </el-form-item>
+      </el-form>
+    </el-col>
+  </el-row>
+
+  <el-row>
+    <el-col :span="24">
+      <template>
+        <el-timeline :reverse = "reverse" class = "timeline-con">
+          <el-timeline-item>处理人列表</el-timeline-item>
+        </el-timeline>
+      </template>
+      <el-row class = "step-form timeline" style="width: auto;margin-top: 0;background-color:transparent;">
+
+        <template>
+          <el-table
+                  :data = "tableData"
+                  border>
+            <el-table-column
+                    prop = "actionName"
+                    label = "标准动作">
+            </el-table-column>
+            <el-table-column
+                    prop = "actionRegion"
+                    label = "网格组织">
+            </el-table-column>
+            <el-table-column
+                    prop = "postName"
+                    label = "指派职能">
+            </el-table-column>
+            <el-table-column
+                    prop = "handlerOrder"
+                    label = "处理层级">
+            </el-table-column>
+          </el-table>
+        </template>
+      </el-row>
+
+
+    </el-col>
+  </el-row>
+</div>
+</body>
+<script th:src="@{/js/vue.js}"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/index.js}"></script>
+<script th:inline="javascript">
+    // 行动的json
+    var form = [[${form}]];//行动链表单
+    var ecName =[[${ecName}]];//事件类型
+    var tableData =[[${tableData}]];//处理人列表
+    form     = JSON.parse(form);
+    tableData     = JSON.parse(tableData);
+
+
+</script>
+<script>
+    new Vue({
+        el: "#app",
+        data: function () {
+            return {
+                list:[],
+                listName:[],
+                user:[],
+                reverse: true,
+                // 添加字段的title位置
+                tabPosition:'left',
+                // 控制步骤条
+                active: 0,
+                // 添加字段数据
+                Tabform:{
+                    numTwo:'',
+                    unameTwo:'',
+                    regionTwo:'',
+                    descTwo:'',
+                    objetTwo:'',
+                    uStaingTwo:'',
+                    radio:''
+                },
+                // 表单数据
+                form: form,
+                ecName: ecName,
+                radio: 1,
+                tableData:tableData //处理人列表
+            };
+        }
+    });
+</script>
+</html>

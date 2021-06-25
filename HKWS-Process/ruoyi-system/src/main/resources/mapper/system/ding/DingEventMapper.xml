@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ding.DingEventMapper">
+
+    <resultMap type="com.ruoyi.system.domain.ding.DingEvent" id="DingEventResult">
+        <result property="id" column="id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="componentId" column="component_id"/>
+        <result property="eventIndexCode" column="event_index_code"/>
+        <result property="eventTitle" column="event_title"/>
+        <result property="reportTime" column="report_time"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventTypeName" column="event_type_name"/>
+        <result property="eventCategory" column="event_category"/>
+        <result property="eventCategoryName" column="event_category_name"/>
+        <result property="eventSource" column="event_source"/>
+        <result property="eventSourceName" column="event_source_name"/>
+        <result property="eventImage" column="event_image"/>
+        <result property="eventThumbnailImage" column="event_thumbnail_image"/>
+        <result property="storageId" column="storage_id"/>
+        <result property="eventStatus" column="event_status"/>
+        <result property="eventStatusName" column="event_status_name"/>
+        <result property="eventAlertStatus" column="event_alert_status"/>
+        <result property="eventAlertStatusName" column="event_alert_status_name"/>
+        <result property="eventSubStatus" column="event_sub_status"/>
+        <result property="eventSubStatusName" column="event_sub_status_name"/>
+        <result property="reportType" column="report_type"/>
+        <result property="reportTypeName" column="report_type_name"/>
+        <result property="lawEnforcementType" column="law_enforcement_type"/>
+        <result property="lawEnforcementTypeName" column="law_enforcement_type_name"/>
+        <result property="isView" column="is_view"/>
+        <result property="timeOut" column="time_out"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="currentProcessorId" column="current_processor_id"/>
+        <result property="currentProcessorName" column="current_processor_name"/>
+        <result property="eventUpdateTime" column="event_update_time"/>
+        <result property="eventCreateTime" column="event_create_time"/>
+        <result property="geometry" column="geometry"/>
+        <result property="reportPersonId" column="report_person_id"/>
+        <result property="reportPersonName" column="report_person_name"/>
+        <result property="reportPersonRealName" column="report_person_real_name"/>
+        <result property="reportPersonPhone" column="report_person_phone"/>
+        <result property="cameraIndexCode" column="camera_index_code"/>
+        <result property="cameraName" column="camera_name"/>
+        <result property="responsibilitySubject" column="responsibility_subject"/>
+        <result property="regionIndexCode" column="region_index_code"/>
+        <result property="regionName" column="region_name"/>
+        <result property="placeType" column="place_type"/>
+        <result property="placeTypeName" column="place_type_name"/>
+        <result property="placeIndexCode" column="place_index_code"/>
+        <result property="placeName" column="place_name"/>
+        <result property="companyLegalPerson" column="company_legal_person"/>
+        <result property="eventAddress" column="event_address"/>
+        <result property="creditUnionCode" column="credit_union_code"/>
+        <result property="companyContactInformation" column="company_contact_information"/>
+        <result property="gridName" column="grid_name"/>
+        <result property="gridMan" column="grid_man"/>
+        <result property="patrolTeam" column="patrol_team"/>
+        <result property="patrolTeamPhone" column="patrol_team_phone"/>
+        <result property="patrolTeam2" column="patrol_team2"/>
+        <result property="patrolTeam2Phone" column="patrol_team2_phone"/>
+        <result property="gridCommunity" column="grid_community"/>
+        <result property="gridContactInformation" column="grid_contact_information"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="routingAddress" column="routing_address"/>
+        <result property="eventRemarks" column="event_remarks"/>
+        <result property="extendInt1" column="extend_int1"/>
+        <result property="extendInt2" column="extend_int2"/>
+        <result property="extendInt3" column="extend_int3"/>
+        <result property="extendStr1" column="extend_str1"/>
+        <result property="extendStr2" column="extend_str2"/>
+        <result property="extendStr3" column="extend_str3"/>
+        <result property="extendjson" column="extendJson"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="procdefType" column="procdef_type"/>
+        <result property="eventRead" column="event_read"/>
+        <result property="cameraTypeCode" column="camera_type_code"/>
+    </resultMap>
+
+    <sql id="selectDingEventVo">
+        select id, event_id, component_id, event_index_code, event_title, report_time, event_type, event_type_name, event_category, event_category_name, event_source, event_source_name, event_image, event_thumbnail_image, storage_id, event_status, event_status_name, event_alert_status, event_alert_status_name, event_sub_status, event_sub_status_name, report_type, report_type_name, law_enforcement_type, law_enforcement_type_name, is_view, time_out, risk_level, current_processor_id, current_processor_name, event_update_time, event_create_time, geometry, report_person_id, report_person_name, report_person_real_name, report_person_phone, camera_index_code, camera_name, responsibility_subject, region_index_code, region_name, place_type, place_type_name, place_index_code, place_name, company_legal_person, event_address, credit_union_code, company_contact_information, grid_name, grid_man, patrol_team, patrol_team_phone, patrol_team2, patrol_team2_phone, grid_community, grid_contact_information, longitude, latitude, routing_address, event_remarks, extend_int1, extend_int2, extend_int3, extend_str1, extend_str2, extend_str3, extendJson, create_time, update_time, procdef_type, event_read, camera_type_code from hk_event_info
+    </sql>
+
+
+    <select id="getEventInfoByEventId" parameterType="string" resultMap="DingEventResult">
+        <include refid="selectDingEventVo"/>
+        where event_id = #{eventId}
+    </select>
+
+    <update id="updateHkActionProcessByEventIdAndUserId">
+        update hk_action_process set return_flag = 1
+        where
+        event_id = #{eventId}
+        and handler_user_id = #{userId}
+        and handler_order = #{handlerOrder}
+    </update>
+
+    <update id="updateHkActionByParam" parameterType="java.util.Map">
+        update hk_action_process
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isComplete != null and isComplete !=''">
+                is_complete = #{isComplete},
+            </if>
+            <if test="afterReturnFlag != null and afterReturnFlag !=''">
+                return_flag = #{afterReturnFlag},
+            </if>
+            update_time = now()
+        </trim>
+        where
+        event_id = #{eventId}
+        and is_complete = 0
+        <if test="handlerUserId != null and handlerUserId !=''">
+            and handler_user_id = #{handlerUserId}
+        </if>
+        <if test="otherUserId != null and otherUserId !=''">
+            and handler_user_id <![CDATA[ <> ]]> #{otherUserId}
+        </if>
+        <if test="handlerOrder != null and handlerOrder !=''">
+            and handler_order = #{handlerOrder}
+        </if>
+        <if test="returnFlag != null and returnFlag !=''">
+            and return_flag = #{returnFlag}
+        </if>
+        <if test="returnFlagArr != null">
+            and return_flag  in
+            <foreach collection="returnFlagArr" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="actionChainId != null and actionChainId !=''">
+            and action_chain_id = #{actionChainId}
+        </if>
+        <if test="actionStandardId != null and actionStandardId !=''">
+            and action_standard_id = #{actionStandardId}
+        </if>
+    </update>
+
+    <update id="updateOtherHkActionProcessByParam" parameterType="java.util.Map">
+        update hk_action_process
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isComplete != null and isComplete !=''">
+                is_complete = #{isComplete},
+            </if>
+            <if test="afterReturnFlag != null and afterReturnFlag !=''">
+                return_flag = #{afterReturnFlag},
+            </if>
+            update_time = now()
+        </trim>
+        where
+        event_id = #{eventId}
+        and is_complete = 0
+        <if test="otherUserId != null and otherUserId !=''">
+            and handler_user_id <![CDATA[ <> ]]> #{otherUserId}
+        </if>
+        <if test="handlerOrder != null and handlerOrder !=''">
+            and handler_order &gt; #{handlerOrder}
+        </if>
+    </update>
+
+    <!--查询用户当前的行动流程-->
+    <select id="queryActionProcessByUserEvent" parameterType="java.util.Map">
+      select * from hk_action_process
+        <if test="">
+
+        </if>
+    </select>
+
+    <select id="queryProcessRecordByUserEvent" parameterType="java.util.Map">
+        select * from hk_event_process_record
+    </select>
+
+</mapper>

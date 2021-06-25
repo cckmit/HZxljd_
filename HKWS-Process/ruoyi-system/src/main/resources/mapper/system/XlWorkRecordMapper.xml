@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlWorkRecordMapper">
+
+    <resultMap type="XlWorkRecord" id="XlWorkRecordResult">
+        <result property="workId"    column="work_id"    />
+        <result property="inspectDate"    column="inspect_date"    />
+        <result property="inspectUser"    column="inspect_user"    />
+        <result property="communityId"    column="community_id"    />
+        <result property="communityName"    column="community_name"    />
+        <result property="gridId"    column="grid_id"    />
+        <result property="gridName"    column="grid_name"    />
+        <result property="inspectResult"    column="inspect_result"    />
+        <result property="rectificationResult"    column="rectification_result"    />
+        <result property="inspectionType"    column="Inspection_type"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="inspectLoction"    column="inspect_loction"    />
+    </resultMap>
+
+    <sql id="selectXlWorkRecordVo">
+         select work_id, inspect_date, inspect_user, community_id, community_name, grid_id, grid_name, inspect_result, rectification_result, Inspection_type, create_date, inspect_loction,
+        general_id as generalId,inspect_image as inspectImage,inspect_content as inspectContent
+        from xl_work_record
+    </sql>
+
+    <select id="selectXlWorkRecordList" parameterType="XlWorkRecord" resultMap="XlWorkRecordResult">
+        <include refid="selectXlWorkRecordVo"/>
+        <where>
+            <if test="inspectDate != null "> and inspect_date = #{inspectDate}</if>
+            <if test="inspectUser != null  and inspectUser != ''"> and inspect_user = #{inspectUser}</if>
+            <if test="communityId != null  and communityId != ''"> and community_id = #{communityId}</if>
+            <if test="communityName != null  and communityName != ''"> and community_name like concat('%', #{communityName}, '%')</if>
+            <if test="gridId != null  and gridId != ''"> and grid_id = #{gridId}</if>
+            <if test="gridName != null  and gridName != ''"> and grid_name like concat('%', #{gridName}, '%')</if>
+            <if test="inspectResult != null  and inspectResult != ''"> and inspect_result = #{inspectResult}</if>
+            <if test="rectificationResult != null  and rectificationResult != ''"> and rectification_result = #{rectificationResult}</if>
+            <if test="inspectionType != null "> and Inspection_type = #{inspectionType}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="inspectLoction != null  and inspectLoction != ''"> and inspect_loction = #{inspectLoction}</if>
+             general_id = #{generalId}
+        </where>
+    </select>
+
+    <select id="selectXlWorkRecordById" parameterType="Long" resultMap="XlWorkRecordResult">
+        <include refid="selectXlWorkRecordVo"/>
+        where work_id = #{workId}
+    </select>
+
+    <insert id="insertXlWorkRecord" parameterType="XlWorkRecord" useGeneratedKeys="true" keyProperty="workId">
+        insert into xl_work_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inspectDate != null ">inspect_date,</if>
+            <if test="inspectUser != null  and inspectUser != ''">inspect_user,</if>
+            <if test="communityId != null  and communityId != ''">community_id,</if>
+            <if test="communityName != null  and communityName != ''">community_name,</if>
+            <if test="gridId != null  and gridId != ''">grid_id,</if>
+            <if test="gridName != null  and gridName != ''">grid_name,</if>
+            <if test="inspectResult != null  and inspectResult != ''">inspect_result,</if>
+            <if test="rectificationResult != null  and rectificationResult != ''">rectification_result,</if>
+            <if test="inspectionType != null ">Inspection_type,</if>
+            <if test="createDate != null ">create_date,</if>
+            <if test="inspectLoction != null  and inspectLoction != ''">inspect_loction,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inspectDate != null ">#{inspectDate},</if>
+            <if test="inspectUser != null  and inspectUser != ''">#{inspectUser},</if>
+            <if test="communityId != null  and communityId != ''">#{communityId},</if>
+            <if test="communityName != null  and communityName != ''">#{communityName},</if>
+            <if test="gridId != null  and gridId != ''">#{gridId},</if>
+            <if test="gridName != null  and gridName != ''">#{gridName},</if>
+            <if test="inspectResult != null  and inspectResult != ''">#{inspectResult},</if>
+            <if test="rectificationResult != null  and rectificationResult != ''">#{rectificationResult},</if>
+            <if test="inspectionType != null ">#{inspectionType},</if>
+            <if test="createDate != null ">#{createDate},</if>
+            <if test="inspectLoction != null  and inspectLoction != ''">#{inspectLoction},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlWorkRecord" parameterType="XlWorkRecord">
+        update xl_work_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inspectDate != null ">inspect_date = #{inspectDate},</if>
+            <if test="inspectUser != null  and inspectUser != ''">inspect_user = #{inspectUser},</if>
+            <if test="communityId != null  and communityId != ''">community_id = #{communityId},</if>
+            <if test="communityName != null  and communityName != ''">community_name = #{communityName},</if>
+            <if test="gridId != null  and gridId != ''">grid_id = #{gridId},</if>
+            <if test="gridName != null  and gridName != ''">grid_name = #{gridName},</if>
+            <if test="inspectResult != null  and inspectResult != ''">inspect_result = #{inspectResult},</if>
+            <if test="rectificationResult != null  and rectificationResult != ''">rectification_result = #{rectificationResult},</if>
+            <if test="inspectionType != null ">Inspection_type = #{inspectionType},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="inspectLoction != null  and inspectLoction != ''">inspect_loction = #{inspectLoction},</if>
+        </trim>
+        where work_id = #{workId}
+    </update>
+
+    <delete id="deleteXlWorkRecordById" parameterType="Long">
+        delete from xl_work_record where work_id = #{workId}
+    </delete>
+
+    <delete id="deleteXlWorkRecordByIds" parameterType="String">
+        delete from xl_work_record where work_id in
+        <foreach item="workId" collection="array" open="(" separator="," close=")">
+            #{workId}
+        </foreach>
+    </delete>
+
+</mapper>

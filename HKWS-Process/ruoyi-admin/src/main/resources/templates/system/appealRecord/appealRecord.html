@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('居民/物业--申诉列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>申诉阶段：</label>
+                                <select name="appealStage" th:with="type=${@dict.getType('appeal_stage')}">
+                                    <option value="">所有阶段</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>事件类型：</label>
+                                <select name="eventType" th:with="type=${@dict.getType('property_event_type')}">
+                                    <option value="">所有事件类型</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictLabel}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>反馈人：</label>
+                                <input type="text" name="appealPerson"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:appealRecord:edit')}]];
+        var detailFlag = [[${@permission.hasPermi('system:appealRecord:detail')}]];
+        var prefix = ctx + "system/appealRecord";
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                detailUrl: prefix + "/detail/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "居民/物业--申诉",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                    {
+                        title: "序号",
+                        formatter: function (value, row, index) {
+                            return $.table.serialNumber(index);
+                        }
+                    },
+                {
+                    field: 'eventType',
+                    title: '事件类型',
+                    // formatter: function(value, row, index){
+                    //     return $.table.selectDictLabel([[${@dict.getType('property_event_type')}]],value);
+                    // }
+                },
+
+                {
+                    field: 'eventContent',
+                    title: '事件内容'
+                },
+                {
+                    field: 'appealPerson',
+                    title: '反馈人'
+                },
+                {
+                    field: 'appealContent',
+                    title: '申诉内容'
+                },
+                {
+                    field: 'appealTime',
+                    title: '申诉时间'
+                },
+                {
+                    field: 'appealProperty',
+                    title: '申诉物业'
+                },
+                {
+                    field: 'appealStage',
+                    title: '申诉阶段'
+                },
+
+                {
+                    field: 'appealResultTime',
+                    title: '申述结果时间'
+                },
+                {
+                    field: 'appealResult',
+                    title: '申诉结果'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        if(('双方申诉')==(row.appealStage) && row.appealResult==''){
+                            var actions = [];
+                            actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="judgement('+ row.id + ')"><i class="fa fa-edit"></i>判定结果</a> ');
+                            actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>查看流程</a> ');
+                            return actions.join('');
+                        }else {
+                            var actions = [];
+                            actions.push('<a class="exdeft ' + detailFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>查看流程</a> ');
+                            return actions.join('');
+                        }
+                    }
+                }]
+            };
+            $.table.init(options);
+            //点击行勾选
+            $("#bootstrap-table").on("click", "tr", function () {
+                var input = $(this).find("input");
+                if (!$(input).prop("checked")) {
+                    $(input).prop("checked",true);
+                }else{
+                    $(input).prop("checked",false);
+                }
+            });
+        });
+        function judgement( id ) {
+            $.modal.open("判定结果", prefix + "/edit/"+id,"350","300");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quartz.mapper.HkSourceFieldFilterMapper">
+    
+    <resultMap type="HkSourceFieldFilter" id="HkSourceFieldFilterResult">
+        <result property="id"    column="id"    />
+        <result property="sourceId"    column="source_id"    />
+        <result property="filterTitle"    column="filter_title"    />
+        <result property="filterKey"    column="filter_key"    />
+        <result property="filterValue"    column="filter_value"    />
+        <result property="filterOperator"    column="filter_operator"    />
+        <result property="valueSource"    column="value_source"    />
+        <result property="isRequired"    column="is_required"    />
+        <result property="filterDesc"    column="filter_desc"    />
+    </resultMap>
+
+    <sql id="selectHkSourceFieldFilterVo">
+        select id, source_id, filter_title, filter_key, filter_value, filter_operator, value_source, is_required, filter_desc from hk_source_field_filter
+    </sql>
+
+    <select id="selectHkSourceFieldFilterList" parameterType="HkSourceFieldFilter" resultMap="HkSourceFieldFilterResult">
+        <include refid="selectHkSourceFieldFilterVo"/>
+        <where>  
+            <if test="sourceId != null "> and source_id = #{sourceId}</if>
+            <if test="filterTitle != null  and filterTitle != ''"> and filter_title = #{filterTitle}</if>
+            <if test="filterKey != null  and filterKey != ''"> and filter_key = #{filterKey}</if>
+            <if test="filterValue != null  and filterValue != ''"> and filter_value = #{filterValue}</if>
+            <if test="filterOperator != null  and filterOperator != ''"> and filter_operator = #{filterOperator}</if>
+            <if test="valueSource != null  and valueSource != ''"> and value_source = #{valueSource}</if>
+            <if test="isRequired != null  and isRequired != ''"> and is_required = #{isRequired}</if>
+            <if test="filterDesc != null  and filterDesc != ''"> and filter_desc = #{filterDesc}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkSourceFieldFilterById" parameterType="Long" resultMap="HkSourceFieldFilterResult">
+        <include refid="selectHkSourceFieldFilterVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHkSourceFieldFilter" parameterType="HkSourceFieldFilter">
+        insert into hk_source_field_filter
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="sourceId != null ">source_id,</if>
+            <if test="filterTitle != null  and filterTitle != ''">filter_title,</if>
+            <if test="filterKey != null  and filterKey != ''">filter_key,</if>
+            <if test="filterValue != null  and filterValue != ''">filter_value,</if>
+            <if test="filterOperator != null  and filterOperator != ''">filter_operator,</if>
+            <if test="valueSource != null  and valueSource != ''">value_source,</if>
+            <if test="isRequired != null  and isRequired != ''">is_required,</if>
+            <if test="filterDesc != null  and filterDesc != ''">filter_desc,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="sourceId != null ">#{sourceId},</if>
+            <if test="filterTitle != null  and filterTitle != ''">#{filterTitle},</if>
+            <if test="filterKey != null  and filterKey != ''">#{filterKey},</if>
+            <if test="filterValue != null  and filterValue != ''">#{filterValue},</if>
+            <if test="filterOperator != null  and filterOperator != ''">#{filterOperator},</if>
+            <if test="valueSource != null  and valueSource != ''">#{valueSource},</if>
+            <if test="isRequired != null  and isRequired != ''">#{isRequired},</if>
+            <if test="filterDesc != null  and filterDesc != ''">#{filterDesc},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkSourceFieldFilter" parameterType="HkSourceFieldFilter">
+        update hk_source_field_filter
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sourceId != null ">source_id = #{sourceId},</if>
+            <if test="filterTitle != null  and filterTitle != ''">filter_title = #{filterTitle},</if>
+            <if test="filterKey != null  and filterKey != ''">filter_key = #{filterKey},</if>
+            <if test="filterValue != null  and filterValue != ''">filter_value = #{filterValue},</if>
+            <if test="filterOperator != null  and filterOperator != ''">filter_operator = #{filterOperator},</if>
+            <if test="valueSource != null  and valueSource != ''">value_source = #{valueSource},</if>
+            <if test="isRequired != null  and isRequired != ''">is_required = #{isRequired},</if>
+            <if test="filterDesc != null  and filterDesc != ''">filter_desc = #{filterDesc},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkSourceFieldFilterById" parameterType="Long">
+        delete from hk_source_field_filter where id = #{id}
+    </delete>
+
+    <delete id="deleteHkSourceFieldFilterByIds" parameterType="String">
+        delete from hk_source_field_filter where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

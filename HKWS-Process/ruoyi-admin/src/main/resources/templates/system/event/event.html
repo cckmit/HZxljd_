@@ -1,0 +1,3038 @@
+<!DOCTYPE html>
+<html lang = "zh" xmlns:th = "http://www.thymeleaf.org" xmlns:shiro = "http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset = "UTF-8">
+    <title>数智闲林·统一门户管理平台</title>
+    <link th:href = "@{/css/bootstrap.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/bootstrap-daterangepicker/daterangepicker.css}" rel = "stylesheet" />
+    <link th:href = "@{/layui/css/layui.css}" rel = "stylesheet" />
+    <link th:href=  "@{/font/iconfont.css}" rel="stylesheet"/>
+    <link th:href = "@{/videojs/video-js.min.css}" rel="stylesheet"/>
+    <link th:href = "@{/css/font-awesome.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/public.css}" rel = "stylesheet" />
+    <link th:href = "@{/powerment/css/mian.css}" rel = "stylesheet" />
+<!--    <th:block th:include = "include :: datetimepicker-css" />-->
+    <th:block th:include="include :: ztree-css" />
+    <style>
+        .icoFontlist:hover {
+            border: 0px solid #ddd;
+            overflow: hidden;
+            text-align: left;
+            text-overflow: ellipsis;
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+    <link th:href = "@{/icon/iconfont.css}" rel = "stylesheet" />
+</head>
+<body>
+<div class = "mediaCont">
+<div th:insert="common/header :: header"></div>
+<div th:include="common/sidebar::sidebar(activeUri='event')" class = "nav_sider"></div>
+</div>
+<div class="mediaCont mediaCenter">
+
+
+<div class = "container-fluid">
+    <div data-method = "offset" class = "jxgj">
+        <i class = "iconfont">&#xe7e9;</i>
+        <p>解析工具</p>
+    </div>
+    <div class = "row">
+        <div class = "col-lg-12 ">
+            <div class = "col-lg-12 right-oneContent">
+                <div class = "row">
+                    <div class = "col-lg-2">
+                        <input type = "email" class = "form-control" placeholder = "事件标题/事件类型" id = "contents">
+                    </div>
+                    <div class = "col-lg-2">
+                        <input type = "email" class = "form-control" placeholder = "警情地址/社区网格信息" id = "region">
+                    </div>
+                    <div class = "col-lg-2" style="width: 20%;">
+
+                        <input type = "text" class = "form-control" id = "dateTime" placeholder = "年/月/日/时/分/秒" style="width: 320px;" autocomplete="false">
+                        <i class="iconfont">&#xe637;</i>
+                    </div>
+                    <div class = "col-lg-6 text-right" style="width: 54%;">
+                        <button class = "btn btn-middle btn-default" type = "submit" th:onclick = "'javascript:reset()'">重置</button>
+                        <button class = "btn btn-middle btn-primary" type = "submit" th:onclick = "'javascript:onSearch()'">查询</button>
+                    </div>
+                    <div class = "col-lg-12 right-oneContentData">
+                        <span><b class = "tag-dcl"></b> 待调度：<i class="pendingCount"></i> 条</span>
+                        <span><b class = "tag-sure"></b> 确认事件：<i class="achieveCount"></i> 条</span>
+                        <span><b class = "tag-ignore"></b> 忽略事件：<i class="ignoreCount"></i> 条</span>
+                        <span><b class = "tag-weidu"></b> 异常报送：<i class="abnormalCount"></i> 条</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class = "col-lg-12 right-oneFilter">
+                <div class = "row">
+<!--                    <div class = "col-lg-1 right-oneFilter-text">总事件：<span id="eventCount"></span>条</div>-->
+                    <div class = "col-lg-2">
+                        <select class = "form-control" id = "eventRead">
+                            <option value = "">事件查阅状态</option>
+                            <option value = "0">未读</option>
+                            <option value = "1">已读</option>
+                        </select>
+                    </div>
+                    <div class = "col-lg-2">
+
+                        <select class = "form-control" id = "source">
+                            <option value = "">全部预警类别</option>
+                            <option value = "1001">城管事件</option>
+                            <option value = "1002">浙里坊事件</option>
+                            <option value = "1003">综合治理</option>
+                            <option value = "1004">青山云</option>
+                            <option value = "1010">网格上报</option>
+                        </select>
+                    </div>
+                    <!--<div class="col-lg-2">
+                        <input type="email" class="form-control" placeholder="搜索">
+                    </div>-->
+                    <div class = "col-lg-1">
+                        <div class = "checkbox">
+                            <label>
+                                <input type = "checkbox" value="1" name="bao" checked id = "znAppear"> 智能上报
+                            </label>
+                        </div>
+                    </div>
+                    <div class = "col-lg-1">
+                        <div class = "checkbox">
+                            <label>
+                                <input type="checkbox" value = "2" name = "bao" checked id = "rgAppear"> 人工上报
+                            </label>
+                        </div>
+                    </div>
+                    <div class = "col-lg-1">
+                        <div class = "checkbox">
+                            <label>
+                                <!--                                    <input type="checkbox"> -->
+                            </label>
+                        </div>
+                    </div>
+                    <div class = "col-lg-4 text-right" style="width: 49.3333%;">
+                        <button class = "btn btn-middle btn-Danger-ac" data-toggle = "modal" data-target = "#histroy" type = "submit" id="historyEvent">历史警情</button>
+                        <input hidden id="list-count">
+                    </div>
+                </div>
+            </div>
+
+            <div class = "row">
+
+                <div class = "col-lg-12 earlyWarning">
+<!--                    暂无数据-->
+                    <div class="earlyWarning-pic" style="display:none;">
+                        <img src = "../static/work1.png" th:src = "@{/img/noList.png}">
+                        <p>未查询到相关数据</p>
+                    </div>
+                    <div class = "right-card">
+                        <!--左侧事件列表-->
+                        <ul id = "load">
+
+                        </ul>
+                        <div id = "pagetest1"></div>
+
+                    </div>
+<!--                    右侧事件详情-->
+                    <div class = "right-content" id = "additional">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class = "modal fade" id = "Pic" tabindex = "-1" role = "dialog" aria-labelledby = "Pic">
+    <div class = "modal-dialog" role = "document" style = "width: 50%;height:60%;margin-top: 150px">
+        <div class = "modal-content" style = "width: 100%;height: 100%;">
+        </div>
+    </div>
+</div>-->
+<!--图片弹窗-->
+<div class = "modal fade" id = "P0c" tabindex = "-1" role = "dialog" aria-labelledby = "P0c">
+    <div class = "modal-dialog" role = "document" style = "width: 50%;height:60%;margin-top: 150px">
+        <div class = "modal-content" style = "width: 100%;height: 100%;" id = "pop">
+        </div>
+    </div>
+</div>
+<!--    地图-->
+<div class = "modal fade" id = "Map" tabindex = "-1" role = "dialog" aria-labelledby = "Map" aria-hidden = "true">
+    <div class = "modal-dialog" style = "width: 1200px; height: 60vh;">
+        <div class = "modal-content" style = "height: 100%;">
+            <div class = "modal-body" style = "height: 89%;position:relative;">
+                <div id = "container" style = "width: 100%;height: 100%;"></div>
+                <div class="location">
+                    <span class = "glyphicon glyphicon-screenshot" aria-hidden = "true"></span>
+                    <p>定位</p>
+                </div>
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default mapDestroy" data-dismiss = "modal" >关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--    实时视频-->
+<div class = "modal fade" id = "Vedio" tabindex = "-1" role = "dialog" aria-labelledby = "Vedio" aria-hidden = "true">
+    <div class = "modal-dialog" style = "width: 1300px; height: 80vh;">
+        <div class = "modal-content" style = "height: 100%;">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">实时视频</h4>
+            </div>
+            <div class = "modal-body" style = "height: 82%;">
+                <div class = "col-lg-2" style = "padding: 0;">
+                    <div class = "panel-group" id = "accordion">
+                        <div class = "panel panel-default">
+                            <div class = "panel-heading">
+                                <h4 class = "panel-title">
+                                    <a data-toggle = "collapse" data-parent = "#accordion"
+                                       href = "#collapseOne" style = "display:inline-block;width: 100%;">
+                                        <span class = "close_span span_minus"></span>
+                                        周边视频
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id = "collapseOne" class = "panel-collapse collapse in">
+                                <div class = "panel-body vedio_num">
+                                    <!-- <p><i class = "iconfont">&#xe602;</i><span>宾王社区</span></p>
+                                     <p><i class = "iconfont">&#xe602;</i><span>宾王社区</span></p>
+                                     <p><i class = "iconfont">&#xe602;</i><span>宾王社区</span></p>
+                                     <p><i class = "iconfont">&#xe602;</i><span>宾王社区</span></p>
+                                     <p><i class = "iconfont">&#xe602;</i><span>宾王社区</span></p>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class = "col-lg-10 vedio-dom">
+                    <div class = "col-lg-6"></div>
+                    <div class = "col-lg-6"></div>
+                    <div class = "col-lg-6"></div>
+                    <div class = "col-lg-6"></div>
+                </div>
+            </div>
+            <div class = "modal-footer" style = "border-top: 0;">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    对象分析-->
+<div class = "modal fade" id = "Obj" tabindex = "-1" role = "dialog" aria-labelledby = "Obj" aria-hidden = "true">
+    <div class = "modal-dialog" style = "width: 1300px; height: 80vh;">
+        <div class = "modal-content" style = "height: 100%;">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">对象分析</h4>
+            </div>
+            <div class = "modal-body" style = "height: 82%;background-color:#f2f2f2;">
+                <div class = "col-lg-12 kap">
+                    <h5 class = "trend-title">事件趋势</h5>
+                    <div id = "obj1" style = "width: 1200px; height: 24vh;margin-top: 1.5vh;"></div>
+                </div>
+                <div class = "col-lg-6 kap" style = "margin-top: 1.5vh;">
+                    <h5 class = "trend-title">社区检测</h5>
+                    <div id = "obj2" style = "width: 600px; height: 25vh;margin-top: 1.5vh;"></div>
+                </div>
+                <div class = "col-lg-6 kap" style = "margin-top: 1.5vh;margin-left: 25px;">
+                    <h5 class = "trend-title">事件分析</h5>
+                    <div id = "obj3" style = "width: 600px; height: 25vh;margin-top: 1.5vh;"></div>
+                </div>
+            </div>
+            <div class = "modal-footer" style = "border-top: 0;">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    现象分析-->
+<div class = "modal fade" id = "Cont" tabindex = "-1" role = "dialog" aria-labelledby = "Cont" aria-hidden = "true">
+    <div class = "modal-dialog" style = "width: 1300px; height: 80vh;">
+        <div class = "modal-content" style = "height: 100%;">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">现象分析</h4>
+            </div>
+            <div class = "modal-body" style = "height: 82%;background-color:#f2f2f2;">
+                <div class = "col-lg-6 kap">
+                    <h5 class = "trend-title">类型统计</h5>
+                    <div id = "Cont3" style = "width: 600px; height: 25vh;margin-top: 1.5vh;"></div>
+                </div>
+                <div class = "col-lg-6 kap" style = "margin-left: 25px;">
+                    <h5 class = "trend-title">效率分析</h5>
+                    <div id = "Cont2" style = "width: 600px; height: 25vh;margin-top: 1.5vh;"></div>
+                </div>
+                <div class = "col-lg-12 kap" style = "margin-top: 1.5vh;">
+                    <h5 class = "trend-title">区域检测</h5>
+                    <div id = "Cont1" style = "width: 1200px; height: 24vh;margin-top: 1.5vh;"></div>
+                </div>
+
+            </div>
+            <div class = "modal-footer" style = "border-top: 0;">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    区域分析-->
+<div class = "modal fade" id = "Regio" tabindex = "-1" role = "dialog" aria-labelledby = "Regio" aria-hidden = "true">
+    <div class = "modal-dialog" style = "width: 1300px; height: 80vh;">
+        <div class = "modal-content" style = "height: 100%;">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">区域分析</h4>
+            </div>
+            <div class = "modal-body" style = "height: 82%;background-color:#f2f2f2;">
+                <div class = "col-lg-12 kap">
+                    <h5 class = "trend-title">赋能流转</h5>
+                    <div id = "regio1" style = "width: 1200px; height: 24vh;margin-top: 1.5vh;"></div>
+                </div>
+                <div class = "col-lg-6 kap" style = "margin-top: 1.5vh;">
+                    <h5 class = "trend-title">店铺信誉</h5>
+                    <div id = "regio2" style = "width: 600px; height: 25vh;margin-top: 1.5vh;"></div>
+                </div>
+                <div class = "col-lg-6 kap" style = "margin-top: 1.5vh;margin-left: 25px;">
+                    <h5 class = "trend-title">类型统计</h5>
+                    <div id = "regio3" style = "width: 600px; height: 25vh;margin-top: 1.5vh;"></div>
+                </div>
+            </div>
+            <div class = "modal-footer" style = "border-top: 0;">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    事件类别弹框-->
+<div class = "modal fade" id = "myForm" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    事件类型
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    责任主体-->
+<div class = "modal fade" id = "myForm2" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    责任主体
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name2">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine2()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    敬请地址-->
+<div class = "modal fade" id = "myForm3" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    警情地址
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name3">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine3()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    涉事主体-->
+<div class = "modal fade" id = "myForm4" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    涉事主体
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name4">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine4()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    单位法人-->
+<div class = "modal fade" id = "myForm5" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    单位法人
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name5">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine5()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    单位地址-->
+<div class = "modal fade" id = "myForm6" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    单位地址
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name6">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine6()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    统一信用社代码-->
+<div class = "modal fade" id = "myForm7" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    统一信用代码
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name7">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine7()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    联系方式-->
+<div class = "modal fade" id = "myForm8" tabindex = "-1" role = "dialog" aria-labelledby = "myModalLabel" aria-hidden = "true">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    联系方式
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <input type = "text" style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id = "name8">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">关闭</button>
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:determine8()'">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--短信提醒-->
+<div class = "modal fade" id = "TipsMyModel" tabindex = "-1" role = "dialog" aria-labelledby = "ModalLabel">
+    <div class = "modal-dialog" role = "document">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    请输入车牌号
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <div class = "modal-textarea">
+                    车牌号&nbsp;&nbsp;<input type="text"  style = "height: 34px;width: 100%;border-radius: 4px;border: 1px solid #ddd;" id="licensePlate" placeholder="车牌号">
+                </div>
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-primary hunueBtn" data-dismiss = "modal" th:onclick = "'javascript:TipsPlate()'">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--选择交办部门-->
+<div class = "modal fade" id = "myModalAssign" tabindex = "-1" role = "dialog" aria-labelledby = "OptionLabel">
+    <div class = "modal-dialog" role = "document">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    交办原因：
+                </h4>
+            </div>
+            <div class = "modal-body event-assign" >
+                <div class = "modal-textarea">
+                    <textarea id = "assignReason" name = "closeReason" placeholder = "请输入交办原因..." rows = "5"></textarea>
+                </div>
+
+                    <div class="form-group" style="display: flex;justify-content: space-between">
+                            <div id="deptTrees" class="ztree"></div>
+                        <p class="treeOption" style="line-height: 36px">
+                            <i class = "layui-icon layui-icon-down" style = "cursor:pointer;" id = "down"></i>
+                            <i class = "layui-icon layui-icon-up" style = "display:none;cursor: pointer;" id = "up"></i>
+                        </p>
+
+                    </div>
+
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-primary" data-dismiss = "modal" th:onclick = "'javascript:eventAssign()'">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--确认警情-->
+<div class = "modal fade" id = "myModal" tabindex = "-1" role = "dialog" aria-labelledby = "ModalLabel">
+    <div class = "modal-dialog model-yijin" role = "document"  style="width: 900px;">
+        <div class = "modal-content">
+            <div class="modal-header">
+
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title" id = "myModalLabel">
+                    你确定要确认这条警情嘛 ？
+                </h4>
+            </div>
+            <div class = "modal-body">
+<!--                &lt;!&ndash;                默认条件都满足&ndash;&gt;-->
+<!--                <input type = "text" style = "height: 34px;width: 100%;border: 1px solid #ddd;" id = "eventResult">-->
+<!--                条件不满足-->
+                <div class="noAddress">
+                    <div class="row">
+                        <div class="col-lg-5" style="display:flex;align-items: center;">
+                            <span>事件类型：</span>
+                            <select class = "form-control confirmTypeName">
+                                <option value = "1001">城管事件</option>
+                                <option value = "1002">浙里访事件</option>
+                                <option value = "1003">应急事件</option>
+                                <option value = "1004">四平台事件</option>
+                                <option value = "1005">街道内部事件</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-7">
+                            <span>事件地址：</span>
+                            <input type = "text" style = "height: 34px;width:75%;border: 1px solid #ddd;" class="address">
+                            <i class="iconfont confirmIcon" style="color: #0070cc;margin-left: 8px;" data-toggle="modal" >&#xe697;</i>
+                        </div>
+                    </div>
+                    <table class = "table table-bordered" style = "text-align: center;margin-top: 20px;">
+                        <thead>
+                        <tr>
+                            <th style = "width: 40px;"></th>
+                            <th style="width: 100px">姓名</th>
+                            <th style="width: 100px">手机</th>
+                            <th class="tabWidth">职位</th>
+                            <th class="tabWidth">区域</th>
+                        </tr>
+                        </thead>
+                        <tbody id = "configTable">
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-primary hunueBtn" data-dismiss = "modal" th:onclick = "'confirmDetail()'">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--应急-->
+<div class = "modal fade" id = "myYingModal" tabindex = "-1" role = "dialog" aria-labelledby = "ModalLabel">
+    <div class = "modal-dialog model-yijin" role = "document">
+        <div class = "modal-content">
+            <div class="modal-header">
+
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    你确定将改事件设为应急事件嘛？
+                </h4>
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-primary hunueBtn" data-dismiss = "modal" th:onclick ="'confirmYingDetail()'">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--忽略警情-->
+<div class = "modal fade" id = "myModel" tabindex = "-1" role = "dialog" aria-labelledby = "ModalLabel">
+    <div class = "modal-dialog" role = "document">
+        <div class = "modal-content">
+            <div class = "modal-header">
+
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    你确定要忽略这条警情嘛？
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <div class = "modal-textarea">
+                    <textarea rows = "5" name = "IgnoreReason" id = "IgnoreReason" placeholder = "请填写忽略原因..."></textarea>
+                </div>
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-primary hunueBtn" data-dismiss = "modal" th:onclick = "'javascript:ignoreDetail()'">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--异常报送-->
+<div class = "modal fade" id = "myModelClose" tabindex = "-1" role = "dialog" aria-labelledby = "ModalLabel">
+    <div class = "modal-dialog" role = "document">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    你确定要关闭这条警情嘛？
+                </h4>
+            </div>
+            <div class = "modal-body">
+                <div class = "modal-textarea">
+                    <textarea rows = "5" name = "closeReason" id = "closeReason" placeholder = "关闭原因..."></textarea>
+                </div>
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-middle btn-primary hunueBtn" data-dismiss = "modal" th:onclick = "'javascript:closeDetail()'">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--历史警情-->
+<div class = "modal fade" id = "histroy" tabindex = "-1" role = "dialog" aria-labelledby = "histroyLabel">
+    <div class = "modal-dialog" role = "document">
+        <div class = "modal-content" style = "margin: 0;">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">
+                    历史警情
+                </h4>
+            </div>
+            <div class = "modal-body" id="histroyBody">
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "succsBtn btn-middle btn btn-primary" data-dismiss = "modal">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--确认警情选择地址弹框-->
+<div class = "modal fade" id = "eventAdress" tabindex = "-1" role = "dialog" aria-labelledby = "eventAdress">
+    <div class = "modal-dialog" role = "document" style="width: 900px;height: 800px;">
+        <div class = "modal-content" style = "margin: 0;">
+            <div class = "modal-header">
+                <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
+                    &times;
+                </button>
+                <h4 class = "modal-title">选择事件地址</h4>
+            </div>
+            <div class = "modal-body">
+                <div id="r-result">请输入地址:<input type="text" id="suggestId" size="20" value="" style="width:90%;" /></div>
+                <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+                <div id="l-map" style="width: 100%;height: 600px; margin-top: 20px;"></div>
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn-middle btn btn-primary" onclick="confirmAddress()">确定</button>
+                <button type = "button" class = "btn btn-middle btn-default" data-dismiss = "modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+
+<script th:src = "@{/js/echarts.min.js}"></script>
+<!--<script th:src = "@{/bmap-offline/map3.0_init.js}"></script>-->
+<!--<script th:src = "@{/bmap-offline/map3.0.js}"></script>-->
+<script src="https://api.map.baidu.com/api?v=3.0&ak=OQzFXHaXlNEZTmwvbEHQMB5h2iHaEr4W"></script>
+<script th:src = "@{/js/AreaRestriction_min.js}"></script>
+<script th:src = "@{/video/jsencrypt.min.js}"></script>
+<script th:src = "@{/layui/layui.js}"></script>
+<script th:src = "@{/videojs/video.min.js}"></script>
+<script th:src = "@{/video/jsWebControl-1.0.0.min.js}"></script>
+<script th:src = "@{/js/jiexi.js}"></script>
+<script th:src = "@{/js/public.js}"></script>
+<script th:src = "@{/js/jquery.cookie.js}"></script>
+<th:block th:include="include :: ztree-js" />
+<script th:src = "@{/ruoyi/js/ry-ui.js}"></script>
+<!--<th:block th:include = "include :: datetimepicker-js" />-->
+<!--bootstrap-daterangepicker日期控件-->
+<script th:src = "@{/moment/min/moment.min.js}"></script>
+<script th:src = "@{/bootstrap-daterangepicker/daterangepicker.js}"></script>
+
+<script th:inline="javascript">
+
+    //获取页面参数
+    /*<![CDATA[*/
+    ctx = /*[[@{/}]]*/ '';
+    /*]]>*/
+
+        //全局变量
+    var pageNum = 1,
+        pageSize = 5,
+        total = 0,
+        startTime = funGetDateStr(-7),
+        endTime = funGetDateStr(0);
+
+    var videoBox = '';
+    var videoImage = '';
+    var videoSecond = 0;
+    var otherVedioSrc = '';
+    var otherVedioType = '';
+    var regionIndexCode = '';
+    var gridNum = 1;
+
+    let eventVideoPic = null;
+    // 控制树的折叠与展开
+    $('#down').click(function () {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#up').show();
+    });
+
+    $('#up').click(function () {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#down').show();
+    });
+
+
+    // 实时视频
+    $(document).ready(function () {
+        $('.panel-group').on('hide.bs.collapse show.bs.collapse', '.panel-collapse', function (e) {
+            var $this = $(this)
+            $this.prev().find("span").toggleClass("span_plus");
+            $this.prev().find("span").toggleClass("span_minus");
+        })
+
+        // console.log($('#playWnd'));
+    });
+
+    //点击查看地图模态框
+    $('#Map').on('shown.bs.modal', function () {
+        // 地图展示
+        var map = new BMap.Map("container", {
+            maxZoom: 18,
+            minZoom:14// coordsType指定输入输出的坐标类型，3为gcj02坐标，5为bd0ll坐标，默认为5。
+            // 指定完成后API将以指定的坐标类型处理您传入的坐标
+        }); // 创建地图实例
+        var longitude = $("#longitude").val();
+        var latitude = $("#latitude").val();
+        //如果无经纬度,默认经纬度为闲林街道办
+        if(!longitude || longitude.length < 1){
+            longitude = 119.989472;
+        }
+        if(!latitude || latitude.length < 1){
+            latitude = 30.237869;
+        }
+        var centerPoint = new BMap.Point(longitude, latitude);//地图中心点
+        map.centerAndZoom(centerPoint, 16); // 初始化地图，设置中心点坐标和地图级别
+        map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放,
+        // map.disableDragging(); //禁止拖拽
+        // 设置地图可拖拽范围 Bounds(sw: Point , ne: Point ) 创建一个包含所有给定点坐标的矩形区域。其中sw表示矩形区域的西南角，参数ne表示矩形区域的东北角
+        var b = new BMap.Bounds(new BMap.Point(119.939329,30.220157), new BMap.Point(120.056325,30.270699));
+        try {
+            BMapLib.AreaRestriction.setBounds(map, b);
+        } catch (e) {
+            alert(e);
+        }
+
+        map.addEventListener("tilesloaded", function () {//mapName是你的地图名称
+                map.setCenter(longitude, latitude);//point是设置的中心点
+
+        });
+        // 设置中心点
+        $('.location').on('click', function () {
+            // debugger;
+            // map.centerAndZoom(centerPoint, 15);
+
+            console.log(map.getCenter());
+            map.clearOverlays();
+            var marker = new BMap.Marker(centerPoint);        // 创建标注
+            marker.setIcon(new BMap.Icon(vedioPic, new BMap.Size(30, 40), {
+                    anchor: new BMap.Size(15, 40)
+                }
+            ));
+            map.addOverlay(marker);
+            map.panTo(new BMap.Point(longitude, latitude))
+            console.log(map.getCenter());
+        })
+        // 定义摄像头图片
+        let vedioPic = ''
+        if(eventVideoPic==1){
+            vedioPic = "../img/sxt.png"
+        }else if(eventVideoPic == 2){
+            vedioPic = "../img/personSxt.png"
+        }
+        var marker = new BMap.Marker(centerPoint);        // 创建标注
+        marker.setIcon(new BMap.Icon(vedioPic, new BMap.Size(30, 40), {
+            anchor: new BMap.Size(15, 40)}
+            ));
+        map.addOverlay(marker);
+        // 点击关闭按钮销毁地图实例
+        $('.mapDestroy').on('hidden.bs.modal', function () {
+            // map.destroy()
+            map.clearOverlays()
+        });
+    })
+
+    /**
+     * 垂直居中模态框
+     **/
+    function centerModals() {
+        $('.modal').each(function (i) {
+            var $clone = $(this).clone().css('display', 'block').appendTo('body');
+            var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+            top = top > 50 ? top : 0;
+            $clone.remove();
+            $(this).find('.modal-content').css("margin-top", top - 50);
+        });
+    }
+
+    // 在模态框出现的时候调用垂直居中方法
+    $('.modal').on('show.bs.modal', centerModals);
+    // 在窗口大小改变的时候调用垂直居中方法
+    $(window).on('resize', centerModals);
+
+    $(".center").click(function () {
+        var customSkinSC = 'demoInfo';
+        var customContentSC = '<i class="fa fa-info-circle"></i><span>暂未开放！</span>';
+        customOpen(customSkinSC, customContentSC)
+    });
+
+
+    $(function () {
+        onSearch();
+    });
+
+
+    /**获取当前**/
+    function funGetDateStr(p_count) {
+        var dd = new Date();
+        dd.setDate(dd.getDate() + p_count);//获取p_count天后的日期
+        var y = dd.getFullYear();
+        var m = dd.getMonth() + 1;//获取当前月份的日期
+        if( m <10){
+            m = '0'+m;
+        }
+        var d = dd.getDate();
+        if( d <10){
+            d = '0'+d;
+        }
+        var hh = dd.getHours();
+        var mm = dd.getMinutes();
+        var ss = dd.getSeconds();
+        if(hh < 10){
+            hh = '0'+hh;
+        }
+        if(mm < 10){
+            mm = '0'+mm;
+        }
+        if(ss < 10){
+            ss = '0'+ss;
+        }
+        /*if(p_count < 0){
+            return y + "-" + m + "-" + d +" 00:00:00";
+        }else{
+        }*/
+        return y + "-" + m + "-" + d +" "+hh+":"+mm+":"+ss;
+    }
+
+    layui.use(['laydate', 'layer', 'laypage'], function () {
+        var laydate = layui.laydate;
+        var $ = layui.jquery,
+            laypage=layui.laypage,
+            layer = layui.layer;
+        var active = {
+            offset: function (othis) {
+                layer.open({
+                    type: 1,
+                    title: '功能展示',
+
+                    area: ['430px', '340px'],
+                    content: "<ul class=\"Jxgj\">\n" +
+                        "            <li class='GN'>\n" +
+                        "                <img src=\"./../img/jxgjpic1.png\" alt=\"\" data-toggle = \"modal\" data-target = \"#Vedio\" />\n" +
+                        "                <p>周边视频</p>\n" +
+                        "            </li>\n" +
+                        "            <li class='GN'>\n" +
+                        "                <img src=\"./../img/jxgjpic2.png\" alt=\"\" data-toggle = \"modal\" data-target = \"#Obj\"/>\n" +
+                        "                <p>对象分析</p>\n" +
+                        "            </li>\n" +
+                        "            <li class='GN'>\n" +
+                        "                <img src=\"./../img/jxgjpic3.png\" alt=\"\" data-toggle = \"modal\" data-target = \"#Cont\"/>\n" +
+                        "                <p>现象分析</p>\n" +
+                        "            </li>\n" +
+                        "            <li class='GN'>\n" +
+                        "                <img src=\"./../img/jxgjpic4.png\" alt=\"\" data-toggle = \"modal\" data-target = \"#Regio\"/>\n" +
+                        "                <p>区域分析</p>\n" +
+                        "            </li>\n" +
+                        "        </ul>",
+                    btn: ['确定', '取消'],
+                    no: function () {
+                        layer.close();
+                    }
+                })
+            }
+        }
+        $(document).on('click', '.jxgj', function () {
+            var othis = $(this),
+                method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+            $('.GN').on('click', function () {
+                layer.close(layer.index);
+            })
+        })
+        // laydate.render({
+        //     elem: '#dateTime',
+        //     type:'',
+        //     range: '~',
+        //     value: funGetDateStr(-7) +" ~ "+funGetDateStr(0),
+        //     done: function (value, date, endDate) {
+        //         var s = value.split("~");
+        //         startTime = s[0];
+        //         endTime = s[1];
+        //         // onserch();
+        //     }
+        // });
+
+        laypage.render({
+            elem: 'pagetest1' //注意，这里的 test1 是 ID，不用加 # 号
+            , count: total //数据总数，从服务端得到
+            , limit:5
+            , groups:1      //连续出现的页码个数
+            , prev:'<'
+            , next:'>'
+            , layout:['prev','page','next','skip']
+            ,jump: function (obj, first) {
+                //首次不执行
+                if (!first) {
+                    pageNum = obj.curr;
+                    onSearch();
+                }
+            }
+        });
+
+
+    });
+
+    /**更新分页**/
+    function flushPage(total,page){
+        layui.use(['layer', 'laypage'], function () {
+            var laypage=layui.laypage;
+            laypage.render({
+                elem: 'pagetest1' //注意，这里的 test1 是 ID，不用加 # 号
+                , count: total //数据总数，从服务端得到
+                , limit:5
+                , curr:page
+                , groups:1      //连续出现的页码个数
+                , prev:'<'
+                , next:'>'
+                , layout:['prev','page','next','skip']
+                ,jump: function (obj, first) {
+                    //首次不执行
+                    if (!first) {
+                        pageNum = obj.curr;
+                        onSearch();
+                    }
+                }
+            });
+        })
+    }
+
+    /**点击后已读**/
+    $(document).on('click', '#dop', function () {
+        $(this).find("#ddp").empty();
+        var read = '<em>已读</em>';
+        $(this).find("#ddp").append(read);
+    });
+    //点击查看视频
+    $("#additional").on('click', '.videoinfo', function () {
+        // $(".right-video-p-video").css('display', 'block');
+        var id = $("#id").val();
+        var cameraIndexCode = $("#cameraIndexCode").val();
+        let only = $(this).val();
+        $("#eventOnly").val(only);
+        var src = $("#imgPath").val();
+        //判断视频与实时视频
+        var componentId = $("#componentId").val();
+        var extendStr1 = $("#extendStr1").val();
+        if(componentId == '1001'){//城管系统，调用海康视频插件
+            $.ajax({
+                url: "http://183.134.220.227:58085/video/getVideoUrl/"+id+"/"+only,
+                type: "GET",
+                success: function (data) {
+                    if (data.code == 0) {
+                        // console.log(data.data)
+                        extendStr1 = data.msg;
+                        if(videoSecond==0){
+                            if(only == '1'){
+                                videoPlay('videoReal', extendStr1, 'application/x-mpegURL', '');
+
+                            }else{
+                                videoPlay('videoBack', extendStr1, 'application/x-mpegURL', videoImage);
+
+                            }
+                            videoSecond =1;
+                        }else{
+                            if (only == '1') {
+                                videoDispose('videoReal', extendStr1, 'application/x-mpegURL', '');
+
+                            } else {
+                                videoDispose('videoBack', extendStr1, 'application/x-mpegURL', videoImage);
+
+                            }
+                        }
+
+                    }
+                }
+
+            })
+
+        }else if(extendStr1==null || extendStr1.length < 10){
+            src = "../img/no-video1.png";
+            $('#videoBack').css({
+                "background": "url(" + src + ") no-repeat",
+                "background-size": '100% 100%'
+            })
+            $('#videoReal').css({
+                "background": "url(" + src + ") no-repeat",
+                "background-size": '100% 100%'
+            })
+        }else{
+            if(only=='1'){
+                videoPlay('videoReal', otherVedioSrc, otherVedioType, '');
+            }else{
+                src = "../img/no-video1.png";
+                $('#videoBack').css({
+                    "background": "url(" + src + ") no-repeat",
+                    "background-size": '100% 100%'
+                })
+            }
+        }
+    });
+
+
+    $(document).on('click', '#load li', function () {
+        $(this).addClass("active");
+        $(this).siblings().removeClass("active");
+        labelList = []//清空标签集合
+    })
+
+    // function checkVideo(obj){
+    //     layer.msg('未找到图片路径！', {icon: 5,  time: 1000});
+    // }
+
+    function convertCanvasToImage(canvas) {
+        //新Image对象，可以理解为DOM
+        var image = new Image();
+        // canvas.toDataURL 返回的是一串Base64编码的URL
+        // 指定格式 PNG
+        image.src = canvas.toDataURL("image/png");
+        return image;
+    };
+
+
+    var sources = "";
+    $("#source").change(function () {
+        sources = $(this).val();
+        onSearch();
+    });
+
+    //按照智能或人工进行上报
+    var type = "";
+    // 判断是否选中checkbox
+    $('input[name=bao]').on('click', function () {
+        console.log($(this))
+        var checkOne = false;                    //判断是否被选择条件
+        var chboxVal = [];                       //存入被选中项的值
+        var checkBox = $('input[name = bao]'); //获得得到所的复选框
+
+        for (var i = 0; i < checkBox.length; i++) {
+
+            //如果有1个被选中时，去判断checkbox是否被选中）
+            if (checkBox[i].checked) {
+                checkOne = true;
+                chboxVal.push(checkBox[i].value)//将被选择的值追加到
+            }
+        }
+        ;
+        if (checkOne) {
+            if (chboxVal == 1) {
+                type = '1';
+            } else if (chboxVal == 2) {
+                type = '2';
+            } else {
+                type = '';
+            }
+            onSearch()
+        } else if (!checkOne) {
+            // alert("您必须选择一项");
+            $(this).prop('checked', true)
+        }
+    })
+
+    var eventReadStatus = "";
+    $("#eventRead").change(function () {
+        eventReadStatus = $(this).val();
+        onSearch();
+    });
+
+    //重置
+    function reset() {
+        $("#contents").val("");
+        $("#region").val("");
+        $('.right-card').show();
+        $('.right-content').show();
+        $('.earlyWarning-pic').hide();
+        /*if (startTime != null && endTime != null) {
+            startTime = "";
+            endTime = "";
+        }*/
+        $("#dateTime").val(funGetDateStr(-6)+"~"+funGetDateStr(0));
+        onSearch();
+    }
+
+
+    /**
+     * 获取当前域名
+     * @returns {string}
+     * @constructor
+     */
+    function GetCookieDomain() {
+        var host = location.hostname;
+        var ip = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        if (ip.test(host) === true || host === 'localhost') return host;
+        var regex = /([^]*).*/;
+        var match = host.match(regex);
+        if (typeof match !== "undefined" && null !== match) host = match[1];
+        if (typeof host !== "undefined" && null !== host) {
+            var strAry = host.split(".");
+            if (strAry.length > 1) {
+                host = strAry[strAry.length - 2] + "." + strAry[strAry.length - 1];
+            }
+        }
+        return '.' + host;
+    };
+
+    //列表
+    function onSearch() {
+        if (videoSecond == 1) {
+            let myvideo = videojs('tagVideojs', {
+                bigPlayButton: false,
+                textTrackDisplay: false,
+                posterImage: true,
+                errorDisplay: false,
+                controlBar: true
+            }, function () {
+
+            })
+            myvideo.dispose();
+
+        }
+        videoSecond = 0
+        var dateTime = $("#dateTime").val();
+        if(dateTime && dateTime.length > 0){
+            var arr = dateTime.split("~");
+            startTime = arr[0];
+            endTime = arr[1];
+        }
+        var targetId = '';
+        var targetId1 = $.cookie("targetId");
+        var targetId2 = localStorage.getItem("targetId");
+        if(targetId1){
+            targetId = targetId1;
+        }else if(targetId2){
+            targetId = targetId2;
+        }
+        var params = {
+            targetId:   targetId,
+            region:     $("#region").val(),
+            contents:   $("#contents").val(),
+            platCode:   sources,
+            reportType: type,
+            eventReadStatus:eventReadStatus,
+            startDate:  startTime,
+            endDate:    endTime,
+            pageSize:   pageSize,
+            pageNum:    pageNum,
+        }
+        $.ajax({
+            url: "/system/event/searchVague",
+            data: params,
+            type: "GET",
+            success: function (data) {
+                localStorage.removeItem("targetId");
+                $.cookie('targetId', null, { path: '/',expires:0,domain:GetCookieDomain()});
+                if (data.code == '0') {
+                    if (data.pendingCount == null || data.pendingCount == '') {//待调度
+                        $(".pendingCount").text('0');
+                    } else {
+                        $(".pendingCount").text(data.pendingCount);
+                    }
+                    if(data.achieveCount==null||data.achieveCount==''){//确认敬请
+                        $(".achieveCount").text('0');
+                    }else{
+                        $(".achieveCount").text(data.achieveCount);
+                    }
+                    if(data.ignoreCount == null || data.ignoreCount == ''){//忽略警情
+                        $(".ignoreCount").text('0');
+                    }else{
+                        $(".ignoreCount").text(data.ignoreCount);
+                    }
+                    if(data.abnormalCount ==  null || data.abnormalCount == ''){//异常报送
+                        $(".abnormalCount").text('0');
+                    }else{
+                        $(".abnormalCount").text(data.abnormalCount);
+                    }
+
+                    var s = data.rows;
+                    // console.log(s)
+                    total = data.total;
+                    // $("#eventCount").text(total);
+                    $("#load").empty();
+                    flushPage(total,pageNum);
+                    for (var i = 0; i < s.length; i++) {
+                        var date = s[i].date;
+                        var id = s[i].id;
+                        var regionName = s[i].regionName;
+                        if (regionName == null || regionName == "") {
+                            regionName = "";
+                        }
+                        var cameraName = s[i].cameraName;
+                        var eventAddress = s[i].eventAddress;
+                        var reportType = s[i].reportType;
+                        var count = s[i].count;
+                        if (count == 0 || count == 1) {
+                            var repeat = '';
+                        } else {
+                            var repeat = '<span>重复报警：<b style="color: red">' + count + '</b></span>';
+                        }
+                        if (reportType == null || reportType == "") {
+                            reportType = "";
+                        }
+                        var eventAlertStatus = s[i].eventAlertStatus;
+                        var eventTypeName = s[i].eventTypeName;
+                        if (eventTypeName == null || eventTypeName == "") {
+                            eventTypeName = "";
+                        }
+                        var platName = "";
+                        var componentId = s[i].componentId;
+                        var eventTitle = s[i].eventTitle;
+                        if (eventTitle == null || eventTitle == "") {
+                            eventTitle = "";
+                        }
+                        var createTime = s[i].createTime;
+                        if (createTime == null || createTime == "") {
+                            createTime = "";
+                        }
+                        var eventRead = s[i].eventRead;
+                        if (eventRead == null || eventRead == "") {
+                            eventRead = "";
+                        }
+                        var read = "";
+                        if (eventRead == 1) {
+                            read += '<em>已读</em>';
+                        } else {
+                            read += '<em class="tag-weidu">未读</em>';
+                        }
+                        var status = "";
+                        if (eventAlertStatus == 2) {
+                            status += '<em class="tag-dcl" title="待处理事件">待</em>';
+                        } else {
+                            status += '';
+                        }
+                        var componentName = "";
+                        if(componentId == '1001'){
+                            componentName = '城管事件';
+                        }else if(componentId == '1002'){
+                            componentName = '浙里访事件';
+                        }else if(componentId == '1003'){
+                            componentName = '应急事件';
+                        }else if(componentId == '1004'){
+                            componentName = '四平台事件';
+                        }else if(componentId == '1005'){
+                            componentName = '街道内部事件';
+                        }
+                        var riskLevel = s[i].riskLevel;
+                        var judge = "";
+                        if (reportType == 1) {
+                            judge += '<em class="tag-zhi" title="智能上报">智</em>';
+                        } else if (reportType == 2) {
+                            judge += '<em class="tag-zhi" title="人工上报">人</em>';
+                        }
+                        var tt = '<li class="" id = "dop" onclick = "detailsss(' + id + ','+componentId+')">\n';
+                        var specialIcon = '';
+                        var specialTag = '';
+                        if(riskLevel == '99'){
+                            tt+='<div class="right-card-title" style="background-color: rgba(255,157,64,0.59)">';
+                            specialIcon += '<span class="glyphicon glyphicon-star" aria-hidden="true" style="color: rgba(255,157,64,0.59)" title="重要事件" ></span>'
+                            specialTag += '<em class="tag-zy" title="重要事件">重</em>'
+                        }else if(riskLevel == '999'){
+                            tt+='<div class="right-card-title" style="background-color: rgba(217,48,38,0.59)">';
+                            specialIcon += '<span class="glyphicon glyphicon-star" aria-hidden="true" style="color: rgba(217,48,38,0.59)" title="紧急事件" ></span>'
+                            specialTag += '<em class="tag-ji" title="紧急事件">急</em>'
+                        }else{
+                            tt+='<div class="right-card-title">';
+                        }
+                            tt+='                                    <div class = "col-lg-6">\n' +
+                            '                                        <span id = "ddp">' +
+                            read +
+                            '                                        </span>\n' +
+                            '                                        <span>' + eventTypeName  + '</span>\n' +
+                            '                                    </div>\n' +
+                            '                                    <div class="col-lg-3 text-right" style="padding-right: 0">\n' +
+                            repeat +
+                            '                                    </div>\n' +
+                            '                                    <div class = "col-lg-3 text-right">\n' +
+                            '                                        <strong>' + date + '</strong>\n' +
+                            '                                    </div>\n' +
+                            '                                </div>' +
+                            '                                    <div class="right-card-content">\n' +
+                            '                                        <div class="col-lg-7">\n' +
+                            '                                            <i class="iconfont">&#xe62b;</i>\n' +
+                            '                                            <span>' + regionName + '</span>\n' +
+                            '                                        </div>\n' +
+                            '                                        <div class="col-lg-5 text-right right-card-tag">\n' +
+                            specialTag+
+                            // specialIcon+
+                            status +
+                            judge +
+                            '                                        </div>\n' +
+                            '                                        <div class="col-lg-9 TextOmit">\n' +
+                            '                                            <i class="iconfont">&#xe66e;</i>\n' +
+                            '                                            <span title="' + eventAddress + '">' + eventAddress + '</span>\n' +
+                            '                                        </div>\n' +
+                            '                                        <div class="col-lg-3 text-right font12 color6"> <i class="iconfont">&#xe6c4;</i><span>'+componentName+'</span></div>\n' +
+                            '                                    </div>\n' +
+                            '                                </li>';
+
+                        $("#load").append(tt);
+
+                        $('#load li:first').attr('class', 'active');
+                    }
+                    if ($('#load li').length == 0) {
+                        // 判断有无数据
+                        $('.right-card').hide();
+                        $('.right-content').hide();
+                        $('.earlyWarning-pic').show();
+
+                    }else{
+                        $('.right-card').show();
+                        $('.right-content').show();
+                        $('.earlyWarning-pic').hide()
+                    }
+                    if(s.length > 0){
+                        detailsss(s[0].id,s[0].componentId);
+                        console.log(s[0].id)
+                    }
+                }
+            }
+        })
+    }
+
+    //查看详情
+    function detailsss(id,componentId) {
+        if (videoSecond == 1) {
+            let myvideo = videojs('tagVideojs', {
+                bigPlayButton: false,
+                textTrackDisplay: false,
+                posterImage: true,
+                errorDisplay: false,
+                controlBar: true
+            }, function () {
+
+            })
+            myvideo.dispose();
+
+        }
+        videoSecond = 0
+        videoBox=''
+        let only = $("#eventOnly").val();
+        $.ajax({
+            url: "/system/event/details",
+            data: {id: id},
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    var detail = data.data;
+                    eventVideoPic = detail
+                    $("#additional").empty();
+                    $("#pop").empty();
+                    var id = detail.id;
+                    var dateNow = detail.dateNow;
+                    var deptName = detail.extendStr2;
+                    var regionDetail = detail.regionDetail;
+                    if(regionDetail==null || regionDetail==''){
+                        regionDetail='暂无信息'
+                    }
+                    var videoPath = detail.extendStr1;
+                    var videoType = detail.extendStr3;
+                    var eventTitle = detail.eventTitle;
+                    var assignDeptId = detail.assignDeptId;
+                    let assignDeptText = '';
+                    if(assignDeptId!='' && assignDeptId!=null){
+                        assignDeptText = '（该事件已交办）'
+                    }
+                    // console.log(assignDeptText)
+                    var assignReason = detail.assignReason;
+                    if (assignReason == null || assignReason == "") {
+                        assignReason = "";
+                    }
+                    $("#assignReason").val(assignReason);
+                    if(videoType==null || videoType==''){
+                        videoType = 'video/mp4';
+                    }
+                    var componentId = detail.componentId;
+                    if(componentId == '1002'){
+                        videoType = 'application/x-mpegURL';
+                    }else if(componentId == '1003' || componentId == '1004'){
+                        videoType = 'video/mp4';
+                    }
+                    var eventAlertStatus = detail.eventAlertStatus;
+                    var reportType = detail.reportType;
+                    eventVideoPic = reportType
+                    if (reportType == null || reportType == "") {
+                        reportType = "";
+                    }
+
+                    var eventTypeName = detail.eventTypeName;
+                    if (eventTypeName == null || eventTypeName == "") {
+                        eventTypeName = "";
+                    }
+                    if(componentId == '1004'){
+                        eventTypeName = eventTitle;
+                    }
+                    var plateNo = detail.plateNo;
+                    var placeName = detail.placeName;
+                    if (plateNo == null || plateNo == "") {
+                        plateNo = "";
+                    }else{
+                        placeName = "机动车 "+plateNo;
+                    }
+                    if (placeName == null || placeName == "") {
+                        placeName = "闲林街道";
+                    }
+                    var cameraName = detail.cameraName;
+                    if (cameraName == null || cameraName == "") {
+                        cameraName = "";
+                    }
+                    var responsibilitySubject = detail.responsibilitySubject;
+                    if (responsibilitySubject == null || responsibilitySubject == "") {
+                        var subject = '                                            <p>责任主体：<span data-toggle="modal" data-target="#myForm2" class="openModal" id="responsibilitySubject" style="color: #0070cc">待研判</span></p>\n';
+                    } else {
+                        var subject = '                                            <p>责任主体：<span data-toggle="modal" data-target="#myForm2" class="openModal" id="responsibilitySubject">' + responsibilitySubject + '</span></p>\n';
+                    }
+                    var gridCommunity = detail.gridCommunity;
+                    if (gridCommunity == null || gridCommunity == "") {
+                        gridCommunity = "";
+                    }
+                    var creditUnionCode = detail.creditUnionCode;
+                    if (creditUnionCode == null || creditUnionCode == "") {
+                        var unionCode = '                                            <p>统一信用代码：<span data-toggle="modal" data-target="#myForm7" class="openModal" id="creditUnionCode" style="color: #0070cc">待研判</span></p>\n';
+                    } else {
+                        var unionCode = '                                            <p>统一信用代码：<span data-toggle="modal" data-target="#myForm7" class="openModal" id="creditUnionCode">' + creditUnionCode + '</span></p>\n';
+                    }
+                    var companyLegalPerson = detail.companyLegalPerson;
+                    if (companyLegalPerson == null || companyLegalPerson == "") {
+                        var person = '                                            <p>单位法人：<span data-toggle="modal" data-target="#myForm5" class="openModal" id="companyLegalPerson" style="color: #0070cc">待研判</span></p>\n';
+                    } else {
+                        var person = '                                            <p>单位法人：<span data-toggle="modal" data-target="#myForm5" class="openModal" id="companyLegalPerson">' + companyLegalPerson + '</span></p>\n';
+                    }
+                    var companyContactInformation = detail.companyContactInformation;
+                    if (companyContactInformation == null || companyContactInformation == "") {
+                        var company = '                                            <p>联系方式：<span data-toggle="modal" data-target="#myForm8" class="openModal" id="companyContactInformation" style="color: #0070cc">待研判</span></p>\n';
+                    } else {
+                        var company = '                                            <p>联系方式：<span data-toggle="modal" data-target="#myForm8" class="openModal" id="companyContactInformation">' + companyContactInformation + '</span></p>\n';
+                    }
+                    var eventAddress = detail.eventAddress;
+                    if (eventAddress == null || eventAddress == "") {
+                        eventAddress = "";
+                    }
+                    var gridName = detail.gridName;
+                    if (gridName == null || gridName == "") {
+                        gridName = "";
+                    }
+                    var regionName = detail.regionName;
+                    if (regionName == null || regionName == "") {
+                        regionName = "";
+                    }
+                    var gridMan = detail.gridMan;
+                    if (gridMan == null || gridMan == "") {
+                        gridMan = "";
+                    }
+                    var gridContactInformation = detail.gridContactInformation;
+                    if (gridContactInformation == null || gridContactInformation == "") {
+                        gridContactInformation = "";
+                    }
+                    var patrolTeam = detail.patrolTeam;
+                    if (patrolTeam == null || patrolTeam == "") {
+                        patrolTeam = "";
+                    }
+                    var patrolTeamPhone = detail.patrolTeamPhone;
+                    if (patrolTeamPhone == null || patrolTeamPhone == "") {
+                        patrolTeamPhone = "";
+                    }
+                    var patrolTeam2 = detail.patrolTeam2;
+                    if (patrolTeam2 == null || patrolTeam2 == "") {
+                        patrolTeam2 = "";
+                    }
+                    var patrolTeam2Phone = detail.patrolTeam2Phone;
+                    if (patrolTeam2Phone == null || patrolTeam2Phone == "") {
+                        patrolTeam2Phone = "";
+                    }
+                    var eventCategory = detail.eventCategory;
+                    if (eventCategory == null || eventCategory == "") {
+                        eventCategory = "";
+                    }
+                    var eventSource = detail.eventSource;
+                    if (eventSource == null || eventSource == "") {
+                        gridMan = "";
+                    }
+                    var createTime = detail.createTime;
+                    if (createTime == null || createTime == "") {
+                        createTime = "";
+                    }
+                    var eventId = detail.eventId;
+                    if (eventId == null || eventId == "") {
+                        eventId = "";
+                    }
+                    var eventType = detail.eventType;
+                    var eventImage = detail.eventImage;
+                    if(eventImage == null || eventImage==''){
+                        eventImage = '../img/no-pic1.png'
+                    }
+                    var listMap = detail.listMap;
+                    var regionIndexCode = detail.regionIndexCode;
+                    var cameraIndexCode = detail.cameraIndexCode;
+                    var reportTime = detail.reportTime;
+                    var longitude = detail.longitude;
+                    var latitude = detail.latitude;
+                    if(!longitude || longitude.length < 1){
+                        longitude = 119.989475;
+                    }
+                    if(!latitude || latitude.length < 1){
+                        latitude = 30.237865;
+                    }
+                    var status = '';
+                    if (eventAlertStatus == 2) {
+                        status += '<em class="tag-dcl">待处理事件</em>';
+                        // labelList.push('待处理事件')
+                    }
+                    var judge = "";
+                    var persons = "";
+                    if (reportType == 1) {
+                        judge += '                                            <p>预警来源：<span  id = "reportTypeName">智能上报</span></p>\n';
+                        persons += '<em class="tag-zhi">智能上报</em>';
+                    } else if (reportType == 2) {
+                        judge += '                                            <p>预警来源：<span  id = "reportTypeName">人工上报</span></p>\n';
+                        persons += '<em class="tag-zhi">人工上报</em>';
+                    }
+                    var hkLmanagements = detail.hkLmanagements;
+                    if(hkLmanagements && hkLmanagements.length > 0){
+                        for (let i = 0; i < hkLmanagements.length; i++) {
+                            persons+= '<em class = "tag-add" data-id="'+hkLmanagements[i].lmId+'">' + hkLmanagements[i].lmName + '</em>';
+                        }
+                    }
+                    console.log("所有标签 = "+persons);
+                    var riskLevel = detail.riskLevel;
+                    var specialTag = '';
+                    var specialLevel='';
+                    if (riskLevel == '99') {
+                        specialTag += '<em class="tag-zy">重要事件</em>'
+                        specialLevel+='二级'
+                    } else if (riskLevel == '999') {
+                        specialTag += '<em class="tag-ji">紧急事件</em>'
+                        specialLevel+='三级'
+                    }else{
+                        specialLevel+='一级'
+                    }
+                    var list = "";
+                    var lists = "";
+                    if (listMap == null || listMap.length == 0) {
+                        var userName = "";
+                        var phonenumber = "";
+                        list += '<p>网格员：<span>' + userName + '</span></p>';
+                        lists += '<p>联系方式：<span>' + phonenumber + '</span></p>';
+                    } else {
+                        for (var i = 0; i < listMap.length; i++) {
+                            var userName = listMap[i].userName;
+                            var phonenumber = listMap[i].phonenumber;
+                            var userPostName = listMap[i].userPostName;
+                            list += '<div style="display:flex;"><p style="width: 27%">网格员：<span>' + userName + '</span></p><p class="position">所属职位：<span title="' + userPostName + '">' + userPostName + '</span></p></div>';
+                            lists += '<p>联系方式：<span>' + phonenumber + '</span></p>';
+                        }
+                    }
+                    if(eventType == 'laneOccupationbyMotorVehicle'){
+                        var tips='<button class="btn btn-middle btn-primary" type="submit" data-toggle = "modal" data-target = "#TipsMyModel">短信提示</button>';
+                    }else{
+                        var tips='';
+                    }
+                    var picList = detail.picList;
+                    // console.log(picList)
+                    // 遍历图片
+                    var carouselIndicators = '';
+                    var carouselInner = '';
+                    var morePicArr = [];
+                    if(picList !=''){
+                        for (let i = 0; i < picList.length; i++) {
+                            let pic = picList[i].pic;
+                            if(pic && pic.length > 6){
+                                morePicArr.push(picList[i].pic);
+                            }
+                        }
+                        for (var i = 0; i < picList.length; i++) {
+                            let pic = picList[i].pic;
+                            if(pic && pic.length > 6){
+                                if (i == 0) {
+                                    carouselIndicators += '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>\n';
+                                    carouselInner += '<div class="item active">\n' +
+                                        '<img id="eventImage" src = "' + pic + '" onClick="showMorePic(\''+i+'\',\''+ morePicArr+'\')">\n' +
+                                        '</div>\n';
+
+
+
+                                } else {
+                                    carouselIndicators += '<li data-target="#myCarousel" data-slide-to="' + i + '"></li>\n';
+                                    carouselInner += '<div class="item">\n' +
+                                        '<img  src = "' + pic + '" onClick="showMorePic(\''+i+'\',\''+ morePicArr+'\')">\n' +
+                                        '</div>\n';
+
+                                }
+                            }
+                        }
+                    }else{
+                        carouselInner += '<div class="item active">\n' +
+                            '<img  src ="../img/no-pic1.png" >\n' +
+                            '</div>\n';
+                    }
+
+                var ps = '<img src = "' + eventImage + '"  style="width: 100%;height: 100%;">';
+                $("#pop").append(ps);
+                var pp = '<div class="right-content-title" onmousemove="$(\'.addPic\').css(\'display\',\'inline-block\');" onmouseout="outAdd(this)">\n' +
+                    '                                <div class="row">\n' +
+                    '                                    <div class="col-lg-10 right-content-title-t">\n' +
+                    '                                        <b>' + eventAddress + '</b> 发生 <b>' + eventTypeName + '</b> 事件<span style="color: #D95C5C;font-size: 14px;">'+assignDeptText+'</span> <span class="right-content-title-span font12">' + dateNow + '</span>\n' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-lg-6" style="display:flex;flex-wrap: wrap">\n' +
+
+                    '                                       <div>' +
+                    '<span  class="addLabel">' +
+                    specialTag+
+                    status +
+                    persons +
+                    '</span>'+
+                    '<span style="position: relative"><em class="addPic custom-options" onclick="addLabelInformation(this)"><i class="fa fa-plus"></i>标签</em></span>' +
+                    '</div>' +
+                    '                                    </div>\n' +
+                    '                                    <div class="col-lg-6 text-right" style="display:flex;align-items: center;justify-content:flex-end;">\n' +
+
+                    '                                        <i class="fa fa-angle-left" onclick="showButton()"></i>\n' +
+                    '                                        <i class="fa fa-angle-right" onclick="hideButton()"></i>\n' +
+                    '<div class="showButton">' +
+                    '<button class="btn btn-middle btn-primary" type="submit" data-toggle = "modal" data-target = "#myModalAssign" id="eventAssign" onclick="eventAssignOpen()">交办</button>' +
+                    '<button class="btn btn-middle btn-default" onclick="copyFnss(\'' + eventImage + '\',\'' + eventTypeName + '\')">分享</button>'+
+                    '</div>' +
+                    '                                        <button class="btn btn-middle btn-primary" type="submit" data-toggle = "modal" data-target = "#myYingModel">应急事件</button>\n' +
+                    '                                        <button class="btn btn-middle btn-primary confirmEvent" type="submit">确认事件</button>\n' +
+                    '                                        <button class="btn btn-middle btn-default" type="submit" data-toggle = "modal" data-target = "#myModel" id="huLue">忽略事件</button>\n' +
+                    '                                        <button class="btn btn-middle btn-Danger" type="submit" data-toggle = "modal" data-target = "#myModelClose" id="closeEvent">异常报送</button>\n' +
+                    '                                    </div>\n' +
+                    '                                </div>\n' +
+                    '                            </div>\n' +
+                    '\n' +
+                    '                            <div class="right-content-c" style="overflow: scroll; height: 63vh;">\n' +
+                    '                                <div class="col-lg-12 right-content-c-line">\n' +
+                    '                                    <div class="row">\n' +
+                    '                                        <div class="col-lg-6">\n' +
+                    '                                            <h5>取证资料</h5>\n' +
+                    '                                            <p class="summary">事件概述：<span class="icoFontlist" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" title='+eventTitle+'>'+ eventTitle+'</span></p>\n' +
+                    '                                            <p>事件类别：<span class="openModal" data-toggle = "modal" data-target = "#myForm" id = "eventTypeName">' + eventTypeName + '</span></p>\n' +
+                    judge +
+                    '                                            <p>预警等级：<span>'+specialLevel+'</span></p>\n' +
+                    '                                            <p>预警时间：<span>' + createTime + '</span></p>\n' +
+                    subject +
+                    '                                            <p>警情地址：<span class="openModal" data-toggle="modal" data-target="#myForm3" id = "cameraName">' + eventAddress + '</span><i class="iconfont openModal"  id="ditu" style = "color: #0070cc;font-size: 18px;cursor:pointer;margin-left: 7px;" data-toggle = "modal" data-target = "#Map">&#xe63e;</i></p>\n' +
+                    '                                            <p>所属辖区：<span>'+regionDetail+'</span></p>\n' +
+                    '                                        <div style = "display: none">\n' +
+                    '                                                <span id = "createTime">' + createTime + '</span>\n' +
+                    '                                                <span id = "reportTime">' + reportTime + '</span>\n' +
+                    '                                            </div>\n' +
+                    '                                            <input type = "hidden" value=' + eventId + ' id = "eventId">\n' +
+                    '                                            <input type = "hidden" value=' + id + ' id = "id">\n' +
+                    '                                            <input type = "hidden" value=' + assignDeptId + ' id = "assignDepts">\n' +
+                    '                                            <input type = "hidden" value=' + eventType + ' id = "eventType">\n' +
+                    '                                            <input type = "hidden" value=' + regionIndexCode + ' id = "regionIndexCode">\n' +
+                    '                                            <input type = "hidden" value=' + cameraIndexCode + ' id = "cameraIndexCode">' +
+                    '                                            <input type = "hidden" value=' + componentId + ' id = "componentId">\n' +
+                    '                                            <input type = "hidden" value=' + videoPath + ' id = "extendStr1">'+
+                    '                                            <input type = "hidden" value=' + longitude + ' id = "longitude">'+
+                    '                                            <input type = "hidden" value=' + latitude + ' id = "latitude">'+
+                    '                                            <input type = "hidden" value=' + eventImage + ' id = "imgPath">'+
+                    '                                            <input type = "hidden" value=' + videoPath + ' id = "videoPath">'+
+                    '                                            <input type = "hidden" id="eventOnly">' +
+                    '                                        </div>\n' +
+                    '                                        <div class="col-lg-6 right-content-c-img">\n' +
+                    // '                                            <h6>&nbsp;</h6>\n' +
+                    '                                            <div class="row">\n' +
+                    '                                                <div class="row right-imgVideo-line">\n' +
+                    '                                                    <ul class="nav">\n' +
+                    '                                                        <li class="active" id = "tabimg"><a href="#img" data-toggle="tab"><i class="iconfont" style="font-size: 14px;">&#xe622;</i>取证图片</a></li>\n' +
+                    '                                                        <li  class = "videoinfo" value="0"><a href="#video" data-toggle="tab"><i class="iconfont">&#xe60b;</i>取证视频</a></li>\n' +
+                    '                                                        <li  class="videoinfo"  value="1"><a href="#realVideo" data-toggle="tab"><i class="iconfont">&#xe61d;</i>实时视频</a></li>' +
+                    '                                                    </ul>\n' +
+                    '                                                </div>\n' +
+                    '                                                <div class="row" style="width: 100%;">\n' +
+                    '                                                    <div id="mytab-content" class="tab-content">\n' +
+                    '                                                        <div class="tab-pane fade in active" id="img" value="222">\n' +
+                    '<div id="myCarousel" class="carousel slide reportBigPic" onmousemove="prev()" onmouseout="next()">\n' +
+                    '   <ol class="carousel-indicators">\n' +
+                    carouselIndicators+
+                    '   </ol>   \n' +
+                    '   <div class="carousel-inner">\n' +
+                    carouselInner +
+                    '   </div>\n' +
+                    '   <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">\n' +
+                    '       <i class="fa fa-angle-left" aria-hidden="true"></i>\n' +
+                    '       <span class="sr-only">Previous</span>\n' +
+                    '   </a>\n' +
+                    '   <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">\n' +
+                    '       <i class="fa fa-angle-right" aria-hidden="true"></i>\n' +
+                    '       <span class="sr-only">Next</span>\n' +
+                    '   </a>\n' +
+                    '</div> '+
+                    // '                                                            <img  src = ' + eventImage + ' onClick="showMorePic()" id = "eventImage">\n' +
+                    // '                                                            <img  src = ' + eventImage + ' data-toggle = "modal" data-target = "#P0c" id = "eventImage">\n' +
+                    '                                                        </div>\n' +
+                    '                                            <div class="ssim" ></div>' +
+                    '                                            <div  id="imgsss">\n' +
+                    '                                             <canvas hidden  id = "canvas" width="460px" height="266px"/>\n' +
+                    '                                            </div>' +
+                    '                                                        <div class="tab-pane fade" id="video" style = "position:relative;">\n' +
+                    '                                                            <div class="right-video-p">\n' +
+                    '                                                               <div class="video-div" style="width: 100%;height: 100%;" id="videoBack">'+
+                    videoBox+
+                    '                                                               </div>\n' +
+                    '                                                            </div>\n' +
+                    '                                                        </div>\n' +
+                    '                                                        <div class="tab-pane fade" id="realVideo" style = "position:relative;">\n' +
+                    '                                                            <div class="right-video-p">\n' +
+                    '                                                                <div class="video-div" style="width: 100%;height: 100%;" id="videoReal">\n' +
+                    videoBox +
+                    '                                                               </div>\n' +
+                    '                                                            </div>\n' +
+                    '                                                        </div>\n' +
+                    '                                                    </div>\n' +
+                    '                                                </div>' +
+                    '                                            </div>\n' +
+                    '                                        </div>' +
+                    '                                    </div>\n' +
+                    '                                </div>\n' +
+                    '\n' +
+                    '                                <div class="col-lg-12 right-content-c-line">\n' +
+                    '                                    <div class="row">\n' +
+                    '                                        <div class="col-lg-6">\n' +
+                    '                                            <h5>主体信息</h5>\n' +
+                    '                                            <P>涉事主体：<span class="openModal" data-toggle="modal" data-target="#myForm4" id = "placeName">' + placeName + '</span></P>\n' +
+                    person +
+                    '                                            <P>单位地址：<span class="openModal" data-toggle="modal" data-target="#myForm6" id = "eventAddress">' + eventAddress + '</span></P>\n' +
+                    '\n' +
+                    '                                        </div>\n' +
+                    '                                        <div class="col-lg-6">\n' +
+                    '                                            <h6>&nbsp;</h6>\n' +
+                    unionCode +
+                    company +
+                    '                                            <p>所属辖区：<span>'+regionDetail+'</span></p>\n' +
+                    '                                        </div>\n' +
+                    '                                    </div>\n' +
+                    '                                </div>\n' +
+                    '\n' +
+                    '                                <div class="col-lg-12 right-content-c-line">\n' +
+                    '                                            <h5>关联网格</h5>\n' +
+                    '                                    <div class="row relation">\n' +
+                    '                                        <div class="col-lg-6">\n' +
+
+                    '                                            <P>街道名称：<span id="gridName">' + deptName + '</span></P>\n' +
+                    list +
+                    '                                        </div>\n' +
+                    '                                        <div class="col-lg-6">\n' +
+                    '                                            <P>网格社区：<span id = "regionName">' + regionName + '</span></P>\n' +
+                    lists +
+                    '                                        </div>\n' +
+                    '                                    </div>\n' +
+
+                    '                                </div>\n' +
+                    '                            </div>';
+                    $(".right-content").fadeIn();
+                    $("#additional").append(pp);
+                    // 设置轮播一张图时导航按钮为灰色
+                    if(picList.length == 1) {
+                        $('.fa-angle-left').css('color', '#ccc')
+                        $('.fa-angle-right').css('color', '#ccc')
+                    }
+                }
+
+
+                copyFnss = function (src, texts) {
+                    if (!src || src.length < 1 || src.indexOf("http") < 0) {
+                        var customSkinSC = 'demoWaring';
+                        var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>未找到图片路径！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        return false;
+                    }
+                    window.getSelection().removeAllRanges();
+                    var range = document.createRange();
+                    range.selectNode(document.getElementById('eventImage'));  //selectable为下面页面中DIV中的id
+                    window.getSelection().addRange(range);
+                    document.execCommand("Copy");
+                    var customSkinSC = 'demosuccess';
+                    var customContentSC = '<i class="fa fa-check-circle"></i><span>复制成功！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                };
+            }
+        })
+    }
+    // 点击交办查询树
+    function eventAssignOpen(){
+        var url = ctx + "system/dept/assignDeptTreeData?assignDepts=" + $("#assignDepts").val();
+        var options = {
+            id: "deptTrees",
+            url: url,
+            check: {enable: true},
+            expandLevel: 0,
+            checkedTreeValue: [],
+            isCustom: '1'
+        };
+        $.tree.init(options);
+    }
+    /**事件交办**/
+    function eventAssign(){
+        var eventId = $("#eventId").val();
+        var deptIds = $.tree.getCheckedNodes();
+        var assignReason = $("#assignReason").val();
+        let formData = {
+            "eventId":eventId,
+            "deptIds":deptIds,
+            "assignReason":assignReason
+        };
+        $.ajax({
+            url: "/system/event/eventAssign",
+            type: "post",
+            data: formData,
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    var customSkinSC = 'demosuccess';
+                    var customContentSC = '<i class="fa fa-check-circle"></i><span>当前事件已交办！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                    // location.reload();
+                    onSearch();
+
+                } else {
+                    var customSkinSC = 'demoError';
+                    var customContentSC = '<i class="fa fa-times-circle"></i><span>'+ data.msg+'！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                }
+            }
+        })
+    }
+
+    function confirmYingDetail() {
+        var id = $("#id").val();
+        var responsibilitySubject = $("#responsibilitySubject").text();
+        if (responsibilitySubject == '待研判') {
+            responsibilitySubject = "";
+        }
+        let companyLegalPerson = $("#companyLegalPerson").text();
+        if (companyLegalPerson == '待研判') {
+            companyLegalPerson = "";
+        }
+        let creditUnionCode = $("#creditUnionCode").text();
+        if (creditUnionCode == '待研判') {
+            creditUnionCode = "";
+        }
+        let companyContactInformation = $("#companyContactInformation").text();
+        if (companyContactInformation == "待研判") {
+            companyContactInformation = "";
+        }
+        if (id == "") {
+
+        } else {
+            $.ajax({
+                url: "/system/event/confirmYingDetail",
+                type: "post",
+                data: {id:id},
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        var customSkinSC = 'demosuccess';
+                        var customContentSC = '<i class="fa fa-check-circle"></i><span>当前事件已设为应急事件</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        onSearch();
+                    } else {
+                        var customSkinSC = 'demoError';
+                        var customContentSC = '<i class="fa fa-times-circle"></i><span>'+data.msg+'！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        // onSearch();
+                    }
+                }
+            })
+        }
+
+    }
+
+    //确认警情
+    function confirmDetail() {
+        var id = $("#id").val();
+        console.log(id)
+        var responsibilitySubject = $("#responsibilitySubject").text();
+        if (responsibilitySubject == '待研判') {
+            responsibilitySubject = "";
+        }
+        let companyLegalPerson = $("#companyLegalPerson").text();
+        if (companyLegalPerson == '待研判') {
+            companyLegalPerson = "";
+        }
+        let creditUnionCode = $("#creditUnionCode").text();
+        if (creditUnionCode == '待研判') {
+            creditUnionCode = "";
+        }
+        let companyContactInformation = $("#companyContactInformation").text();
+        if (companyContactInformation == "待研判") {
+            companyContactInformation = "";
+        }
+        if (id == "") {
+
+        } else {
+            var formData = new FormData();
+            formData.append("id", $("#id").val());
+            /*   formData.append("eventCategory",$("#eventCategory").val());
+              formData.append("eventSource",$("#eventSource").val());*/
+            formData.append("componentId", $("#componentId").val());
+            formData.append("eventType", $("#eventType").val());
+            formData.append("createDate", $("#createTime").text());
+            formData.append("eventTypeName", $("#eventTypeName").text());
+            formData.append("reportTypeName", $("#reportTypeName").text());
+            formData.append("responsibilitySubject", responsibilitySubject);
+            formData.append("cameraName", $("#cameraName").text());
+            formData.append("placeName", $("#placeName").text());
+            formData.append("creditUnionCode", creditUnionCode);
+            formData.append("companyLegalPerson", companyLegalPerson);
+            formData.append("companyContactInformation", companyContactInformation);
+            formData.append("eventAddress", $("#eventAddress").text());
+            formData.append("gridName", $("#gridName").text());
+            formData.append("regionName", $("#regionName").text());
+            formData.append("gridMan", $("#gridMan").text());
+            formData.append("gridContactInformation", $("#gridContactInformation").text());
+            formData.append("eventId", $("#eventId").val());
+            /*formData.append("patrolTeam", $("#patrolTeam").text());
+            formData.append("patrolTeamPhone", $("#patrolTeamPhone").text());
+            formData.append("patrolTeam2", $("#patrolTeam2").text());
+            formData.append("patrolTeam2Phone", $("#patrolTeam2Phone").text());*/
+            formData.append("regionIndexCode", $("#regionIndexCode").val());
+            var centerConfirmUserVo = {
+                "postId": 3,
+                "postName": "专职网格员",
+                "regionId": 1794305,
+                "regionName": "大许家埭网格",
+                "userid": 8850,
+                "username": "樊凯彪",
+                "phonenumber": "18434865392"
+            }
+            var eventRecommendedVo = {
+                hkEventInfo: {
+                    id:$("#id").val(),
+                    eventId:$("#eventId").val(),
+                    componentId:$("#componentId").val()
+                },
+                centerConfirmUserVo: {
+                    userid:"",
+                    username:"",
+                    regionId:""
+                },
+            }
+
+            $.ajax({
+                url: "/system/event/confirmDetail",
+                type: "post",
+                data: eventRecommendedVo,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        var customSkinSC = 'demosuccess';
+                        var customContentSC = '<i class="fa fa-check-circle"></i><span>当前警情已确认，进入指派环节！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        onSearch();
+                    } else {
+                        var customSkinSC = 'demoError';
+                        var customContentSC = '<i class="fa fa-times-circle"></i><span>'+data.msg+'！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        // onSearch();
+                    }
+                }
+            })
+        }
+
+    }
+
+    //赋默认值
+    $(document).on('click', '#huLue', function () {
+        document.getElementById('IgnoreReason').value = '';
+    })
+
+    //忽略警情
+    function ignoreDetail() {
+        let id = $("#id").val();
+        if (id == "") {
+
+        } else {
+            let IgnoreReason = $("#IgnoreReason").val();
+            if (IgnoreReason == null || IgnoreReason == "") {
+                var customSkinSC = 'demoWaring';
+                var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>请填写忽略的原因！</span>';
+                customOpen(customSkinSC, customContentSC)
+                return false;
+            }
+            $.ajax({
+                url: "/system/event/ignoreDetail",
+                type: "post",
+                data: {
+                    id: id,
+                    IgnoreReason: IgnoreReason
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == "0") {
+                        var customSkinSC = 'demosuccess';
+                        var customContentSC = '<i class="fa fa-check-circle"></i><span>当前警情已忽略，警情信息已归档！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        // location.reload();
+                        onSearch();
+                    }
+                }
+            })
+        }
+    }
+
+    /*历史警情*/
+    $(document).on('click','#historyEvent',function () {
+        var regionName = $("#regionName").text();
+        var longitude = $("#longitude").val();
+        var latitude = $("#latitude").val();
+        var eventType = $("#eventType").val();
+        var historyDiv = $("#histroyBody");
+        historyDiv.empty();
+        $.ajax({
+            url: "/system/event/eventTypeHistory",
+            data: {
+                regionName: regionName,
+                longitude: longitude,
+                latitude: latitude,
+                eventType: eventType
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    var datas = data.data;
+                    if(datas.length > 0){
+                        $.each(datas,function(index,item){
+                            var date = item.date;
+                            var eventImage = item.eventImage;
+                            var placeName = item.placeName;
+                            if(placeName == null || placeName == ""){
+                                placeName = "无";
+                            }
+                            var eventTypeName = item.eventTypeName;
+                            var eventAddress = item.eventAddress;
+                            if(eventImage == null || eventImage == ""){
+                                eventImage = '../img/no-pic1.png';
+                            }
+                            var history = '<div class="C_nav-cont">' +
+                                '                       <div class="C_nav-left">' +
+                                '                               <img src="'+eventImage+'"/>' +
+                                '                               <p>'+date+'</p>' +
+                                '                       </div>' +
+                                '                       <div class="C_nav-center">' +
+                                '                            <div class="gs-left">' +
+                                '                                <p>' +
+                                '                                    <img src = "../img/zhuti.png"  title="涉事主体"/>：' +
+                                '                                    <span >'+placeName+'</span>\n' +
+                                '                                </p>' +
+                                '                            </div>' +
+                                '                            <div class="gs-left">' +
+                                '                                <p>' +
+                                '                                   <img src = "../img/canyuzhuti.png" title="事件类型"/>：' +
+                                '                                   <span>'+eventTypeName+'</span>' +
+                                '                                </p>\n' +
+                                '                            </div>' +
+                                '                            <div class="gs-left">' +
+                                '                                <p>' +
+                                '                                   <img src = "../img/dizhi.png" title="警情地址"/>：' +
+                                '                                   <span>'+eventAddress+'</span>' +
+                                '                                </p>\n' +
+                                '                            </div>' +
+                                '                       </div>' +
+                                '                    </div>';
+                            historyDiv.fadeIn();
+                            historyDiv.append(history);
+                        });
+                    }
+                    if($('#histroyBody').html()==''){
+                        var customSkinSC = 'demoWaring';
+                        var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>暂无历史警情！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                    }
+                }else{
+                    var customSkinSC = 'demoError';
+                    var customContentSC = '<i class="fa fa-times-circle"></i><span>历史警情查询失败！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                }
+            },
+            error: function (err){
+                var customSkinSC = 'demoError';
+                var customContentSC = '<i class="fa fa-times-circle"></i><span>网络错误！</span>';
+                customOpen(customSkinSC, customContentSC)
+            }
+        })
+    });
+
+    /**关闭事件**/
+    // $(document).on('click', '#closeEvent', function () {
+    //     document.getElementById('closeReason').value = '网格信息错误';
+    // });
+
+    //关闭警情
+    function closeDetail() {
+        let id = $("#id").val();
+        if (id == null || id == "") {
+            var customSkinSC = 'demoInfo';
+            var customContentSC = '<i class="fa fa-info-circle"></i><span>无法获取事件信息，请刷新当前页面！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return false;
+        }
+        let closeReason = $("#closeReason").val();
+        if (closeReason == null || closeReason == "") {
+            var customSkinSC = 'demoWaring';
+            var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>请填写关闭原因！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return false;
+        }
+        $.ajax({
+            url: "/system/event/closeDetail",
+            type: "post",
+            data: {
+                id: id,
+                closeReason: closeReason
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.code == "0") {
+                    var customSkinSC = 'demosuccess';
+                    var customContentSC = '<i class="fa fa-check-circle"></i><span>已关闭异常报送警情，警情信息已归档！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                    onSearch()
+                }
+            }
+        })
+    }
+    //将车牌号进行录入
+    function TipsPlate(){
+        let eventId = $("#eventId").val();
+        let licensePlate = $("#licensePlate").val();
+        var fdStart = licensePlate.indexOf("浙");
+        if(fdStart == -1){
+            var customSkinSC = 'demoError';
+            var customContentSC = '<i class="fa fa-times-circle"></i><span>对不起,你输入的不是本地区车牌,请重新输入！</span>';
+            customOpen(customSkinSC, customContentSC)
+        }else{
+            $.ajax({
+                url:"/system/event/TipsPlate",
+                type:"get",
+                data:{
+                    eventId:eventId,
+                    VIEW_SJH_CPH_HPHM:licensePlate
+                },
+                dataType: "json",
+                success:function (data) {
+                    if(data.code =='00'){
+                        var customSkinSC = 'demosuccess';
+                        var customContentSC = '<i class="fa fa-check-circle"></i><span>车主信息以保存并发送短信通知！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        setTimeout(function () {
+                            // location.reload();
+                            onSearch()
+                        },1500);
+                    }else if(data.code =='301'){
+                        var customSkinSC = 'demoError';
+                        var customContentSC = '<i class="fa fa-times-circle"></i><span>对不起,未查找到车主手机号或车牌输入不正确,导致短信发送失败！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        setTimeout(function () {
+                            // location.reload();
+                            onSearch()
+                        },1500);
+                    }else if(data.code == '500'){
+                        var customSkinSC = 'demoInfo';
+                        var customContentSC = '<i class="fa fa-info-circle"></i><span>已向车主发送过信息！</span>';
+                        customOpen(customSkinSC, customContentSC)
+                        setTimeout(function () {
+                            // location.reload();
+                            onSearch()
+                        },1500);
+                    }
+                }
+            })
+        }
+    }
+
+    //事件类别
+    $(document).on('click', '#eventTypeName', function () {
+        var tilteName = $("#eventTypeName").text();
+        $("#name").val(tilteName);
+    })
+
+    function determine() {
+        var uname = $("#name").val();
+        $("#eventTypeName").text(uname);
+    }
+
+    //责任主体
+    $(document).on('click', '#responsibilitySubject', function () {
+        var tilteName = $("#responsibilitySubject").text();
+        $("#name2").val(tilteName);
+    })
+
+    function determine2() {
+        var uname = $("#name2").val();
+        $("#responsibilitySubject").text(uname);
+    }
+
+    //警情地址
+    $(document).on('click', '#cameraName', function () {
+        var tilteName = $("#cameraName").text();
+        $("#name3").val(tilteName);
+    })
+
+    function determine3() {
+        var uname = $("#name3").val();
+        $("#cameraName").text(uname);
+    }
+
+    //涉事主体
+    $(document).on('click', '#placeName', function () {
+        var tilteName = $("#placeName").text();
+        $("#name4").val(tilteName);
+    })
+
+    function determine4() {
+        var uname = $("#name4").val();
+        $("#placeName").text(uname);
+    }
+
+    //单位法人
+    $(document).on('click', '#companyLegalPerson', function () {
+        var tilteName = $("#companyLegalPerson").text();
+        $("#name5").val(tilteName);
+    })
+
+    function determine5() {
+        var uname = $("#name5").val();
+        $("#companyLegalPerson").text(uname);
+    }
+
+    //单位地址
+    $(document).on('click', '#eventAddress', function () {
+        var tilteName = $("#eventAddress").text();
+        $("#name6").val(tilteName);
+    })
+
+    function determine6() {
+        var uname = $("#name6").val();
+        $("#eventAddress").text(uname);
+    }
+
+    //统一信用代码
+    $(document).on('click', '#creditUnionCode', function () {
+        var tilteName = $("#creditUnionCode").text();
+        $("#name7").val(tilteName);
+    })
+
+    function determine7() {
+        var uname = $("#name7").val();
+        $("#creditUnionCode").text(uname);
+    }
+
+    //联系方式
+    $(document).on('click', '#companyContactInformation', function () {
+        var tilteName = $("#companyContactInformation").text();
+        $("#name8").val(tilteName);
+    })
+
+    function determine8() {
+        var uname = $("#name8").val();
+        $("#companyContactInformation").text(uname);
+    }
+
+    // 添加标签的集合
+    var lookList = [];
+    // 保存标签
+    var labelList =[];
+    // 渲染弹框标签
+    function see() {
+        lookList = [];
+        var text = '';
+        labelList.forEach(item => {
+            if (item !== '' || item !== null) {
+                text += '<li class="addList tag-add"><span data-id="'+item.lmId+'">' + item.lmName + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+                lookList.push(item);
+                lookList.join('.');
+            }
+        });
+        $('.addInput').before(text);
+    }
+
+    // 选择已有标签
+    function addTag(add) {
+        var text = $(add).text();
+        var id = $(add).data("id");
+        let flag = false;
+        lookList.forEach(item => {
+            if(item.lmId == id){
+                flag = true;
+            }
+        });
+        if(!flag){
+            var addtext = '<li class="addList tag-add"><span>' + text + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+            $('.addInput').before(addtext);
+            lookList.push({lmId:id,lmName:text});
+            lookList.join('.');
+        }
+    }
+
+    // 自定义输入标签
+    function addTagInput() {
+        $('.addLabelSelect').css({
+            'border': '1px solid #ddd',
+            'box-shadow': 'none'
+        });
+        var inputText = $('.addTagInput').val();
+        if (inputText !== '') {
+            var addtext = '<li class="addList tag-add"><span>' + inputText + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+            $('.addInput').before(addtext);
+            $('.addTagInput').val('');
+            lookList.push({lmId:"",lmName:inputText});
+            lookList.join('.');
+        }
+    }
+
+    // 键盘enter查询事件
+    $('body').on('keyup', 'input.addTagInput', function (e) {
+        console.log(e.keyCode)
+        if (e.keyCode == 13) {
+            var inputText = $('.addTagInput').val();
+            if (inputText !== '') {
+                var addtext = '<li class="addList tag-add"><span>' + inputText + '</span><i class="fa fa-close removeList" onClick="removeList(this)"></i></li>';
+                $('.addInput').before(addtext);
+                $('.addTagInput').val('');
+                lookList.push({lmId: "", lmName: inputText});
+                lookList.join('.');
+            }
+        }
+    })
+    // 点击获取焦点
+    function addLabelSelect() {
+        $('.addTagInput').focus();
+        $('.addLabelSelect').css({
+            'border': '1px solid #66afe9',
+            'box-shadow': 'inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6)'
+        })
+    }
+
+    // 关闭弹窗
+    function removeNode(add) {
+        lookList = [];
+        labelList = [];
+        $(add).parents('.custom_tooltip').hide();
+        $(add).parents('.custom_tooltip').remove();
+        $('.addPic').hide();
+    }
+
+    // 删除标签
+    function removeList(add) {
+        var textList = $(add).prev().text();
+        $(add).parents('.addList').remove();
+        lookList.splice($.inArray(textList, lookList), 1);
+        labelList.splice($.inArray(textList, labelList), 1);
+    }
+
+    // 渲染标签到页面
+    function addListLabel() {
+        if(lookList.length > 10){
+            var customSkinSC = 'demoInfo';
+            var customContentSC = '<i class="fa fa-info-circle"></i><span>单个事件最多添加10个自定义标签！</span>';
+            customOpen(customSkinSC, customContentSC)
+            return;
+        }
+        var ajaxData = {
+            eventId:$("#id").val(),
+            lmList:lookList,
+            riskLevel:$("input[name='optionsRadios']:checked").val()
+        };
+        $.ajax({
+            url:"/system/event/addEventLm",
+            type:"post",
+            data:JSON.stringify(ajaxData),
+            dataType:'json',
+            contentType:'application/json',
+            success:function (data) {
+                if(data.code == 0){
+                    var customSkinSC = 'demosuccess';
+                    var customContentSC = '<i class="fa fa-check-circle"></i><span>保存成功！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                    onSearch();
+                    // detailsss($("#id").val(),$("#componentId").val());
+                }else{
+                    var customSkinSC = 'demoError';
+                    var customContentSC = '<i class="fa fa-times-circle"></i><span>'+ data.msg+'！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                }
+            }
+        });
+    }
+
+    // 自定义信息框 使用时必须给需要使用的dom元素添加class：custom-options，父元素添加style：position: relative
+    function addLabelInformation(addlabel) {
+        $('.addPic').show();
+        labelList = [];
+        var information = '';
+        $.ajax({
+            url:"/system/event/queryEventLm",
+            type:"get",
+            data:{
+                id:$("#id").val()
+            },
+            success:function (data) {
+                if(data.code == 0){
+                    let hasLm = data.data.lmList;
+                    let allLm = data.data.allLm;
+                    let riskLevel = data.data.riskLevel;
+                    // 添加节点
+                    information = '<div class="custom_tooltip custom_label">' +
+                        '<p class="custom_tooltip-colse"><span>添加标签</span><i class="fa fa-close" onclick="removeNode(this)"></i></p>' +
+                        '<div class="custom_labelCenter"><div class="row">';
+                    if(riskLevel == '99'){
+                        information +='<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="1" id="optionsRadios1" name="optionsRadios">普通事件</label>\n' +
+                            '</div>\n' +
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="99" checked="" id="optionsRadios2" name="optionsRadios">重要事件</label>\n' +
+                            '</div>'+
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="999" id="optionsRadios3" name="optionsRadios">紧急事件</label>\n' +
+                            '</div>';
+                    }else if(riskLevel == '999'){
+                        information +='<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="1" id="optionsRadios1" name="optionsRadios">普通事件</label>\n' +
+                            '</div>\n' +
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="99" id="optionsRadios2" name="optionsRadios">重要事件</label>\n' +
+                            '</div>'+
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="999" checked="" id="optionsRadios3" name="optionsRadios">紧急事件</label>\n' +
+                            '</div>';
+                    }else{
+                        information +='<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" checked="" value="1" id="optionsRadios1" name="optionsRadios">普通事件</label>\n' +
+                            '</div>\n' +
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="99" id="optionsRadios2" name="optionsRadios">重要事件</label>\n' +
+                            '</div>'+
+                            '<div class="radio col-sm-4">\n' +
+                            '   <label><input type="radio" value="999" id="optionsRadios3" name="optionsRadios">紧急事件</label>\n' +
+                            '</div>';
+                    }
+                    information +='</div>'+
+                        '<ul class = "addLabelSelect" onclick="addLabelSelect()">' +
+                        '        <li class = "addInput">' +
+                        '            <input type = "text" class = "addTagInput" onblur="addTagInput();">' +
+                        '        </li>' +
+                        '</ul>'+
+                        '<div class = "allLabel">\n';
+                    for (let i = 0; i < hasLm.length; i++) {
+                        labelList.push({lmId:hasLm[i].lmId,lmName:hasLm[i].lmName});
+                    }
+                    for (let i = 0; i < allLm.length; i++) {
+                        information+='<span><em class = "addTag tag-add" data-id="'+allLm[i].lmId+'" onclick="addTag(this)">'+allLm[i].lmName+'</em></span>';
+                    }
+                    information+='</div></div>'+
+                        '<div class="labelFooter">' +
+                        '<button onclick="addListLabel()" class="btn btn-middle btn-primary">确定</button>' +
+                        '<button onclick="removeNode(this)" class="btn btn-middle btn-default">取消</button>' +
+                        '</div>' +
+                        '</div>';
+                    $('.custom_label').remove();
+                    $(addlabel).after(information);
+                    $(addlabel).next().show();
+                    see()
+                }
+            }
+        });
+    }
+
+    // 判断信息框是否存在
+    function outAdd(out) {
+        var addPicBlock = $(out).find('.custom_label').css('display');
+        if (addPicBlock == 'block') {
+            $('.addPic').show();
+        } else {
+            $('.addPic').hide();
+        }
+    }
+
+
+    //daterangepicker汉化
+    var locale = {
+        "format": 'YYYY-MM-DD HH:mm:ss',
+        "separator": "~",
+        "applyLabel": "确定",
+        "cancelLabel": "取消",
+        "fromLabel": "起始时间",
+        "toLabel": "结束时间'",
+        "customRangeLabel": "自定义",
+        "weekLabel": "W",
+        "daysOfWeek": ["日", "一", "二", "三", "四", "五", "六"],
+        "monthNames": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+        "firstDay": 1
+    };
+
+    $('#dateTime').daterangepicker(
+        {
+            'timePicker24Hour': true,//设置小时为24小时制 默认false
+            'timePicker': true,//可选中时分 默认false
+            'locale': locale,
+            //汉化按钮部分
+            ranges: {
+                '今日': [moment(), moment()],
+                '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                '最近7日': [moment().subtract(6, 'days'), moment()],
+                '最近30日': [moment().subtract(29, 'days'), moment()],
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            //默认报警区间是最近7天
+            startDate: moment().subtract(6, 'days'),
+            endDate: moment(),
+
+        }
+    );
+
+    // 多余button显示隐藏
+    function showButton() {
+        $('.fa-angle-right').show()
+        $('.showButton').show()
+        $('.fa-angle-left').hide()
+    }
+    function hideButton() {
+        $('.fa-angle-right').hide()
+        $('.showButton').hide()
+        $('.fa-angle-left').show()
+    }
+    // 键盘enter查询事件
+    $('body').on('keyup','input.form-control',function (e) {
+        console.log(e.keyCode)
+        if(e.keyCode==13){
+            onSearch()
+        }
+    })
+
+    // 轮播切换按钮的显示隐藏
+    function prev() {
+        $('.carousel-control').css('opacity', '1')
+    }
+
+    function next() {
+        $('.carousel-control').css('opacity', '0')
+    }
+
+
+    // layui弹出相册层
+    function showMorePic(index,imgSrc) {
+        var arr = imgSrc.split(",");
+        var jsonPic = {
+            "title": "", //相册标题
+            "id": 123, //相册id
+            "start": index, //初始显示的图片序号，默认0
+            "data": [   //相册包含的图片，数组格式
+            ]
+        };
+        arr.forEach(item => {
+            let params = {
+                src: item
+            }
+            jsonPic.data.push(params)
+        });
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            // $.getJSON('jsonPic', function (json) {
+                layer.photos({
+                    photos: jsonPic
+                    , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                    ,area: ['800px', '600px']
+                    ,shade: [0.3, '#000']//遮罩层颜色
+                });
+            // });
+        })
+    }
+
+    function customOpen(customSkin, customContent){
+    layui.use('layer', function () {
+        var layer = layui.layer;
+        layer.open({
+            type: 1,
+            title: '',
+            offset: '60px',
+            time: 2000, //时间
+            skin: ''+ customSkin+' demo-class',//自定义class
+            content: customContent,
+            btn: [],
+            closeBtn: 0//不显示右上角图标
+            , resize: false//是否禁止拉伸
+            , shade: 0//是否显示遮罩层
+        });
+    })
+}
+    function videoPlay(id,src,type,cover) {
+        //添加视频
+        videoBox = ''
+        videoBox = '<video id="tagVideojs" class="video-js vjs-default-skin vjs-big-play-centered" ' +
+            'style="width: 100%;height: 100%;" controls preload="auto" muted autoplay data-setup="{}"  poster=' + cover + '>\n' +
+            '<source src=' + src + ' type='+ type+'>\n' +
+            '</video>';
+        $('#'+ id+'').append(videoBox)
+        videojs('tagVideojs', {
+            sources: [{
+                src: src,
+                type: type
+            }]
+        });
+    }
+
+    function videoDispose(id,src,type,cover) {
+        // 销毁视频
+        let myvideo = videojs('tagVideojs', {
+            bigPlayButton: false,
+            textTrackDisplay: false,
+            posterImage: true,
+            errorDisplay: false,
+            controlBar: true
+        }, function () {
+
+        })
+        myvideo.dispose();
+        //添加视频
+        videoBox = ''
+        videoBox = '<video id="tagVideojs" class="video-js vjs-default-skin vjs-big-play-centered" ' +
+            'style="width: 100%;height: 100%;" controls preload="auto" muted autoplay data-setup="{}"  poster=' + cover + '>\n' +
+            '<source src=' + src + ' type='+ type+'>\n' +
+            '</video>';
+        $('#'+ id+'').append(videoBox)
+        videojs('tagVideojs', {
+            sources: [{
+                src: src,
+                type: type
+            }]
+        });
+    }
+
+    // 点击确认警情是否弹框
+    $('#additional').on('click','.confirmEvent',function () {
+        // 确认警情弹框弹出
+        $('#myModal').modal('show');
+        var longitude = $("#longitude").val();
+        var latitude = $("#latitude").val();
+        var val = $("#componentId").val();
+        if(val != ''){
+            $(".confirmTypeName option[value="+val+"]").attr("selected", "selected");
+        }
+        let eventTypeName = $('.confirmTypeName').val();
+        let ads = $('#cameraName').html()
+        if(eventTypeName == ''){
+            $('.address').attr('disabled',true);
+        }else if(ads !=''){
+            $('.address').attr('disabled',true);
+        }else{
+            $('.address').removeAttr('disabled');
+            $('.confirmIcon').attr('data-target',"#eventAdress");
+            $('.confirmIcon').css('cursor',"pointer");
+        }
+        $('.address').val($('#cameraName').html())
+        confirmTable(val,longitude,latitude)
+
+    })
+    // 选择事件类型后方可点击右侧定位
+    $('.confirmTypeName').on('change',function(){
+        let val= $(this).val();
+        if(val == ''){
+            $('.address').attr('disabled',true);
+        }else{
+            $('.address').removeAttr('disabled');
+            $('.confirmIcon').attr('data-target',"#eventAdress");
+            $('.confirmIcon').css('cursor',"pointer");
+            var longitude = $("#longitude").val();
+            var latitude = $("#latitude").val();
+            console.log(val,longitude,latitude)
+            confirmTable(val,longitude,latitude)
+        }
+    })
+    // 点击事件地图右侧定位弹框
+    $('#eventAdress').on('shown.bs.modal', function () {
+        // 地图展示
+        var map = new BMap.Map("l-map", {
+            maxZoom: 18,
+            minZoom:14// coordsType指定输入输出的坐标类型，3为gcj02坐标，5为bd0ll坐标，默认为5。
+                    // 指定完成后API将以指定的坐标类型处理您传入的坐标
+        }); // 创建地图实例
+        var longitude = $("#longitude").val();
+        var latitude = $("#latitude").val();
+        //如果无经纬度,默认经纬度为闲林街道办
+        if(!longitude || longitude.length < 1){
+            longitude = 119.989475;
+        }
+        if(!latitude || latitude.length < 1){
+            latitude = 30.237865;
+        }
+        var centerPoint = new BMap.Point(longitude, latitude);//地图中心点
+        map.centerAndZoom(centerPoint, 16); // 初始化地图，设置中心点坐标和地图级别
+        map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放,
+        var marker = new BMap.Marker(centerPoint,{
+            enableDragging: true //开启标记点可拖动
+        })
+        map.addOverlay(marker);
+        var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+            {"input" : "suggestId"
+                ,"location" : map
+            });
+        ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+            var str = "";
+            var _value = e.fromitem.value;
+            var value = "";
+            if (e.fromitem.index > -1) {
+                value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+            }
+            str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+
+            value = "";
+            if (e.toitem.index > -1) {
+                _value = e.toitem.value;
+                value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+            }
+            str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+            $("#searchResultPanel").innerHTML = str;
+        });
+
+        var myValue;
+        ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+            var _value = e.item.value;
+            myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+            $("#searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+
+            setPlace();
+        });
+        function setPlace(){
+            map.removeOverlay(marker);    //清除地图上所有覆盖物
+            function myFun(){
+                var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+                map.centerAndZoom(pp, 18);
+                let marker = new BMap.Marker(pp, {
+                    enableDragging: true //开启标记点可拖动
+                })
+                map.addOverlay(marker);    //添加标注
+
+                //监听标记点拖动
+                marker.addEventListener("dragend", function (e) { //拖动事件
+                    getLocationByPoint(e.point)
+                });
+            }
+            var local = new BMap.LocalSearch(map, { //智能搜索
+                onSearchComplete: myFun
+            });
+            local.search(myValue);
+        }
+
+        map.addEventListener('click', function (e) {
+            map.removeOverlay(marker);
+            getLocationByPoint(e.point)
+            let point = new BMap.Point(e.point.lng,e.point.lat);
+            marker = new BMap.Marker(point,{
+                enableDragging: true //开启标记点可拖动
+            })
+            map.addOverlay(marker);
+            var val = $('.confirmTypeName').val();
+            confirmTable(val,e.point.lng,e.point.lat)
+        });
+        //监听标记点拖动
+        marker.addEventListener("dragend", function (e) { //拖动事件
+            getLocationByPoint(e.point)
+        });
+        //根据社区deptId获取上一级街道
+        $.ajax({
+            url:"/system/region/queryParentRegionByRegionId",
+            type:"post",
+            data:{
+                "regionId":regionIndexCode,
+            },
+            success:function (data) {
+                if(data.code == 0){
+                    let parentId = data.data;
+                    //动态加载已绘制完成点位信息
+                    $.ajax({
+                        url:"/system/region/map/details",
+                        type:"post",
+                        data:{
+                            "regionId":parentId,
+                        },
+                        success:function (data) {
+                            if(data.code == 0){
+                                let colors = [
+                                    '#0000ff', '#02a7f0', '#01a63a', '#d9001b',
+                                    '#70b603', '#8b741a',
+
+                                ]
+                                let backgroundColors = [
+                                    '#8080ff', '#81d3f8', '#38b051', '#ec808d',
+                                    '#caf982', '#facd91',
+                                ]
+
+                                //保存所有覆盖物集合
+                                let polygons = []
+                                //保存所有文本标注集合
+                                let labels = []
+                                //遍历集合
+                                let markerPointsList = data.data;
+                                if (markerPointsList && markerPointsList.length > 0) {
+                                    $('#tips').text('已绘制' + markerPointsList.length + '个下级网格。如有需要，请前往各地区下编辑地图。')
+                                    for (let i = 0; i < markerPointsList.length; i++) {
+                                        let markerPoints = JSON.parse(markerPointsList[i].markerPoints)
+                                        //获取当前区域中心点
+                                        let centerPoint = JSON.parse(markerPointsList[i].centerPoint);
+                                        // console.log(centerPoint)
+                                        let regionName = markerPointsList[i].parentName;
+                                        // console.log(markerPoints)
+                                        //覆盖物
+                                        let polygon;
+                                        //文本标注
+                                        let label;
+                                        //覆盖物标记点回显.
+                                        if (markerPoints && markerPoints.length > 3) {
+                                            let settings = {
+                                                strokeColor: colors[i % 6],    //边线颜色。
+                                                fillColor: backgroundColors[i % 6],      //填充颜色。当参数为空时，圆形将没有填充效果。
+                                                strokeWeight: 2,       //边线的宽度，以像素为单位。
+                                                strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+                                                fillOpacity: 0.3,      //填充的透明度，取值范围0 - 1。
+                                                strokeStyle: 'solid' //边线的样式，solid或dashed。
+                                            }
+                                            let points = []
+                                            for (let i = 0; i < markerPoints.length; i++) {
+                                                points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+                                            }
+                                            //构造一个覆盖物
+                                            polygon = new BMap.Polygon(points, settings)
+                                            //指定文本标注的位置
+                                            let opts = {
+                                                position: new BMap.Point(centerPoint[0], centerPoint[1]), // 指定文本标注所在的地理位置
+                                                offset: new BMap.Size(0, 0) // 设置文本偏移量
+                                            };
+                                            //构造一个文本标注
+                                            label = new BMap.Label(regionName, opts);
+                                            // 自定义文本标注样式
+                                            label.setStyle({
+                                                color: "#000000",
+                                                backgroundColor: 'transparent',//文本背景色
+                                                borderColor: 'transparent',//文本框边框色
+                                                width: '70px',
+                                                whiteSpace: "normal",//设置文字超出自动换行
+                                                fontSize: "15px",
+                                                minHeight: "15px",
+                                                lineHeight: "1.5",
+                                                fontFamily: "微软雅黑"
+                                            });
+                                        }
+                                        //添加覆盖物到数组
+                                        polygons.push(polygon)
+                                        //添加文本标注到数组
+                                        labels.push(label);
+                                        //添加覆盖物到地图
+                                        map.addOverlay(polygon);
+                                        //添加文本标注到地图
+                                        map.addOverlay(label);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        });
+
+    })
+    //逆地址解析
+    var geoc = new BMap.Geocoder();
+    //传入point
+    function getLocationByPoint(pt) {
+        // console.log(pt)
+        geoc.getLocation(pt, function (rs) {
+            // console.log(rs.address)
+            $('#suggestId').val(rs.address)
+            // let addComp = rs.addressComponents;
+            // console.log(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
+        })
+    }
+    // 点击确定回显地址
+    function confirmAddress() {
+        let eventAddress = $('#suggestId').val();
+        if(eventAddress !=''){
+            $('.address').val(eventAddress);
+            $('#eventAdress').modal('hide')
+        }else{
+            var customSkinSC = 'demoWaring';
+            var customContentSC = '<i class="fa fa-exclamation-circle"></i><span>请选择事件地址！</span>';
+            customOpen(customSkinSC, customContentSC)
+        }
+
+    }
+
+    // 渲染确认警情列表
+    function confirmTable(val,lng,lat){
+        $('#configTable').empty();
+        $.ajax({
+            url:'/system/event/getEventWithList',
+            type:'post',
+            data:{
+                componentId:val,
+                latitude:lat,
+                longitude:lng
+            },
+            success:function(data){
+                console.log(data)
+
+                if(data.code==0){
+                    let result = data.data;
+                    let tableText = '';
+                    result.forEach(item=>{
+                        tableText = `<tr>
+                                <td>
+                                    <input type="radio" name="single" class="single" value="${item.userid}">
+                                </td>
+                                <td>${item.username}</td>
+                                <td>${item.phonenumber}</td>
+                                <td name="postId" value="${item.postId}">${item.postName}</td>
+                                <td name="regionId" value="${item.regionId}">${item.regionName}</td>
+                            </tr>`;
+                        $('#configTable').append(tableText)
+                    })
+                    $('#configTable tr:eq(0)').find('input').attr('checked',true)
+                }else if(data.code == 301){
+                    var customSkinSC = 'demoError';
+                    var customContentSC = '<i class="fa fa-times-circle"></i><span>'+ data.msg+'！</span>';
+                    customOpen(customSkinSC, customContentSC)
+                }
+            },
+            error:function(err){
+                console.log(err)
+            }
+        })
+    }
+</script>
+</html>

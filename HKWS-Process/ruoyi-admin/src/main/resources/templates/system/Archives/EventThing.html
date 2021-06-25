@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang = "zh" xmlns:th = "http://www.thymeleaf.org" xmlns:shiro = "http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset = "UTF-8" />
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0" />
+    <title>数智闲林·统一门户管理平台</title>
+    <link th:href = "@{/layui/css/layui.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/bootstrap.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/ajax/libs/bootstrap-table/bootstrap-table.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/font-awesome.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/icon/iconfont.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/public.css}" rel = "stylesheet" />
+
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: layout-latest-css" />
+    <link th:href = "@{/css/eventDetail.css}" rel = "stylesheet" />
+    <script>
+        //rem布局动态更改html
+        (function (win) {
+            var tid;
+
+            function refreshRem() {
+                let designSize = 1920;
+                let html = document.documentElement;
+                let wW = html.clientWidth;
+                let rem = (wW * 100) / designSize;
+                document.documentElement.style.fontSize = rem + "px";
+            }
+
+            win.addEventListener(
+                "resize",
+                function () {
+                    clearTimeout(tid);
+                    tid = setTimeout(refreshRem, 100);
+                },
+                false
+            );
+            win.addEventListener(
+                "pageshow",
+                function (e) {
+                    if (e.persisted) {
+                        clearTimeout(tid);
+                        tid = setTimeout(refreshRem, 100);
+                    }
+                },
+                false
+            );
+
+            refreshRem();
+        })(window);
+    </script>
+    <style>
+
+        /*表单*/
+        .form{
+            background-color: #fff;
+            border-radius: 6px;
+            margin-top: 10px;
+            padding-top: 5px;
+            padding-bottom: 13px;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+            height: 71px;
+        }
+        #formId ul{
+            display: flex;
+        }
+        #formId ul li{
+            margin: 5px 15px 5px 0px;
+        }
+        input,select{
+            width: 200px;
+            height: 30px;
+            color: #777;
+            padding-right: 30px;
+            padding-left: 10px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        /*表格*/
+        .table-striped{
+            width: 100%;
+            background: #fff;
+            border-radius: 6px;
+            margin-top: 10px;
+            padding-top: 5px;
+            padding-bottom: 13px;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+            min-height: 75%;
+            max-height: 85vh;
+            overflow-y: scroll;
+        }
+
+        .table > tbody > tr:nth-last-of-type(1) > td{
+            border-bottom:1px solid #ddd ;
+        }
+        ::-webkit-scrollbar{
+            /*不显示滚动条*/
+            display: none;
+        }
+        .fixed-table-toolbar .bs-bars, .fixed-table-toolbar .columns, .fixed-table-toolbar .search{
+            position: relative;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            line-height: 34px;
+        }
+
+
+        th:focus{
+            outline: none;
+        }
+        /*分页*/
+        .pagination > li > a, .pagination > li > span{
+            color: #676767;
+        }
+        .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover{
+            background-color: #f4f4f4;
+            border-color: #DDDDDD;
+            color: inherit;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .fixed-table-body {
+            position: relative;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class = "mediaCont">
+    <div th:insert="common/header :: header"></div>
+    <div th:include="common/sidebar::sidebar(activeUri='thing')" class = "nav_sider"></div>
+</div>
+<div class = "mediaCont mediaCenter">
+<div class = "container-fluid nav-stacked Thing-nav" style="background-color:#f2f2f2;padding-right: 15px;">
+    <div class="container-div">
+
+        <div class = "thingTab row" style = "margin: 0;">
+            <ul class = "thingTitle" id = "dataTab">
+                <li class = "active" data-type = "day">近一天</li>
+                <li class = "" data-type = "week">近一周</li>
+                <li class = "" data-type = "month">近一月</li>
+                <li class = "" data-type = "year">近一年</li>
+            </ul>
+            <div class = "trend_operation">
+                <ul class = "operationLeft operationRight">
+                    <li title = "图表" onclick = "javaScript:location.href = '/system/archives/Thinglist';"><i class = "iconfont">&#xe60f;</i></li>
+                    <li class = "operationActive" title = "报表"><i class = "iconfont">&#xe691;</i></li>
+                </ul>
+                <ul class = "operationRight">
+                    <li title = "刷新"><i class = "fa fa-refresh"></i></li>
+                    <li title = "导出"><span class = "glyphicon glyphicon-cloud-download" aria-hidden = "true"></span></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="row" style="margin: 0;">
+            <div class="form">
+                <div class = "col-sm-12 search-collapse">
+                    <form id = "formId">
+                        <div class = "select-list">
+                            <ul>
+                                <li>
+                                    <label>事件上报时间：</label>
+                                    <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="beginCreateTime"/>
+                                    <span>-</span>
+                                    <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endCreateDate"/>
+                                </li>
+                                <li>
+                                    <label>事件类型：</label>
+                                    <select name = "eventType" th:with = "eventClass=${eventClass}">
+                                        <option value = "">所有</option>
+                                        <option th:each = "class : ${eventClass}" th:text = "${class.ec_name}" th:value = "${class.ec_name_type}"></option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <label>事件状态：</label>
+                                    <select name = "eventAlertStatus">
+                                        <option value = "">所有</option>
+                                        <option value = "2">研判中</option>
+                                        <option value = "3">调度中</option>
+                                        <option value = "4">已退回</option>
+                                        <option value = "5">处置</option>
+                                        <option value = "6">完结</option>
+                                        <option value = "7">已忽略</option>
+                                        <option value = "8">关闭详情</option>
+                                        <option value = "9">系统自动完成</option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <a class = "btn btn-primary btn-rounded btn-sm" onclick = "$.table.search()"><i class = "fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class = "btn btn-warning btn-rounded btn-sm" onclick = "$.form.reset()"><i class = "fa fa-refresh"></i>&nbsp;重置</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" class = "table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+
+</div>
+</div>
+</body>
+
+<script th:inline = "javascript">
+    /**
+     * 事件列表
+     * @type {string}
+     */
+    var prefix = ctx + "system/archives";
+    $(function () {
+        var options = {
+            url: prefix + "/queryThingList",
+            exportUrl: prefix + "/thingTableExport",
+            queryParams: queryParams,
+            modalName: "事件列表",
+            method: 'get',
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            columns: [
+                {
+                    field: 'eventTitle',
+                    title: '事件标题'
+                },
+                {
+                    field: 'eventType',
+                    title: '事件类型'
+                },
+                {
+                    field: 'reportTime',
+                    title: '事件上报时间'
+                },
+                {
+                    field: 'reportType',
+                    title: '事件上报类型'
+                },
+                {
+                    field: 'eventAddress',
+                    title: '事件地址'
+                },
+                {
+                    field: 'eventAlertType',
+                    title: '事件状态',
+                    formatter: function (value, row, index) {
+                        var status = "";
+                        if (value == 2) {
+                            status = "研判中";
+                        } else if (value == 3) {
+                            status = "调度中";
+                        } else if (value == 4) {
+                            status = "已退回";
+                        } else if (value == 5) {
+                            status = "处置中";
+                        } else if (value == 6) {
+                            status = "已完结";
+                        } else if (value == 7) {
+                            status = "已忽略";
+                        } else if (value == 8) {
+                            status = "已关闭";
+                        } else if (value == 9) {
+                            status = "系统自动完成";
+                        }
+                        return status;
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+                }, {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft" href="javascript:void(0)" onclick="detail('+ row.id+')"><i class="iconfont">&#xe6fd;</i>查看详情</a> ');
+                        // console.log(row)
+                        console.log(row.id)
+                        return actions.join('');
+                    }
+                },
+            ]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        return search;
+    }
+
+    $('#dataTab li').on('click', function () {
+        // 删除li的active
+        $('#dataTab li').removeClass('active');
+        // 给当前li添加active
+        $(this).addClass('active');
+    })
+    //定义弹出层内容
+    var dataCenter = '';
+    function detail(id) {
+
+
+        $.ajax({
+            url: "/system/event/details",
+            data: {
+                'id': id
+            },
+            type: "get",
+            success: function (data){
+                var dataDetail = data.data;
+                if (data.code == '0') {
+                    console.log(dataDetail)
+                    var eventTitle = dataDetail.eventTitle;
+                    var eventTypeName = dataDetail.eventTypeName;
+                    var reportTypeName = dataDetail.reportTypeName;
+                    var createTime = dataDetail.createTime;
+                    var reportTime = dataDetail.reportTime;
+                    var responsibilitySubject = dataDetail.responsibilitySubject;
+                    var eventAddress = dataDetail.eventAddress;
+                    var regionDetail = dataDetail.regionDetail;
+                    var eventImage = dataDetail.eventImage;
+                    var picList = dataDetail.picList;
+                    var placeName = dataDetail.placeName;
+                    if (responsibilitySubject == null || responsibilitySubject == "") {
+                        var subject = '<p>责任主体：<span class="openModal" id="responsibilitySubject" style="color: #0070cc">待研判</span></p>\n';
+                    } else {
+                        var subject = '<p>责任主体：<span class="openModal" id="responsibilitySubject">' + responsibilitySubject + '</span></p>\n';
+                    }
+                    // 遍历图片
+                    var carouselIndicators = '';
+                    var carouselInner = '';
+                    var morePicArr = [];
+                    if (picList != '') {
+                        for (let i = 0; i < picList.length; i++) {
+                            let pic = picList[i].pic;
+                            if (pic && pic.length > 6) {
+                                morePicArr.push(picList[i].pic);
+                            }
+                        }
+                        for (var i = 0; i < picList.length; i++) {
+                            let pic = picList[i].pic;
+                            if (pic && pic.length > 6) {
+                                if (i == 0) {
+                                    carouselIndicators += '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>\n';
+                                    carouselInner += '<div class="item active">\n' +
+                                        '<img id="eventImage" src = "' + pic + '" onClick="showMorePic(\'' + i + '\',\'' + morePicArr + '\')">\n' +
+                                        '</div>\n';
+
+
+                                } else {
+                                    carouselIndicators += '<li data-target="#myCarousel" data-slide-to="' + i + '"></li>\n';
+                                    carouselInner += '<div class="item">\n' +
+                                        '<img  src = "' + pic + '" onClick="showMorePic(\'' + i + '\',\'' + morePicArr + '\')">\n' +
+                                        '</div>\n';
+
+                                }
+                            }
+                        }
+                    } else {
+                        carouselInner += '<div class="item active">\n' +
+                            '<img  src ="../../img/no-pic1.png" >\n' +
+                            '</div>\n';
+                    }
+                    var companyLegalPerson = dataDetail.companyLegalPerson;
+                    if (companyLegalPerson == null || companyLegalPerson == "") {
+                        var person = '<p>单位法人：<span class="openModal" id="companyLegalPerson">待研判</span></p>\n';
+                    } else {
+                        var person = '<p>单位法人：<span class="openModal" id="companyLegalPerson">' + companyLegalPerson + '</span></p>\n';
+                    }
+                    var creditUnionCode = dataDetail.creditUnionCode;
+                    if (creditUnionCode == null || creditUnionCode == "") {
+                        var unionCode = '<p>统一信用代码：<span class="openModal" id="creditUnionCode">待研判</span></p>\n';
+                    } else {
+                        var unionCode = '<p>统一信用代码：<span class="openModal" id="creditUnionCode">' + creditUnionCode + '</span></p>\n';
+                    }
+                    var companyContactInformation = dataDetail.companyContactInformation;
+                    if (companyContactInformation == null || companyContactInformation == "") {
+                        var company = '<p>联系方式：<span class="openModal" id="companyContactInformation">待研判</span></p>\n';
+                    } else {
+                        var company = '<p>联系方式：<span class="openModal" id="companyContactInformation">' + companyContactInformation + '</span></p>\n';
+                    }
+                    dataCenter += '<div class="right-content">' +
+                        '<div class="col-lg-12 right-content-c-line">\n' +
+                        '                                    <div class="row">\n' +
+                        '                                        <div class="col-lg-6">\n' +
+                        '                                            <h5>取证资料</h5>\n' +
+                        '                                            <p class="summary">事件概述：<span>'+ eventTitle+'</span></p>\n' +
+                        '                                            <p>事件类别：<span class="openModal" id="eventTypeName">' + eventTypeName + '</span></p>\n' +
+                        '                                            <p>预警来源：<span id="reportTypeName">' + reportTypeName + '</span></p>\n' +
+                        '                                            <p>预警等级：<span>一般</span></p>\n' +
+                        '                                            <p>预警时间：<span>' + createTime + '</span></p>\n' +
+                        subject +
+                        '                                            <p>警情地址：<span class="openModal" id="cameraName">'+ eventAddress+'</span><i class="iconfont openModal" id="ditu" style="color: #0070cc;font-size: 18px;cursor:pointer;margin-left: 7px;" data-toggle="modal" data-target="#Map"></i></p>\n' +
+                        '                                            <p>所属辖区：<span>'+ regionDetail+'</span></p>\n' +
+                        '                                        <div style = "display: none">\n' +
+                        '                                                <span id = "createTime">' + createTime + '</span>\n' +
+                        '                                                <span id = "reportTime">' + reportTime + '</span>\n' +
+                        '                                            </div>\n' +
+                        '                                            <input type = "hidden" value=' + id + ' id = "id">\n' +
+                        '                                            <input type = "hidden" value=' + eventImage + ' id = "imgPath">' +
+                        '                                            <input type = "hidden" id="eventOnly">' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-lg-6 right-content-c-img">\n' +
+                        '                                            <div class="row">\n' +
+                        '                                                <div class="row right-imgVideo-line">\n' +
+                        '                                                    <ul class="nav">\n' +
+                        '                                                        <li class="active" id="tabimg"><a href="#img" data-toggle="tab"><i class="iconfont" style="font-size: 14px;"></i>取证图片</a></li>\n' +
+                        // '                                                        <li class="videoinfo" value="0"><a href="#video" data-toggle="tab"><i class="iconfont"></i>取证视频</a></li>' +
+                        '                                                    </ul>\n' +
+                        '                                                </div>\n' +
+                        '                                                <div class="row" style="width: 100%;">\n' +
+                        '                                                    <div id="mytab-content" class="tab-content">\n' +
+                        '                                                        <div class="tab-pane fade in active" id="img" value="222">\n' +
+                        '<div id="myCarousel" class="carousel slide reportBigPic" onmousemove="prev()" onmouseout="next()">\n' +
+                        '   <ol class="carousel-indicators">\n' +
+                        carouselIndicators +
+                        '   </ol>   \n' +
+                        '   <div class="carousel-inner">\n' +
+                        carouselInner +
+                        '   </div>\n' +
+                        '   <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">\n' +
+                        '       <i class="fa fa-angle-left" aria-hidden="true"></i>\n' +
+                        '       <span class="sr-only">Previous</span>\n' +
+                        '   </a>\n' +
+                        '   <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">\n' +
+                        '       <i class="fa fa-angle-right" aria-hidden="true"></i>\n' +
+                        '       <span class="sr-only">Next</span>\n' +
+                        '   </a>\n' +
+                        '</div>                                                         </div>\n' +
+                        '                                            <div class="ssim"></div>                                            <div id="imgsss">\n' +
+                        '                                             <canvas hidden="" id="canvas" width="460px" height="266px"></canvas>\n' +
+                        '                                            </div>                                                        <div class="tab-pane fade" id="video" style="position:relative;">\n' +
+                        '                                                            <div class="right-video-p">\n' +
+                        '                                                                <div class="right-video-p-video" id="playWnd"></div>\n' +
+                        '                                                                <div class="right-video-p-img" id="tagvideo">\n' +
+                        '                                                                    <img src="../../img/play.png" style="width: 32px;height: 32px">\n' +
+                        '                                                                </div>\n' +
+                        '                                                               <div class="video-div" style="width: 617px;height: 312px">                                                                   <video id="tagVideojs" class="video-js vjs-default-skin right-video-v-video" style="width: 100%;height: 100%;" controls="" preload="none" poster="https://qhz.hhkj1688.cn:8389/file-cg/ngx/proxy?i=aHR0cDovLzE5Mi4xNzAuMS43Mjo2MTIwL3BpYz8yZGRhNDJlMDQtMmkwNDQxKjk0MmVkNzktLTdiOTk0YWQ4MmQ2ODJpZGIyKj0xZDlpOHMxKj1pZHAxKj1wZCptMmkxdD03ZWItNDIwMWQ0M3M9NGIyejEzaTY1PSZBY2Nlc3NLZXlJZD05NnJQN0Jrb21OVVZrRVp1JkV4cGlyZXM9MTYyMDk0MzE5MyZTaWduYXR1cmU9dWNwd1d1OTlFeFBuVE5oaFhNTVRTZHlRclVrPSZBbGdvcml0aG09MA==">\n' +
+                        '                                                                       <source src="null" type="video/mp4">\n' +
+                        '                                                                   </video>\n' +
+                        '                                                               </div>\n' +
+                        '                                                            </div>\n' +
+                        '                                                        </div>\n' +
+                        '                                                    </div>\n' +
+                        '                                                </div>                                            </div>\n' +
+                        '                                        </div>                                    </div>\n' +
+                        '                                </div>' +
+                        '<div class="col-lg-12 right-content-c-line">\n' +
+                        '                                    <div class="row">\n' +
+                        '                                        <div class="col-lg-6">\n' +
+                        '                                            <h5>主体信息</h5>\n' +
+                        '                                            <p>涉事主体：<span class="openModal" id="placeName">'+ placeName+'</span></p>\n' +
+                        person +
+                        '                                            <p>单位地址：<span class="openModal" id="eventAddress">'+eventAddress+'</span></p>\n' +
+                        '\n' +
+                        '                                        </div>\n' +
+                        '                                        <div class="col-lg-6">\n' +
+                        '                                            <h6>&nbsp;</h6>\n' +
+                        unionCode +
+                        company +
+                        '                                            <p>所属辖区：<span>'+ regionDetail+'</span></p>\n' +
+                        '                                        </div>\n' +
+                        '                                    </div>\n' +
+                        '                                </div>' +
+                        '</div>';
+                    layui.use('layer', function () {
+                        var layer = layui.layer;
+                        layer.open({
+                            title: ['事件详情', 'line-height:64px;height:64px;font-size:16px']
+                            , offset: 'rb'
+                            , area: ['1500px', '100%']
+                            , anim: -1
+                            , skin: 'layui-anim layui-anim-rl layui-layer-adminRight'
+                            , move: false//禁止拖动
+                            , content: dataCenter
+                            ,yes:function (index, layero){
+                                layer.close(index)
+                                dataCenter='';
+                            }, cancel: function (index, layero) {
+                                layer.close(index)
+                                dataCenter = '';
+                                return false;
+                            }
+                        });
+                    });
+                    if (picList.length == 1) {
+                        $('.fa-angle-left').css('color', '#ccc')
+                        $('.fa-angle-right').css('color', '#ccc')
+                    }
+                }
+            }
+        })
+    }
+
+    // 轮播切换按钮的显示隐藏
+    function prev() {
+        $('.carousel-control').css('opacity', '1')
+    }
+
+    function next() {
+        $('.carousel-control').css('opacity', '0')
+    }
+
+    // layui弹出相册层
+    function showMorePic(index, imgSrc) {
+        var arr = imgSrc.split(",");
+        var jsonPic = {
+            "title": "", //相册标题
+            "id": 123, //相册id
+            "start": index, //初始显示的图片序号，默认0
+            "data": [   //相册包含的图片，数组格式
+            ]
+        };
+        arr.forEach(item => {
+            let params = {
+                src: item
+            }
+            jsonPic.data.push(params)
+        });
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            // $.getJSON('jsonPic', function (json) {
+            layer.photos({
+                photos: jsonPic
+                , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+                , area: ['800px', '600px']
+                , shade: [0.3, '#000']//遮罩层颜色
+            });
+            // });
+        })
+    }
+
+    //点击查看视频
+    $(".right-content").on('click', '.videoinfo', function () {
+        $(".right-video-p-video").css('display', 'block');
+        let only = $(this).val();
+        $("#eventOnly").val(only);
+        var src = $("#imgPath").val();
+        //判断视频与实时视频
+        var componentId = $("#componentId").val();
+        var extendStr1 = $("#extendStr1").val();
+        if (componentId == '1001') {//城管系统，调用海康视频插件
+            if (oWebControl != null) {
+                // oWebControl.JS_Resize(480,266);
+                // 先让窗口隐藏，规避可能的插件窗口滞后于浏览器消失问题
+                oWebControl.JS_Disconnect().then(function () {  // 断开与插件服务连接成功
+                        oWebControl.JS_HideWnd();
+                    },
+                    function () {  // 断开与插件服务连接失败
+                    });
+            }
+            if (oWebControl1 != null) {
+                // oWebControl1.JS_Resize(480,266);
+                // 先让窗口隐藏，规避可能的插件窗口滞后于浏览器消失问题
+                oWebControl1.JS_Disconnect().then(function () {  // 断开与插件服务连接成功
+                        oWebControl1.JS_HideWnd();
+                    },
+                    function () {  // 断开与插件服务连接失败
+                    });
+            }
+            initClickEvent();
+            $(".video-div").css('display', 'none');
+            $('#realVideojs').css('display', 'none');
+            $('#tagvideojs').css('display', 'none');
+        } else if (extendStr1 == null || extendStr1.length < 10) {
+            src = "../img/no-video1.png";
+            $('#realVideojs').css('display', 'none');
+            $('#tagVideojs').css('display', 'none');
+            if (null != oWebControl) {
+                oWebControl.JS_HideWnd();
+            }
+            if (null != oWebControl1) {
+                oWebControl1.JS_HideWnd();
+            }
+            $(".video-div").css('display', 'none');
+            $(".right-video-p-video").css('display', 'none');
+            /*$(".right-video-p-img").css({
+                "background": "url(" + src + ") no-repeat",
+                "background-size": '100% 100%'
+            });*/
+        } else {
+            if (null != oWebControl) {
+                oWebControl.JS_HideWnd();
+            }
+            if (null != oWebControl1) {
+                oWebControl1.JS_HideWnd();
+            }
+            $(".right-video-p-video").css('display', 'none');
+            /*if (componentId == '1002') {//应急消防，皆为实时视频，需调用videojs
+                var myPlayer = videojs(
+                    'realVideojs', {
+                        width: 480,
+                        height: 266,
+                    }
+                );
+                myPlayer.src({src: extendStr1, type: "application/x-mpegURL"});
+            } *//*else if (componentId == '1003') {//综治平台，视频图片皆可能为空
+                var myPlayer = videojs(
+                    'tagVideojs', {
+                        width: 480,
+                        height: 266,
+                    }
+                );
+                myPlayer.src({src: extendStr1, type: "video/mp4"});
+            } else if (componentId == '1004') {//青山云，可有视频或图片,需调用videojs
+                var myPlayer = videojs(
+                    'Videojs', {
+                        width: 480,
+                        height: 266,
+                    }
+                );
+                myPlayer.src({src: extendStr1, type: "video/mp4"});
+            }*/
+        }
+
+        $(".right-video-p-img").css({
+            "background": "url(" + src + ") no-repeat",
+            "background-size": '100% 100%'
+        });
+        $('.right-video-p-img').css('display', 'block')
+
+        /*if (only == 0) {//视频
+            $(".right-video-p-img").css({
+                "background": "url(" + src + ") no-repeat",
+                "background-size": '100% 100%'
+            });
+            $('.right-video-p-img').css('display', 'block')
+        } else if (only == 1) {//实时视频
+            $(".right-video-p-img").css({
+                "background": "url(" + src + ") no-repeat",
+                "background-size": '100% 100%'
+            });
+            $('.right-video-p-img').css('display', 'block')
+        }*/
+    });
+
+    /**点击播放视频**/
+    $(".right-content").on('click', ".right-video-p-img", function () {
+        let eventOnly = $("#eventOnly").val();
+        var extendStr1 = $("#extendStr1").val();
+        var componentId = $("#componentId").val();
+        //视频地址为空时，点击失效
+        if (componentId == '1001') {
+            $('#realVideos').css('display', 'none');
+            $('#tagvideo').css('display', 'none');
+        } else if (extendStr1 != null && extendStr1.length > 10) {
+            if (eventOnly == 0) {
+                $('#tagvideo').css('display', 'none');
+                var myPlayer = videojs('tagVideojs');
+                videojs("tagVideojs").ready(function () {
+                    var myPlayer = this;
+                    myPlayer.play();
+                });
+            } else if (eventOnly == 1) {
+                $('#realVideos').css('display', 'none');
+                var myPlayer = videojs('realVideojs');
+                videojs("realVideojs").ready(function () {
+                    var myPlayer = this;
+                    myPlayer.play();
+                });
+            }
+
+        }
+    });
+
+</script>
+
+</html>

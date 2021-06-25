@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('星级评定')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-estateManagement-edit" th:object="${xlEstateManagement}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">选择星级：</label>
+                <div class="col-sm-8">
+                  <select name="estateStar" class="form-control m-b" th:with="type=${@dict.getType('starstar')}">
+                    <option th:each="abc : ${type}" th:text="${abc.dictLabel}" th:value="${abc.dictValue}" th:field="*{estateStar}"></option>
+                  </select>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/estateManagement";
+        $("#form-estateManagement-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-estateManagement-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

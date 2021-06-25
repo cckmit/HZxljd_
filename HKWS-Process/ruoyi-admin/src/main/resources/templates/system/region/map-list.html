@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/public.css}" rel="stylesheet"/>
+    <style>
+        body,
+        html,
+        #container {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+
+        .input-event {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+            width: 20rem;
+            border-width: 0;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: absolute;
+            z-index: 9999;
+            top: 1rem;
+            left: 1rem;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+
+        #tips {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .input-item button {
+            margin-right: 10px;
+        }
+
+        label {
+            max-width: 100px;
+        }
+
+    </style>
+    <script src="https://api.map.baidu.com/api?v=3.0&ak=OQzFXHaXlNEZTmwvbEHQMB5h2iHaEr4W"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+</head>
+<body class="gray-bg">
+<div class="input-event" style="width:400px;">
+    <h4 id="tips" style="color: red"></h4>
+
+</div>
+<div class="container-div" id="container"></div>
+
+<script th:inline="javascript">
+    //获取页面参数
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    //当前上级对象id
+    let regionId = [[${regionId}]];
+    //地图标记点集合
+    let markerPointsList = [[${markerPointsList}]];
+    // console.log(markerPointsList)
+    //地图实例化
+    //TODO 此处后续需加一判断地图无法加载时,提示需要链接外网.js不往下执行
+    let map = new BMap.Map('container', {enableMapClick: false});
+    let point = new BMap.Point(119.989472,30.237869);
+    map.centerAndZoom(point, 14);
+    map.enableScrollWheelZoom(true);
+
+    let colors = [
+        '#0000ff', '#02a7f0', '#01a63a', '#d9001b',
+        '#70b603', '#8b741a',
+
+    ]
+    let backgroundColors = [
+        '#8080ff', '#81d3f8', '#38b051', '#ec808d',
+        '#caf982', '#facd91',
+    ]
+
+    //保存所有覆盖物集合
+    let polygons = []
+    //保存所有文本标注集合
+    let labels = []
+    //遍历集合
+    if (markerPointsList && markerPointsList.length > 0) {
+        $('#tips').text('已绘制' + markerPointsList.length + '个下级网格。如有需要，请前往各地区下编辑地图。')
+        for (let i = 0; i < markerPointsList.length; i++) {
+            let markerPoints = JSON.parse(markerPointsList[i].markerPoints)
+            //获取当前区域中心点
+            let centerPoint = JSON.parse(markerPointsList[i].centerPoint);
+            // console.log(centerPoint)
+            let regionName = markerPointsList[i].parentName;
+            // console.log(markerPoints)
+            //覆盖物
+            let polygon;
+            //文本标注
+            let label;
+            //覆盖物标记点回显.
+            if (markerPoints && markerPoints.length > 3) {
+                let settings = {
+                    strokeColor: colors[i % 6],    //边线颜色。
+                    fillColor: backgroundColors[i % 6],      //填充颜色。当参数为空时，圆形将没有填充效果。
+                    strokeWeight: 2,       //边线的宽度，以像素为单位。
+                    strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+                    fillOpacity: 0.3,      //填充的透明度，取值范围0 - 1。
+                    strokeStyle: 'solid' //边线的样式，solid或dashed。
+                }
+                let points = []
+                for (let i = 0; i < markerPoints.length; i++) {
+                    points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+                }
+                //构造一个覆盖物
+                polygon = new BMap.Polygon(points, settings)
+                //指定文本标注的位置
+                let opts = {
+                    position: new BMap.Point(centerPoint[0], centerPoint[1]), // 指定文本标注所在的地理位置
+                    offset: new BMap.Size(0, 0) // 设置文本偏移量
+                };
+                //构造一个文本标注
+                label = new BMap.Label(regionName, opts);
+                // 自定义文本标注样式
+                label.setStyle({
+                    color: "#000000",
+                    backgroundColor: 'transparent',//文本背景色
+                    borderColor: 'transparent',//文本框边框色
+                    width: '70px',
+                    whiteSpace: "normal",//设置文字超出自动换行
+                    fontSize: "15px",
+                    minHeight: "15px",
+                    lineHeight: "1.5",
+                    fontFamily: "微软雅黑"
+                });
+            }
+            //添加覆盖物到数组
+            polygons.push(polygon)
+            //添加文本标注到数组
+            labels.push(label);
+            //添加覆盖物到地图
+            map.addOverlay(polygon);
+            //添加文本标注到地图
+            map.addOverlay(label);
+        }
+    } else {
+        $('#tips').text('已绘制0个下级网格')
+    }
+
+    // 批量绑定鼠标移入移出事件
+    let moveEvts = ['mouseover', 'mouseout'];
+    for (let i = 0; i < moveEvts.length; i++) {
+        const event = moveEvts[i];
+        for (let j = 0; j < polygons.length; j++) {
+            const overlay = polygons[j];
+            overlay.addEventListener(event, e => {
+                switch (event) {
+                    case 'mouseover':
+                        overlay.setFillColor('#04031c')
+                        break;
+                    case 'mouseout':
+                        overlay.setFillColor(backgroundColors[j % 6]);
+                        break;
+                }
+            });
+        }
+    }
+
+
+    map.addEventListener('click', function (e) {
+        console.log('点击位置经纬度：' + e.point.lng + ',' + e.point.lat);
+    });
+
+
+</script>
+
+</body>
+</html>

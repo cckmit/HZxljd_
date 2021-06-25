@@ -1,0 +1,3322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkEventMapper">
+
+	<resultMap type="HkEventInfo" id="HkEventInfoResult">
+		<id     property="id"     column="id"     />
+		<result property="eventId"     column="event_id"     />
+		<result property="componentId"  column="component_id"   />
+		<result property="eventIndexCode"   column="event_index_code"   />
+		<result property="eventTitle"   column="event_title"   />
+		<result property="reportTime"     column="report_time"      />
+		<result property="eventType"      column="event_type"       />
+		<result property="eventTypeName"      column="event_type_name"       />
+		<result property="eventCategory"      column="event_category"       />
+		<result property="eventCategoryName"      column="event_category_name"       />
+		<result property="eventSource"     column="event_source"      />
+		<result property="eventSourceName"    column="event_source_name"    />
+		<result property="eventImage"   column="event_image"   />
+		<result property="eventThumbnailImage" column="event_thumbnail_image" />
+		<result property="storageId"   column="storage_id"   />
+		<result property="eventStatus"     column="event_status"     />
+		<result property="eventStatusName"     column="event_status_name"     />
+		<result property="eventAlertStatus"     column="event_alert_status"     />
+		<result property="eventAlertStatusName"     column="event_alert_status_name"     />
+		<result property="eventSubStatus"   column="event_sub_status"   />
+		<result property="eventSubStatusName"  column="event_sub_status_name"   />
+		<result property="reportType"   column="report_type"   />
+		<result property="reportTypeName"   column="report_type_name"   />
+		<result property="lawEnforcementType"     column="law_enforcement_type"      />
+		<result property="lawEnforcementTypeName"      column="law_enforcement_type_name"       />
+		<result property="timeOut"      column="time_out"       />
+		<result property="riskLevel"     column="risk_level"      />
+		<result property="currentProcessorId"    column="current_processor_id"    />
+		<result property="currentProcessorName" column="current_processor_name" />
+		<result property="eventUpdateTime"   column="event_update_time"   />
+		<result property="eventCreateTime"   column="event_create_time"   />
+		<result property="geometry" column="geometry" />
+		<result property="reportPersonId"   column="report_person_id"   />
+		<result property="reportPersonName" column="report_person_name" />
+		<result property="reportPersonRealName"      column="report_person_real_name"       />
+		<result property="reportPersonPhone"     column="report_person_phone"      />
+		<result property="cameraIndexCode"    column="camera_index_code"    />
+		<result property="cameraName" column="camera_name" />
+		<result property="responsibilitySubject"   column="responsibility_subject"   />
+		<result property="regionIndexCode" column="region_index_code" />
+		<result property="regionName"   column="region_name"   />
+		<result property="placeType" column="place_type" />
+		<result property="placeTypeName"      column="place_type_name"       />
+		<result property="placeIndexCode"     column="place_index_code"      />
+		<result property="placeName"    column="place_name"    />
+		<result property="companyLegalPerson" column="company_legal_person" />
+		<result property="eventAddress"   column="event_address"   />
+		<result property="creditUnionCode" column="credit_union_code" />
+		<result property="companyContactInformation"   column="company_contact_information"   />
+		<result property="gridName" column="grid_name" />
+		<result property="gridMan"      column="grid_man"       />
+		<result property="patrolTeam"     column="patrol_team"      />
+		<result property="patrolTeamPhone"     column="patrol_team_phone"      />
+		<result property="patrolTeam2"     column="patrol_team2"      />
+		<result property="patrolTeam2Phone"     column="patrol_team2_phone"      />
+		<result property="gridCommunity"    column="grid_community"    />
+		<result property="gridContactInformation" column="grid_contact_information" />
+		<result property="longitude"   column="longitude"   />
+		<result property="latitude" column="latitude" />
+		<result property="routingAddress"   column="routing_address"   />
+		<result property="extendInt1" column="extend_int1" />
+		<result property="extendInt2"      column="extend_int2"       />
+		<result property="extendInt3"     column="extend_int3"      />
+		<result property="extendStr1"    column="extend_str1"    />
+		<result property="extendStr2" column="extend_str2" />
+		<result property="extendStr3"   column="extend_str3"   />
+		<result property="extendJson" column="extendJson" />
+		<result property="createTime"   column="create_time"   />
+		<result property="updateTime" column="update_time" />
+		<result property="assId" column="ass_id" />
+		<result property="eventInfoId" column="event_info_id" />
+		<result property="lmId" column="lm_id" />
+		<result property="procdefType" column="procdef_type" />
+		<result property="eventRead" column="event_read" />
+		<result property="eventRemarks" column="event_remarks" />
+		<result property="cameraTypeCode" column="camera_type_code" />
+		<result property="assignDeptId" column="assign_dept_id" />
+		<result property="assignOperator" column="assign_operator" />
+		<result property="assignReason" column="assign_reason" />
+		<result property="assignTime" column="assign_time" />
+		<result property="updateUser" column="update_user" />
+		<result property="plateNo" column="plate_no" />
+		<result property="dispatchEventTime" column="dispatch_event_time" />
+		<result property="dispatchEventUser" column="dispatch_event_user" />
+	</resultMap>
+
+	<!--点击事件展开详情-->
+	<select id="findEventById" resultMap="HkEventInfoResult" parameterType="java.lang.Integer">
+		select id,component_id,event_id,event_title,report_time,event_type,event_type_name,event_category,event_category_name,event_source,
+		event_source_name,event_image,event_thumbnail_image,storage_id,event_alert_status,event_alert_status_name,report_type,event_status,
+		report_type_name,law_enforcement_type,law_enforcement_type_name,time_out,current_processor_id,current_processor_name,
+		event_update_time,geometry,report_person_id,report_person_name,report_person_real_name,report_person_phone,camera_index_code,
+		camera_name,responsibility_subject,region_index_code,region_name,place_type,place_type_name,place_index_code,place_name,
+		company_legal_person,event_address,credit_union_code,company_contact_information,grid_name,grid_man,patrol_team,patrol_team_phone,extend_str1,
+		patrol_team2,patrol_team2_phone,grid_community,grid_contact_information,longitude,latitude,create_time,update_time,procdef_type,event_read,
+		event_create_time,assign_dept_id,assign_operator,assign_reason,assign_time,update_user,risk_level,plate_no,dispatch_event_time,dispatch_event_user
+		from hk_event_info where id = #{id}
+	</select>
+
+
+	<select id="findEventByEventId" parameterType="java.lang.String" resultMap="HkEventInfoResult">
+		select id,component_id,event_id,event_title,report_time,event_type,event_type_name,event_category,event_category_name,event_source,
+		event_source_name,event_image,event_thumbnail_image,storage_id,event_alert_status,event_alert_status_name,report_type,
+		report_type_name,law_enforcement_type,law_enforcement_type_name,time_out,current_processor_id,current_processor_name,
+		event_update_time,geometry,report_person_id,report_person_name,report_person_real_name,report_person_phone,camera_index_code,
+		camera_name,responsibility_subject,region_index_code,region_name,place_type,place_type_name,place_index_code,place_name,
+		company_legal_person,event_address,credit_union_code,company_contact_information,grid_name,grid_man,patrol_team,patrol_team_phone,extend_str1,
+		patrol_team2,patrol_team2_phone,grid_community,grid_contact_information,longitude,latitude,create_time,update_time,procdef_type,event_read,
+		event_create_time,assign_dept_id,assign_operator,assign_reason,assign_time,update_user,plate_no,dispatch_event_time,dispatch_event_user
+		from hk_event_info where event_id = #{eventId}
+	</select>
+
+	<update id="updateAssignInfo" parameterType="com.ruoyi.system.domain.HkEarlyWarning.EventAssignVO">
+		update hk_event_info set
+		assign_dept_id = #{deptIds},
+		assign_time = NOW(),
+		assign_reason = #{assignReason},
+		assign_operator = #{assignOperator}
+		where event_id = #{eventId}
+	</update>
+
+
+	<!--一事一档事件列表-->
+	<select id="queryThingList" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo"
+			resultType="com.ruoyi.system.domain.HkEarlyWarning.HkEventThingVo">
+		select
+		ei.id as id,
+		ei.event_type_name as eventType,
+		ei.create_time as createTime,
+		ei.report_time as reportTime,
+-- 		ap.create_time as dispatchTime,
+		ei.dispatch_event_time as dispatchTime,
+		pr.create_time as signTime,
+		ei.update_time as doneTime,
+		ei.region_name as regionName,
+		ei.report_type_name as reportType,
+		ei.event_title as eventTitle,
+		ei.event_alert_status as eventAlertType,
+		ei.event_status as eventStatus,
+		ei.event_address as eventAddress,
+		su.user_name as processUserName
+		from
+		hk_event_info ei
+		left join hk_action_process ap on ei.event_id = ap.event_id and ap.handler_order = '1'
+		left join
+		(select event_id,create_time from hk_event_process_record order by create_time asc limit 1) pr
+		on pr.event_id = ei.event_id
+		left join sys_user su on su.user_id = ei.current_processor_id
+		where ei.event_status <![CDATA[ <> ]]> 10
+		<if test="eventAlertStatus !=null and eventAlertStatus !=''">
+			and ei.event_alert_status = #{eventAlertStatus}
+		</if>
+		<if test="eventType !=null and eventType !=''">
+			and ei.event_type = #{eventType}
+		</if>
+		<if test="beginCreateTime !=null and beginCreateTime != ''">
+			and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{beginCreateTime}
+		</if>
+		<if test="endCreateDate !=null and endCreateDate != ''">
+			and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> #{endCreateDate}
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(ei.create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendMonthMonday}
+		</if>
+		order by ei.create_time desc
+	</select>
+
+	<!--一域一档事件列表-->
+	<!--一域一档 查询社区 社区发生的事件数量-->
+	<select id="queryRegionByEvent" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFieldVo">
+		SELECT
+			( CASE WHEN hhsr.eventCount IS NULL THEN 0 ELSE hhsr.eventCount END ) AS `eventCount`,
+			sd4.region_name AS `regionName`,
+			sd4.region_id AS `regionCode`
+		FROM
+			(
+			SELECT
+				sd1.region_id,
+				sd1.region_name
+			FROM
+				sys_region sd1
+				INNER JOIN ( SELECT region_id FROM sys_region WHERE parent_id = 0 ) sd ON sd1.parent_id = sd.region_id
+			) sd4
+			LEFT JOIN (
+			SELECT
+				COUNT( hhi.event_id ) AS `eventCount`,
+				hhi.parent_id
+			FROM
+				(
+				SELECT
+					hei.event_id,
+					sd.region_id,
+					sd.parent_id
+				FROM
+					hk_event_info hei
+					LEFT JOIN sys_region sd ON hei.region_index_code = sd.region_id
+				WHERE
+					1 = 1
+					<if test="eventAlertStatus !=null and eventAlertStatus !=''">
+						and ei.event_alert_status = #{eventAlertStatus}
+					</if>
+					<if test="statusArr != null and eventAlertStatus == null">
+						and hei.event_alert_status in
+						<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+							#{status}
+						</foreach>
+					</if>
+					<if test="eventType !=null and eventType !=''">
+						and ei.event_type = #{eventType}
+					</if>
+					<if test="beginCreateTime !=null and beginCreateTime != ''">
+						and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{beginCreateTime}
+					</if>
+					<if test="endCreateDate !=null and endCreateDate != ''">
+						and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ <= ]]> #{endCreateDate}
+					</if>
+					<if test="currentDate != null and currentDate !=''">
+						and date_format(ei.create_time,'%Y-%m-%d') = #{currentDate}
+					</if>
+					<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+						and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendWeekMonday}
+					</if>
+					<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+						and date_format(ei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendMonthMonday}
+					</if>
+				) hhi
+			GROUP BY
+				hhi.parent_id
+			) hhsr ON sd4.region_id = hhsr.parent_id
+		<where>
+			<if test="regionName != null and regionName != ''">
+				sd4.region_name like concat('%',#{regionName},'%')
+			</if>
+			<if test="regionId != null and regionId != ''">
+				sd4.region_id = #{regionId}
+			</if>
+		</where>
+		ORDER BY
+			eventCount DESC
+	</select>
+
+	<select id="queryEventCountByRegion2" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="java.lang.Integer">
+		SELECT
+		count(distinct hei.event_id)
+		FROM
+		hk_event_info hei
+		LEFT JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		LEFT JOIN sys_region sd1 on sd1.region_id = sd.parent_id
+		WHERE
+		1 = 1
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(hei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendMonthMonday}
+		</if>
+		<if test="eventType !=null and eventType !=''">
+			and hei.event_type = #{eventType}
+		</if>
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="regionId != null and regionId != ''">
+			and sd1.region_id = #{regionId}
+		</if>
+	</select>
+
+	<select id="queryEventCountByRegion" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="java.lang.Integer">
+		SELECT COUNT(he.event_id)
+		FROM
+		(SELECT sd3.region_id,sd3.region_name FROM sys_region sd3 INNER JOIN
+		(SELECT sd1.region_id FROM sys_region sd1
+		INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id)sd2
+		ON sd3.parent_id = sd2.region_id)sd4
+		left JOIN (SELECT sd.parent_id,hei.event_id from hk_event_info hei
+		INNER JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		WHERE
+		1 = 1
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(hei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendMonthMonday}
+		</if>
+		<if test="eventType !=null and eventType !=''">
+			and hei.event_type = #{eventType}
+		</if>
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		)he
+		ON sd4.region_id = he.parent_id
+		where
+		sd4.region_id = #{regionId}
+	</select>
+
+	<!--事件数量-->
+	<select id="queryEventCount" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="java.lang.Integer">
+		select count(hei.id) as value from
+		hk_event_info hei
+		where
+		1 = 1
+		<if test="eventType != null and eventType != ''">
+			and hei.event_type = #{eventType}
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(hei.create_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendMonthMonday}
+		</if>
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</select>
+
+
+	<!--查询所有用户-->
+	<select id="queryEventByUser" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="com.ruoyi.system.domain.HkEarlyWarning.HkEventPersonVo">
+		select  su.user_id as userId,su.user_name as userName,d.region_name as regionName,count(hei.event_id) as eventCount
+		from sys_user su
+		left join (
+		select d1.region_id,d2.region_name from sys_region d1
+		left join sys_region d2 on d1.parent_id = d2.region_id
+		) d on d.region_id = su.region_id
+		left join
+		hk_event_info hei on su.user_id = hei.current_processor_id
+		and hei.event_status  <![CDATA[ <> ]]> 3
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(hei.update_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(hei.update_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(hei.update_time,'%Y-%m-%d') <![CDATA[ >= ]]> #{trendMonthMonday}
+		</if>
+		<if test="userId !=null">
+			and  su.user_id = #{userId}
+		</if>
+		where su.user_id <![CDATA[ <> ]]> 1
+		<if test="userName != null and userName != ''">
+			and su.user_name like concat('%',#{userName},'%')
+		</if>
+		<if test="regionName != null and regionName != ''">
+			and d.region_name like concat('%',#{regionName},'%')
+		</if>
+		group by su.user_id
+		order by eventCount desc
+	</select>
+
+	<!--查询所有人员下的事件数量-->
+	<select id="queryEventByUser1" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="com.ruoyi.system.domain.HkEarlyWarning.HkEventPersonVo">
+		SELECT
+		tt1.user_name as userName,
+		tt1.user_id as userId,
+		tt2.dept_name as deptName,
+		IFNULL( tt2.VALUE, 0 ) AS eventCount
+		FROM
+		sys_user tt1
+		LEFT JOIN (
+		SELECT
+		count(DISTINCT hei.event_id ) AS VALUE,
+		su.user_name,
+		su.user_id,
+		sd.dept_name
+		FROM
+		hk_event_info hei
+		LEFT JOIN hk_event_process_record epr ON epr.event_id = hei.event_id
+		LEFT JOIN sys_user su ON su.user_id = epr.handler_index_code
+		LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+		LEFT JOIN sys_user_post_region upr on upr.user_id = su.user_id
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="processStatusArr != null">
+				and epr.process_status IN
+				<foreach collection="processStatusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="postArr != null and postArr != ''">
+				and upr.post_id IN
+				<foreach collection="postArr" item="post" open="(" separator="," close=")">
+					#{post}
+				</foreach>
+			</if>
+			<if test="deptId != null and deptId != ''">
+				and sd.dept_id = #{deptId}
+			</if>
+			<if test="deptName != null and deptName != ''">
+				and sd.dept_name like concat('%',#{deptName},'%')
+			</if>
+		</where>
+		GROUP BY
+		epr.handler_index_code
+		) tt2 ON tt1.user_id = tt2.user_id
+		ORDER BY tt2.VALUE DESC
+	</select>
+
+	<!--查询用户正在处置的事件数量-->
+	<select id="queryStatusEventCountByUser" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+		IFNULL(count(distinct hei.event_id),0)
+		from
+		hk_event_info hei
+		left join
+		(select Max(id),event_id,any_value(process_status) as process_status,any_value(handler_index_code) as handler_index_code from hk_event_process_record group by event_id) tt
+		on tt.event_id = hei.event_id
+		where
+		tt.handler_index_code = #{userId}
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="processStatusArr != null">
+			and tt.process_status IN
+			<foreach collection="processStatusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="queryEventTotalTimeByUser" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventFourVo" resultType="java.lang.Long">
+		select
+		sum(unix_timestamp(hei.update_time)-unix_timestamp(hap.create_time)) as time
+		from
+		hk_event_info hei
+		inner join
+		hk_action_process hap on hei.event_id = hap.event_id
+		where  hei.current_processor_id = #{userId}
+		and hei.event_alert_status = 6
+		and hei.event_status <![CDATA[ <> ]]> 3
+	</select>
+
+	<update id="updateRiskLevelById">
+		update hk_event_info set
+		risk_level = #{riskLevel}
+		where id = #{eventId}
+	</update>
+
+
+	<update id="updateByIdRiskLevel" parameterType="java.lang.Integer">
+		update hk_event_info set
+		risk_level = '999',
+		component_id='1003'
+		where id = #{id}
+	</update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!--一事一档数据查询-->
+	<select id="queryHkEventInfo" resultMap="HkEventInfoResult" parameterType="HkEventInfo">
+		select * from hk_event_info
+		<where>
+			<if test="eventTitle !=null and eventTitle != ''">
+				and event_title LIKE CONCAT('%',#{eventTitle},'%')
+			</if>
+			<if test="eventType !=null and eventType != ''">
+				and event_type LIKE CONCAT('%',#{eventType},'%')
+			</if>
+			<if test="eventTypeName !=null and eventTypeName != ''">
+				and event_type_name LIKE CONCAT('%',#{eventTypeName},'%')
+			</if>
+			<if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+				and date_format(create_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+			</if>
+			<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+				and date_format(create_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+			</if>
+			AND event_alert_status in (6,7,8)
+		</where>
+	</select>
+
+	<!--确认警情-->
+	<update id="updateConfirmDetail" parameterType="HkEventInfo">
+		update hk_event_info set
+		event_type_name = #{eventTypeName},
+		camera_name = #{cameraName},
+		responsibility_subject = #{responsibilitySubject},
+		place_name = #{placeName},
+		credit_union_code = #{creditUnionCode},
+		company_legal_person = #{companyLegalPerson},
+		company_contact_information = #{companyContactInformation},
+		event_address = #{eventAddress},
+		grid_name = #{gridName},
+		region_name = #{regionName},
+		grid_man = #{gridMan},
+		grid_contact_information= #{gridContactInformation},
+		event_alert_status = 3,
+		event_alert_status_name = '调度中',
+		update_time = #{updateTime},
+		report_type_name=#{reportTypeName}
+		where id = #{id}
+	</update>
+
+	<!--忽略警情-->
+	<update id="updateEventStatus"  parameterType="HkEventInfo" >
+		update hk_event_info
+		set
+		event_alert_status = 7,
+		event_alert_status_name = '已忽略',
+		event_remarks = #{eventRemarks},
+		update_time = #{updateTime}
+		where id = #{id}
+	</update>
+
+	<!--关闭警情-->
+	<update id="closeEventStatus" parameterType="HkEventInfo">
+		update hk_event_info
+		set
+		event_alert_status = 8,
+		event_alert_status_name = '已关闭',
+		event_remarks = #{eventRemarks},
+		update_time = #{updateTime}
+		where id = #{id}
+	</update>
+
+	<select id="searchEventInfo" parameterType="com.ruoyi.system.domain.HkEntity.EventSearchVO" resultMap="HkEventInfoResult">
+		select
+		id,
+		component_id,
+		event_id,
+		event_title,
+		report_time,
+		event_type,
+		event_type_name,
+		event_image,
+		event_alert_status,
+		report_type,
+		event_status,
+		event_create_time,
+		time_out,
+		current_processor_id,
+		camera_index_code,
+		region_index_code,
+		region_name,
+		place_name,
+		event_address,
+		extend_str1,
+		longitude,
+		latitude,
+		create_time,
+		update_time,
+		procdef_type,
+		event_read,
+		assign_dept_id,
+		assign_operator,
+		assign_reason,
+		assign_time,
+		update_user,
+		risk_level,
+		extend_str3
+		from hk_event_info
+		where
+			event_alert_status = 2
+			<if test="contents != null and contents != ''">
+				AND concat(event_title,event_type_name) like concat('%', #{contents}, '%')
+			</if>
+			<if test="region != null and region != ''">
+				AND concat(region_name,event_address) like concat('%', #{region}, '%')
+			</if>
+			<if test="platCode != null and platCode != ''">
+				AND component_id = #{platCode}
+			</if>
+			<if test="riskLevel != null and riskLevel != ''">
+				AND risk_level = #{riskLevel}
+			</if>
+			<if test="reportType != null and reportType != ''">
+				AND report_type = #{reportType}
+			</if>
+			<if test="eventReadStatus != null and eventReadStatus != ''">
+				AND event_read = #{eventReadStatus}
+			</if>
+			<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+				and create_time &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+				and create_time &lt;= #{endDate}
+			</if>
+			<if test="assignDeptId != null"><!-- 结束时间检索 -->
+				and  FIND_IN_SET(#{assignDeptId},assign_dept_id) &gt; 0
+			</if>
+			<if test="targetId != null">
+				ORDER BY id &lt;&gt; #{targetId},id DESC
+			</if>
+			<if test="targetId == null">
+				ORDER BY risk_level desc, id DESC
+			</if>
+	</select>
+
+
+	<select id="findEventHistory" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo" resultMap="HkEventInfoResult">
+		select id,event_id,component_id,event_title,report_time,event_type,event_type_name,event_category,event_category_name,event_source,
+		event_source_name,event_image,event_thumbnail_image,storage_id,event_alert_status,event_alert_status_name,report_type,
+		report_type_name,law_enforcement_type,law_enforcement_type_name,time_out,current_processor_id,current_processor_name,
+		event_update_time,geometry,report_person_id,report_person_name,report_person_real_name,report_person_phone,camera_index_code,
+		camera_name,responsibility_subject,region_index_code,region_name,place_type,place_type_name,place_index_code,place_name,
+		company_legal_person,event_address,credit_union_code,company_contact_information,grid_name,grid_man,patrol_team,patrol_team_phone,extend_str1,
+		patrol_team2,patrol_team2_phone,grid_community,grid_contact_information,longitude,latitude,create_time,update_time,procdef_type,event_read,event_create_time
+		from hk_event_info
+		where
+		event_alert_status = 6
+		<if test="regionName != null and regionName != ''">
+			AND region_name = #{regionName}
+		</if>
+		<if test="longitude != null and longitude != ''">
+			AND longitude =  #{longitude}
+		</if>
+		<if test="latitude != null and latitude != ''">
+			AND latitude = #{latitude}
+		</if>
+		<if test="eventType != null and eventType != ''">
+			AND event_type = #{eventType}
+		</if>
+	</select>
+
+
+	<select id="findEventTypeName" resultMap="HkEventInfoResult">
+		select id,event_id,event_title,report_time,event_type,event_type_name,event_category,event_category_name,event_source,
+		event_source_name,event_image,event_thumbnail_image,storage_id,event_alert_status,event_alert_status_name,report_type,
+		report_type_name,law_enforcement_type,law_enforcement_type_name,time_out,current_processor_id,current_processor_name,
+		event_update_time,geometry,report_person_id,report_person_name,report_person_real_name,report_person_phone,camera_index_code,
+		camera_name,responsibility_subject,region_index_code,region_name,place_type,place_type_name,place_index_code,place_name,
+		company_legal_person,event_address,credit_union_code,company_contact_information,grid_name,grid_man,patrol_team,patrol_team_phone,
+		patrol_team2,patrol_team2_phone,grid_community,grid_contact_information,longitude,latitude,create_time,update_time,procdef_type,event_read,event_create_time from hk_event_info
+		where 1=1
+		AND (event_alert_status = 6 or event_alert_status = 7)
+		ORDER BY create_time DESC LIMIT 5
+	</select>
+
+	<update id="updateEventRead" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		update hk_event_info set event_read = 1 where event_alert_status = 2 ORDER BY create_time DESC LIMIT 1
+	</update>
+
+	<update id="updateEventReadType" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		update hk_event_info set event_read = 1 where id=#{id}
+	</update>
+
+	<select id="queryEventResult" parameterType="com.ruoyi.system.domain.HkEntity.EventBackVo"
+			resultType="com.ruoyi.system.domain.HkEntity.EventBackVo">
+		select
+		hei.event_id as eventId,
+    	hei.event_index_code as eventIndexCode,
+    	hei.event_alert_status as eventAlertStatus,
+    	hep.handler_name as handlerUserName,
+    	hep.handler_index_code as handlerUserId,
+		hep.create_time as processTime,
+		her.result as processResult
+		from
+		hk_event_info hei
+		left join hk_event_process_record hep on hei.event_id = hep.event_id and hep.process_status = "4"
+		left join hk_event_process_result her on her.record_id = hep.record_id
+		where
+		hei.event_alert_status in (4,6,7)
+		and hei.component_id = #{componentId}
+		<if test="eventIndexCode != null and eventIndexCode !=''">
+			and hei.event_index_code = #{eventIndexCode}
+		</if>
+		<if test="eventType != null and eventType !=''">
+			and hei.event_type = #{eventType}
+		</if>
+		order by hei.update_time desc,hep.create_time desc
+	</select>
+
+
+
+	<insert id="addHKEventInfo" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo" >
+		insert into hk_event_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="eventId != null  and eventId != ''">event_id,</if>
+			<if test="componentId != null  and componentId != ''">component_id,</if>
+			<if test="eventIndexCode != null  and eventIndexCode != ''">event_index_code,</if>
+			<if test="eventTitle != null  and eventTitle != ''">event_title,</if>
+			<if test="reportTime != null  and reportTime != ''">report_time,</if>
+			<if test="eventType != null  and eventType != ''">event_type,</if>
+			<if test="eventTypeName != null  and eventTypeName != ''">event_type_name,</if>
+			<if test="eventSubStatus != null  and eventSubStatus != ''">event_sub_status,</if>
+			<if test="eventSubStatusName != null  and eventSubStatusName != ''">event_sub_status_name,</if>
+			<if test="eventCategory != null ">event_category,</if>
+			<if test="eventCategoryName != null  and eventCategoryName != ''">event_category_name,</if>
+			<if test="eventSource != null ">event_source,</if>
+			<if test="eventSourceName != null  and eventSourceName != ''">event_source_name,</if>
+			<if test="eventImage != null  and eventImage != ''">event_image,</if>
+			<if test="eventThumbnailImage != null  and eventThumbnailImage != ''">event_thumbnail_image,</if>
+			<if test="storageId != null  and storageId != ''">storage_id,</if>
+			<if test="eventStatus != null ">event_status,</if>
+			<if test="eventStatusName != null  and eventStatusName != ''">event_status_name,</if>
+			<if test="eventAlertStatus != null ">event_alert_status,</if>
+			<if test="eventAlertStatusName != null  and eventAlertStatusName != ''">event_alert_status_name,</if>
+
+			<if test="reportType != null ">report_type,</if>
+			<if test="reportTypeName != null  and reportTypeName != ''">report_type_name,</if>
+			<if test="lawEnforcementType != null ">law_enforcement_type,</if>
+			<if test="lawEnforcementTypeName != null  and lawEnforcementTypeName != ''">law_enforcement_type_name,</if>
+			<if test="isView != null ">is_view,</if>
+			<if test="timeOut != null ">time_out,</if>
+			<if test="riskLevel != null  and riskLevel != ''">risk_level,</if>
+			<if test="currentProcessorId != null  and currentProcessorId != ''">current_processor_id,</if>
+			<if test="currentProcessorName != null  and currentProcessorName != ''">current_processor_name,</if>
+			<if test="eventUpdateTime != null  and eventUpdateTime != ''">event_update_time,</if>
+			<if test="eventCreateTime != null  and eventCreateTime != ''">event_create_time,</if>
+			<if test="geometry != null  and geometry != ''">geometry,</if>
+			<if test="reportPersonId != null  and reportPersonId != ''">report_person_id,</if>
+			<if test="reportPersonName != null  and reportPersonName != ''">report_person_name,</if>
+			<if test="reportPersonRealName != null  and reportPersonRealName != ''">report_person_real_name,</if>
+			<if test="reportPersonPhone != null  and reportPersonPhone != ''">report_person_phone,</if>
+			<if test="cameraIndexCode != null  and cameraIndexCode != ''">camera_index_code,</if>
+			<if test="cameraName != null  and cameraName != ''">camera_name,</if>
+			<if test="cameraTypeCode != null  and cameraTypeCode != ''">camera_type_code,</if>
+			<if test="responsibilitySubject != null  and responsibilitySubject != ''">responsibility_subject,</if>
+			<if test="regionIndexCode != null  and regionIndexCode != ''">region_index_code,</if>
+			<if test="regionName != null  and regionName != ''">region_name,</if>
+			<if test="placeType != null  and placeType != ''">place_type,</if>
+			<if test="placeTypeName != null  and placeTypeName != ''">place_type_name,</if>
+			<if test="placeIndexCode != null  and placeIndexCode != ''">place_index_code,</if>
+			<if test="placeName != null  and placeName != ''">place_name,</if>
+			<if test="companyLegalPerson != null  and companyLegalPerson != ''">company_legal_person,</if>
+			<if test="eventAddress != null  and eventAddress != ''">event_address,</if>
+			<if test="creditUnionCode != null  and creditUnionCode != ''">credit_union_code,</if>
+			<if test="companyContactInformation != null  and companyContactInformation != ''">company_contact_information,</if>
+			<if test="gridName != null  and gridName != ''">grid_name,</if>
+			<if test="gridMan != null  and gridMan != ''">grid_man,</if>
+			<if test="patrolTeam != null  and patrolTeam != ''">patrol_team,</if>
+			<if test="patrolTeamPhone != null  and patrolTeamPhone != ''">patrol_team_phone,</if>
+			<if test="patrolTeam2 != null  and patrolTeam2 != ''">patrol_team2,</if>
+			<if test="patrolTeam2Phone != null  and patrolTeam2Phone != ''">patrol_team2_phone,</if>
+			<if test="gridCommunity != null  and gridCommunity != ''">grid_community,</if>
+			<if test="gridContactInformation != null  and gridContactInformation != ''">grid_contact_information,</if>
+			<if test="longitude != null  and longitude != ''">longitude,</if>
+			<if test="latitude != null  and latitude != ''">latitude,</if>
+			<if test="routingAddress != null  and routingAddress != ''">routing_address,</if>
+			<if test="eventRemarks != null  and eventRemarks != ''">event_remarks,</if>
+			<if test="extendInt1 != null ">extend_int1,</if>
+			<if test="extendInt2 != null ">extend_int2,</if>
+			<if test="extendInt3 != null ">extend_int3,</if>
+			<if test="extendStr1 != null  and extendStr1 != ''">extend_str1,</if>
+			<if test="extendStr2 != null  and extendStr2 != ''">extend_str2,</if>
+			<if test="extendStr3 != null  and extendStr3 != ''">extend_str3,</if>
+
+			create_time,
+			<if test="eventAlertStatus == 6">update_time,</if>
+			<if test="procdefType != null  and procdefType != ''">procdef_type,</if>
+			<if test="eventRead != null ">event_read,</if>
+			<if test="plateNo != null and plateNo != ''">plate_no,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="eventId != null  and eventId != ''">#{eventId},</if>
+			<if test="componentId != null  and componentId != ''">#{componentId},</if>
+			<if test="eventIndexCode != null  and eventIndexCode != ''">#{eventIndexCode},</if>
+			<if test="eventTitle != null  and eventTitle != ''">#{eventTitle},</if>
+			<if test="reportTime != null  and reportTime != ''">#{reportTime},</if>
+			<if test="eventType != null  and eventType != ''">#{eventType},</if>
+			<if test="eventTypeName != null  and eventTypeName != ''">#{eventTypeName},</if>
+			<if test="eventSubStatus != null  and eventSubStatus != ''">#{eventSubStatus},</if>
+			<if test="eventSubStatusName != null  and eventSubStatusName != ''">#{eventSubStatusName},</if>
+			<if test="eventCategory != null ">#{eventCategory},</if>
+			<if test="eventCategoryName != null  and eventCategoryName != ''">#{eventCategoryName},</if>
+			<if test="eventSource != null ">#{eventSource},</if>
+			<if test="eventSourceName != null  and eventSourceName != ''">#{eventSourceName},</if>
+			<if test="eventImage != null  and eventImage != ''">#{eventImage},</if>
+			<if test="eventThumbnailImage != null  and eventThumbnailImage != ''">#{eventThumbnailImage},</if>
+			<if test="storageId != null  and storageId != ''">#{storageId},</if>
+			<if test="eventStatus != null ">#{eventStatus},</if>
+			<if test="eventStatusName != null  and eventStatusName != ''">#{eventStatusName},</if>
+			<if test="eventAlertStatus != null ">#{eventAlertStatus},</if>
+			<if test="eventAlertStatusName != null  and eventAlertStatusName != ''">#{eventAlertStatusName},</if>
+
+			<if test="reportType != null ">#{reportType},</if>
+			<if test="reportTypeName != null  and reportTypeName != ''">#{reportTypeName},</if>
+			<if test="lawEnforcementType != null ">#{lawEnforcementType},</if>
+			<if test="lawEnforcementTypeName != null  and lawEnforcementTypeName != ''">#{lawEnforcementTypeName},</if>
+			<if test="isView != null ">#{isView},</if>
+			<if test="timeOut != null ">#{timeOut},</if>
+			<if test="riskLevel != null  and riskLevel != ''">#{riskLevel},</if>
+			<if test="currentProcessorId != null  and currentProcessorId != ''">#{currentProcessorId},</if>
+			<if test="currentProcessorName != null  and currentProcessorName != ''">#{currentProcessorName},</if>
+			<if test="eventUpdateTime != null  and eventUpdateTime != ''">#{eventUpdateTime},</if>
+			<if test="eventCreateTime != null  and eventCreateTime != ''">#{eventCreateTime},</if>
+			<if test="geometry != null  and geometry != ''">#{geometry},</if>
+			<if test="reportPersonId != null  and reportPersonId != ''">#{reportPersonId},</if>
+			<if test="reportPersonName != null  and reportPersonName != ''">#{reportPersonName},</if>
+			<if test="reportPersonRealName != null  and reportPersonRealName != ''">#{reportPersonRealName},</if>
+			<if test="reportPersonPhone != null  and reportPersonPhone != ''">#{reportPersonPhone},</if>
+			<if test="cameraIndexCode != null  and cameraIndexCode != ''">#{cameraIndexCode},</if>
+			<if test="cameraName != null  and cameraName != ''">#{cameraName},</if>
+			<if test="cameraTypeCode != null  and cameraTypeCode != ''">#{cameraTypeCode},</if>
+			<if test="responsibilitySubject != null  and responsibilitySubject != ''">#{responsibilitySubject},</if>
+			<if test="regionIndexCode != null  and regionIndexCode != ''">#{regionIndexCode},</if>
+			<if test="regionName != null  and regionName != ''">#{regionName},</if>
+			<if test="placeType != null  and placeType != ''">#{placeType},</if>
+			<if test="placeTypeName != null  and placeTypeName != ''">#{placeTypeName},</if>
+			<if test="placeIndexCode != null  and placeIndexCode != ''">#{placeIndexCode},</if>
+			<if test="placeName != null  and placeName != ''">#{placeName},</if>
+			<if test="companyLegalPerson != null  and companyLegalPerson != ''">#{companyLegalPerson},</if>
+			<if test="eventAddress != null  and eventAddress != ''">#{eventAddress},</if>
+			<if test="creditUnionCode != null  and creditUnionCode != ''">#{creditUnionCode},</if>
+			<if test="companyContactInformation != null  and companyContactInformation != ''">#{companyContactInformation},</if>
+			<if test="gridName != null  and gridName != ''">#{gridName},</if>
+			<if test="gridMan != null  and gridMan != ''">#{gridMan},</if>
+			<if test="patrolTeam != null  and patrolTeam != ''">#{patrolTeam},</if>
+			<if test="patrolTeamPhone != null  and patrolTeamPhone != ''">#{patrolTeamPhone},</if>
+			<if test="patrolTeam2 != null  and patrolTeam2 != ''">#{patrolTeam2},</if>
+			<if test="patrolTeam2Phone != null  and patrolTeam2Phone != ''">#{patrolTeam2Phone},</if>
+			<if test="gridCommunity != null  and gridCommunity != ''">#{gridCommunity},</if>
+			<if test="gridContactInformation != null  and gridContactInformation != ''">#{gridContactInformation},</if>
+			<if test="longitude != null  and longitude != ''">#{longitude},</if>
+			<if test="latitude != null  and latitude != ''">#{latitude},</if>
+			<if test="routingAddress != null  and routingAddress != ''">#{routingAddress},</if>
+			<if test="eventRemarks != null  and eventRemarks != ''">#{eventRemarks},</if>
+			<if test="extendInt1 != null ">#{extendInt1},</if>
+			<if test="extendInt2 != null ">#{extendInt2},</if>
+			<if test="extendInt3 != null ">#{extendInt3},</if>
+			<if test="extendStr1 != null  and extendStr1 != ''">#{extendStr1},</if>
+			<if test="extendStr2 != null  and extendStr2 != ''">#{extendStr2},</if>
+			<if test="extendStr3 != null  and extendStr3 != ''">#{extendStr3},</if>
+			#{createTime},
+			<if test="eventAlertStatus == 6">now(),</if>
+			<if test="procdefType != null  and procdefType != ''">#{procdefType},</if>
+			<if test="eventRead != null ">#{eventRead},</if>
+			<if test="plateNo != null and plateNo != ''">#{plateNo},</if>
+		</trim>
+	</insert>
+
+	<update id="updateHkEventInfo" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		update hk_event_info
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="eventId != null  and eventId != ''">event_id = #{eventId},</if>
+			<if test="componentId != null  and componentId != ''">component_id = #{componentId},</if>
+			<if test="eventIndexCode != null  and eventIndexCode != ''">event_index_code = #{eventIndexCode},</if>
+			<if test="eventTitle != null  and eventTitle != ''">event_title = #{eventTitle},</if>
+			<if test="reportTime != null  and reportTime != ''">report_time = #{reportTime},</if>
+			<if test="eventType != null  and eventType != ''">event_type = #{eventType},</if>
+			<if test="eventTypeName != null  and eventTypeName != ''">event_type_name = #{eventTypeName},</if>
+			<if test="eventCategory != null ">event_category = #{eventCategory},</if>
+			<if test="eventCategoryName != null  and eventCategoryName != ''">event_category_name = #{eventCategoryName},</if>
+			<if test="eventSource != null ">event_source = #{eventSource},</if>
+			<if test="eventSourceName != null  and eventSourceName != ''">event_source_name = #{eventSourceName},</if>
+			<if test="eventImage != null  and eventImage != ''">event_image = #{eventImage},</if>
+			<if test="eventThumbnailImage != null  and eventThumbnailImage != ''">event_thumbnail_image = #{eventThumbnailImage},</if>
+			<if test="storageId != null  and storageId != ''">storage_id = #{storageId},</if>
+			<if test="eventStatus != null ">event_status = #{eventStatus},</if>
+			<if test="eventStatusName != null  and eventStatusName != ''">event_status_name = #{eventStatusName},</if>
+			<if test="eventAlertStatus != null ">event_alert_status = #{eventAlertStatus},</if>
+			<if test="eventAlertStatusName != null  and eventAlertStatusName != ''">event_alert_status_name = #{eventAlertStatusName},</if>
+			<if test="eventSubStatus != null and eventSubStatus != ''">event_sub_status = #{eventSubStatus},</if>
+			<if test="eventSubStatusName != null  and eventSubStatusName != ''">event_sub_status_name = #{eventSubStatusName},</if>
+			<if test="reportType != null ">report_type = #{reportType},</if>
+			<if test="reportTypeName != null  and reportTypeName != ''">report_type_name = #{reportTypeName},</if>
+			<if test="lawEnforcementType != null ">law_enforcement_type = #{lawEnforcementType},</if>
+			<if test="lawEnforcementTypeName != null  and lawEnforcementTypeName != ''">law_enforcement_type_name = #{lawEnforcementTypeName},</if>
+			<if test="isView != null ">is_view = #{isView},</if>
+			<if test="timeOut != null ">time_out = #{timeOut},</if>
+			<if test="riskLevel != null  and riskLevel != ''">risk_level = #{riskLevel},</if>
+			<if test="currentProcessorId != null  and currentProcessorId != ''">current_processor_id = #{currentProcessorId},</if>
+			<if test="currentProcessorName != null  and currentProcessorName != ''">current_processor_name = #{currentProcessorName},</if>
+			<if test="eventUpdateTime != null  and eventUpdateTime != ''">event_update_time = #{eventUpdateTime},</if>
+			<if test="geometry != null  and geometry != ''">geometry = #{geometry},</if>
+			<if test="reportPersonId != null  and reportPersonId != ''">report_person_id = #{reportPersonId},</if>
+			<if test="reportPersonName != null  and reportPersonName != ''">report_person_name = #{reportPersonName},</if>
+			<if test="reportPersonRealName != null  and reportPersonRealName != ''">report_person_real_name = #{reportPersonRealName},</if>
+			<if test="reportPersonPhone != null  and reportPersonPhone != ''">report_person_phone = #{reportPersonPhone},</if>
+			<if test="cameraIndexCode != null  and cameraIndexCode != ''">camera_index_code = #{cameraIndexCode},</if>
+			<if test="cameraName != null  and cameraName != ''">camera_name = #{cameraName},</if>
+			<if test="responsibilitySubject != null  and responsibilitySubject != ''">responsibility_subject = #{responsibilitySubject},</if>
+			<if test="regionIndexCode != null  and regionIndexCode != ''">region_index_code = #{regionIndexCode},</if>
+			<if test="regionName != null  and regionName != ''">region_name = #{regionName},</if>
+			<if test="placeType != null  and placeType != ''">place_type = #{placeType},</if>
+			<if test="placeTypeName != null  and placeTypeName != ''">place_type_name = #{placeTypeName},</if>
+			<if test="placeIndexCode != null  and placeIndexCode != ''">place_index_code = #{placeIndexCode},</if>
+			<if test="placeName != null  and placeName != ''">place_name = #{placeName},</if>
+			<if test="companyLegalPerson != null  and companyLegalPerson != ''">company_legal_person = #{companyLegalPerson},</if>
+			<if test="eventAddress != null  and eventAddress != ''">event_address = #{eventAddress},</if>
+			<if test="creditUnionCode != null  and creditUnionCode != ''">credit_union_code = #{creditUnionCode},</if>
+			<if test="companyContactInformation != null  and companyContactInformation != ''">company_contact_information = #{companyContactInformation},</if>
+			<if test="gridName != null  and gridName != ''">grid_name = #{gridName},</if>
+			<if test="gridMan != null  and gridMan != ''">grid_man = #{gridMan},</if>
+			<if test="patrolTeam != null  and patrolTeam != ''">patrol_team = #{patrolTeam},</if>
+			<if test="patrolTeamPhone != null  and patrolTeamPhone != ''">patrol_team_phone = #{patrolTeamPhone},</if>
+			<if test="patrolTeam2 != null  and patrolTeam2 != ''">patrol_team2 = #{patrolTeam2},</if>
+			<if test="patrolTeam2Phone != null  and patrolTeam2Phone != ''">patrol_team2_phone = #{patrolTeam2Phone},</if>
+			<if test="gridCommunity != null  and gridCommunity != ''">grid_community = #{gridCommunity},</if>
+			<if test="gridContactInformation != null  and gridContactInformation != ''">grid_contact_information = #{gridContactInformation},</if>
+			<if test="longitude != null  and longitude != ''">longitude = #{longitude},</if>
+			<if test="latitude != null  and latitude != ''">latitude = #{latitude},</if>
+			<if test="routingAddress != null  and routingAddress != ''">routing_address = #{routingAddress},</if>
+			<if test="eventRemarks != null  and eventRemarks != ''">event_remarks = #{eventRemarks},</if>
+			<if test="extendInt1 != null ">extend_int1 = #{extendInt1},</if>
+			<if test="extendInt2 != null ">extend_int2 = #{extendInt2},</if>
+			<if test="extendInt3 != null ">extend_int3 = #{extendInt3},</if>
+			<if test="extendStr1 != null  and extendStr1 != ''">extend_str1 = #{extendStr1},</if>
+			<if test="extendStr2 != null  and extendStr2 != ''">extend_str2 = #{extendStr2},</if>
+			<if test="extendStr3 != null  and extendStr3 != ''">extend_str3 = #{extendStr3},</if>
+			<if test="createTime != null ">create_time = #{createTime},</if>
+			<if test="updateTime != null ">update_time = #{updateTime},</if>
+			<if test="procdefType != null  and procdefType != ''">procdef_type = #{procdefType},</if>
+			<if test="eventRead != null ">event_read = #{eventRead},</if>
+			<if test="dispatchEventUser != null ">dispatch_event_user = #{dispatchEventUser},</if>
+			<if test="dispatchEventTime != null ">dispatch_event_time = #{dispatchEventTime},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+<!--	查询待处理事件数量-->
+	<select id="findPendingCount" resultType="java.lang.Integer">
+		select count(*) from  hk_event_info where event_alert_status = 2
+	</select>
+<!--	查询已完成事件数量-->
+	<select id="findEventEndCount" resultType="java.lang.Integer">
+		select count(*) from  hk_event_info where event_alert_status = 6 or event_alert_status = 7 or event_alert_status = 9
+	</select>
+<!--	查询处理中的事件数量-->
+	<select id="findDisposalCount" resultType="java.lang.Integer">
+		select count(*) from  hk_event_info where event_alert_status in (3,4,5)
+	</select>
+<!--	查询已逾期事件的数量-->
+	<select id="findOverdueCount" resultType="java.lang.Integer">
+		select count(*) from hk_event_info a where event_alert_status !=6 AND NOW() &gt; a.time_out
+	</select>
+	<!--	查询本月城管类事件数量,处理、未处理数量-->
+	<select id="findHKEventCount" resultType="map">
+		SELECT
+		( SELECT count(*) FROM `hk_event_info` a WHERE date_format( a.create_time, '%Y-%m' )= date_format( now(), '%Y-%m' ) AND component_id = 1001 ) AS "subCount",
+		(
+		SELECT
+			count(*)
+		FROM
+			`hk_event_info` a
+		WHERE
+			event_alert_status IN ( 2,3, 4, 5 )
+			AND date_format( a.create_time, '%Y-%m' )= date_format( now(), '%Y-%m' )
+		) AS "disposal",
+		(
+		SELECT
+			count(*)
+		FROM
+			`hk_event_info` a
+		WHERE
+			event_alert_status IN ( 6, 7,8, 9 )
+		AND date_format( a.create_time, '%Y-%m' )= date_format( now(), '%Y-%m' )
+		) AS "complete"
+	</select>
+
+<!--	//在时间段里发生的城管类事件的总数-->
+	<select id="getIntervalCount" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventChenAccVO" parameterType="java.lang.Integer">
+		SELECT
+			event_title title,
+			count(*) count,
+			(
+			SELECT
+				count(*)
+			FROM
+				hk_event_info
+			WHERE
+				create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' )
+				AND HOUR ( create_time ) = #{time}
+				AND component_id = 1001
+			) percentage
+		FROM
+			hk_event_info
+		WHERE
+			create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' )
+			AND HOUR ( create_time ) = #{time}
+			AND component_id = 1001
+		GROUP BY
+			event_title
+		ORDER BY
+		count(*) desc
+			LIMIT 3
+
+	</select>
+<!--	//事件高频发生的5个时间段-->
+	<select id="selectFuryTime" resultType="java.lang.Integer">
+		SELECT HOUR
+			( create_time ) time
+		FROM
+			hk_event_info
+		WHERE
+			create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' )
+		GROUP BY
+			time
+		ORDER BY
+			count(create_time) desc
+		LIMIT 5
+	</select>
+<!--	重点违规-->
+	<select id="getKeyViolations" resultType="com.ruoyi.system.domain.HkEarlyWarning.KeyViolationsVO">
+		SELECT
+			event_title title,
+			count( event_title ) count,
+			(SELECT count(1) FROM hk_event_info a WHERE date_format( a.create_time, '%Y-%m' )= date_format( now(), '%Y-%m' ) AND component_id = 1001 ) sum
+		FROM
+			hk_event_info a
+		WHERE
+			date_format( a.create_time, '%Y-%m' )= date_format( now(), '%Y-%m' )
+			AND component_id = 1001
+		GROUP BY
+			event_title
+		ORDER BY
+			count DESC
+		LIMIT 4
+	</select>
+<!--	查询当日城管类事件总数-->
+	<select id="getTodayEventCount" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			hk_event_info
+		WHERE
+			create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' )
+		AND component_id = 1001
+	</select>
+<!--	日常模式-->
+	<select id="getTodayHandleProp" resultType="java.util.Map">
+		SELECT
+		(SELECT count(*) FROM hk_event_info WHERE create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' ) AND component_id = 1001 ) sum,
+		(SELECT count(*) FROM hk_event_info WHERE event_alert_status IN ( 2,3, 4, 5 ) AND create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' ) AND component_id = 1001 ) disposal,
+		(SELECT count(*) FROM hk_event_info WHERE event_alert_status IN ( 6, 7, 8, 9 ) AND create_time > CONCAT( LEFT ( NOW(), 11 ), '00:00:00' ) AND component_id = 1001 ) eventend
+	</select>
+	<select id="selectEventInfoAll" resultMap="HkEventInfoResult" parameterType="HkEventInfo">
+		select * from hk_event_info where  event_id =#{eventId}
+	</select>
+<!--	工作概要的消息通知-->
+	<select id="queryEventOrder" resultMap="HkEventInfoResult" >
+		select * from  hk_event_info where event_alert_status = 2 ORDER BY create_time DESC LIMIT 10
+	</select>
+
+	<select id="queryEventOrderEnd" resultMap="HkEventInfoResult">
+		select * from hk_event_info where event_alert_status in (6,9) ORDER BY create_time DESC LIMIT 10
+	</select>
+
+	<!--根据事件的当天时间、事件的类别、事件的区域code、状态是否为2 进行判断，
+	如果为查出的数量为0则正常添加，如果查出来的数据不为0 则将这条事件的状态改为10(重复报警)-->
+	<select id="selectEventRepeat" resultType="java.lang.Integer" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		select count(*) from hk_event_info where event_create_time = #{eventCreateTime} AND event_type =#{eventType} AND region_index_code =#{regionIndexCode} AND event_title=#{eventTitle} AND event_alert_status = 2
+	</select>
+
+
+	<select id="queryEventRepeat" resultType="java.lang.String" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		select extend_str3 from hk_event_info
+		where
+		component_id=#{componentId}
+		and event_alert_status in (1,2)
+		<if test="eventCreateTime != null and eventCreateTime != ''">
+			AND event_create_time = #{eventCreateTime}
+		</if>
+		<if test="regionIndexCode != null and regionIndexCode != ''">
+			AND region_index_code =#{regionIndexCode}
+		</if>
+		<if test="eventTypeName != null and eventTypeName != ''">
+			AND event_type_name =#{eventTypeName}
+		</if>
+		<if test="eventAddress != null and eventAddress != ''">
+			AND event_address =#{eventAddress}
+		</if>
+		<if test="plateNo != null and plateNo != ''">
+			AND plate_no =#{plateNo}
+		</if>
+		<if test="reportTime != null and reportTime != ''">
+			AND report_time = #{eventAddress}
+		</if>
+		<if test="repeatTime != null and repeatTime != ''">
+			AND create_time <![CDATA[ >= ]]> #{repeatTime}
+		</if>
+		limit 1
+	</select>
+
+	<!--根据重复报警标识 查询重复报警数-->
+	<select id="queryEventCountRepeat" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(id) from hk_event_info where extend_str3 = #{extendStr3}
+	</select>
+
+	<!--根据重复标识 更新之前的事件为重复事件-->
+	<update id="updateRepeatCode" parameterType="java.lang.String">
+		update hk_event_info set event_alert_status = 10 where extend_str3 = #{extendStr3} and event_alert_status in (1,2)
+	</update>
+
+
+<!--	根据事件的天数和事件的类别和事件的区域code进行判断 这条事件的数量-->
+	<select id="selectEventCount" resultType="java.lang.Integer" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		select count(*) from hk_event_info
+		where event_create_time = #{eventCreateTime}
+		AND event_type =#{eventType}
+		AND region_index_code =#{regionIndexCode}
+		AND event_title=#{eventTitle}
+	</select>
+
+
+	<!--一事一档事件数-->
+	<select id="countAllByParams" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(1) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="eventType != null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+			-- trendWeekMonday 本周一
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			-- trendMonthMonday 本月一号
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test="eventAlterStatus!=null and eventAlterStatus !=''">
+				and hei.event_alert_status =#{eventAlterStatus}
+			</if>
+			<if test="eventStatus !=null and eventStatus !=''">
+				and hei.event_status = #{eventStatus}
+			</if>
+			<if test="notEventStatus !=null and notEventStatus !=''">
+				and hei.event_status &lt;&gt; #{notEventStatus}
+			</if>
+			<if test="eventSubStatus !=null and eventSubStatus !=''">
+				and hei.event_sub_status =#{eventSubStatus}
+			</if>
+			<if test="thisWeekMonday !='' and thisWeekMonday !=null">
+				and  date_format(hei.create_time,'%Y-%m-%d')  &lt; #{thisWeekMonday}
+			</if>
+			<if test="lastWeekDay !='' and lastWeekDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  >= #{lastWeekDay}
+			</if>
+			<if test="endMonths !='' and endMonths !=null">
+				and  date_format(hei.create_time,'%Y-%m')  &lt; #{endMonths}
+			</if>
+			<if test="beginMonths !='' and beginMonths !=null">
+				and date_format(hei.create_time,'%Y-%m')  >= #{beginMonths}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and hei.component_id = #{componentId}
+			</if>
+			<if test="cameraTypeCode !=null and cameraTypeCode !=''">
+				and hei.camera_type_code is not null
+			</if>
+			<if test="theDay !='' and theDay !=null">
+				and  date_format(hei.create_time,'%Y-%m-%d')  &lt;= #{theDay}
+			</if>
+			<if test="lastDay !='' and lastDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{lastDay}
+			</if>
+			<if test="hourBegin !=null and hourBegin !=''">
+				and date_format(create_time,'%Y-%m-%d %H:%i:%S') &gt;= #{hourBegin}
+			</if>
+			<if test="hourEnd !=null and hourEnd !=''">
+				and date_format(create_time,'%Y-%m-%d %H:%i:%S') &lt;= #{hourEnd}
+			</if>
+
+			<if test="thisMonthFirstDay !='' and thisMonthFirstDay !=null">
+				and  date_format(hei.create_time,'%Y-%m-%d')  &lt; #{thisMonthFirstDay}
+			</if>
+			<if test="lastMonthFirstDay !='' and lastMonthFirstDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  >= #{lastMonthFirstDay}
+			</if>
+
+
+			<if test="beginDateTime != null and beginDateTime != ''">
+				and hei.create_time &gt;= #{beginDateTime}
+			</if>
+			<if test="endDateTime != null and endDateTime != ''">
+				and hei.create_time &lt; #{endDateTime}
+			</if>
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<!-- 今日总告警数 -->
+	<select id="queryTodayEventCounts"  resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info
+		<where>
+			1 = 1
+			<if test="eventCreatTime != null and eventCreatTime != ''">
+				and event_create_time = #{eventCreatTime}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and component_id = #{componentId}
+			</if>
+			<if test="statusArr != null">
+				and event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<!-- 今日未处理告警数 -->
+	<select id="queryTodayUnprocessedEventCounts" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info
+		<where>
+			(event_alert_status = 1 or event_alert_status = 2 or event_alert_status = 3)
+			<if test="eventCreatTime != null and eventCreatTime != ''">
+				and event_create_time = #{eventCreatTime}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and component_id = #{componentId}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryEventTimeOutCounts" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info
+		<where>
+			event_alert_status = 3
+			<if test="timeOut != null and timeOut != ''">
+				and date_format(time_out,'%Y-%m-%d %H:%i:%S') &lt; #{timeOut}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and component_id = #{componentId}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryEventTypeCounts" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventTypeCountsVO" parameterType="java.lang.String">
+		select event_type as `eventTypeName`,count(1) as `eventCount` from hk_event_info
+		<where>
+			event_create_time = #{eventCreatTime}
+		</where>
+		group by event_type
+	</select>
+
+	<select id="queryEventHandlerCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info
+		<where>
+			event_create_time = #{eventCreatTime} and event_alert_status = 5
+		</where>
+	</select>
+
+
+	<select id="queryEventEndCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info
+		<where>
+			event_create_time = #{eventCreatTime} and  (event_alert_status = 6 or  event_alert_status = 7 or event_alert_status = 9)
+		</where>
+	</select>
+
+	<!-- 事情有效流转率-异常报送数 -->
+	<select id="queryEventExceptionCounts" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info
+		<where>
+			event_create_time = #{eventCreatTime} and  event_alert_status = 8
+		</where>
+	</select>
+
+	<!-- 一事一档 共治数量 -->
+	<select id="queryEventTurnoverRateCounts" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_action_chain hac
+		inner join hk_event_info hei on  hac.action_chain_id = hei.procdef_type
+		<where>
+				1 = 1
+			<if test="trendWeekMonday != null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+			<if test="thisWeekMonday !='' and thisWeekMonday !=null">
+				and  date_format(hei.create_time,'%Y-%m-%d')  &lt; #{thisWeekMonday}
+			</if>
+			<if test="lastWeekDay !='' and lastWeekDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  >= #{lastWeekDay}
+			</if>
+
+			<if test="eventAlterStatus !=null and eventAlterStatus !=''">
+				and  hei.event_alter_status in (#{eventAlterStatus})
+			</if>
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="isGovernance !=null and isGovernance !=''">
+				and hac.is_governance = #{isGovernance}
+			</if>
+		</where>
+	</select>
+
+	<!-- 一事一档 事件趋势 -->
+	<select id="queryEventTrends" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventTrendVO" parameterType="java.util.Map">
+		SELECT hei.create_time as `createTime` FROM hk_event_info hei
+		<where>
+			hei.place_type_name IS NULL
+			-- currentDate 当天
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			-- trendWeekMonday 本周
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			-- trendMonthMonday 本月
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 一事一档 社区检测 (仅统计定位到网格的社区事件数量，若事件所属为街道 则不进入统计)-->
+	<select id="queryEventRegion" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventInspectVO" parameterType="java.util.Map">
+		SELECT sd4.region_name as `regionName`,sd4.region_id as `regionCode`,COUNT(he.event_id)  as `eventCount` FROM(
+		SELECT sd1.region_id,sd1.region_name FROM sys_region sd1
+		INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id
+		)sd4
+		left JOIN (SELECT sd.parent_id,hei.event_id from hk_event_info hei
+		INNER JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+		</where>
+		)he
+		ON sd4.region_id = he.parent_id
+		<where>
+			<if test="regionCode != null and regionCode != ''">
+				sd4.region_id = #{regionCode}
+			</if>
+		</where>
+		GROUP BY sd4.region_id
+		<choose>
+			<when test="sort != null and sort != ''">
+				ORDER BY eventCount ${sort}
+			</when>
+			<otherwise>
+				ORDER BY sd4.region_id asc
+			</otherwise>
+		</choose>
+
+	</select>
+
+
+	<!---->
+	<select id="queryEventRegionPart1" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventInspectVO" parameterType="java.util.Map">
+		SELECT sd4.region_name as `regionName`,COUNT(he.event_id)  as `eventCount` FROM(
+		SELECT sd1.region_id,sd1.region_name FROM sys_region sd1
+		INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id
+		)sd4
+		left JOIN (SELECT sd.parent_id,hei.event_id from hk_event_info hei
+		INNER JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+		</where>
+		)he
+		ON sd4.region_id = he.parent_id
+		GROUP BY sd4.region_id
+		ORDER BY eventCount ${sort},sd4.region_name
+	</select>
+
+
+	<!-- 一事一档 类型统计 -->
+	<select id="queryEventType" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventTypeVO" parameterType="java.util.Map">
+		SELECT he.ec_name AS `name`,COUNT(hhs.event_id) AS `value` FROM hk_EClassification he
+		LEFT JOIN
+		(SELECT hei.event_id,hei.event_type,hei.region_index_code,hei.component_id FROM hk_event_info hei
+		left join sys_region sr on sr.region_id = hei.region_index_code
+		<where>
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="regionId != null and regionId !=''">
+				sr.parent_id = #{regionId}
+			</if>
+		</where>
+		)hhs
+		ON hhs.component_id = he.ec_name_type
+		GROUP BY he.ec_name
+		order by value desc
+	</select>
+
+
+	<!-- 一事一档 类型统计 查询上报平台分类与自定义分类映射-->
+	<select id="queryEventTypePartTwo" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventTypeVO" parameterType="java.util.Map">
+		SELECT he.ec_name AS `name`,COUNT(hhs.event_id) AS `value`
+		FROM hk_EClassification he
+		LEFT JOIN hk_eclassification_plat_custom epc on epc.ac_id = he.ec_id
+		LEFT JOIN hk_eclassification_plat ep on ep.class_id = epc.class_id
+ 		(SELECT hei.event_id,hei.event_type,hei.region_index_code
+		FROM hk_event_info hei
+		left join sys_region sr on sr.region_id = hei.region_index_code
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test="regionId != null and regionId !=''">
+				sr.parent_id = #{regionId}
+			</if>
+		</where>
+		)hhs
+		ON hhs.event_type = ep.class_code
+		GROUP BY he.ec_name
+		order by value desc
+	</select>
+
+	<!-- 一事一档 事件分析 -->
+	<select id="queryEventAnalysis" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventAnalysisVO" parameterType="java.util.Map">
+		SELECT hei1.createTime,hei1.updateTime,he.ec_name as `eventAnalysisTypeName` FROM  hk_EClassification he
+		LEFT JOIN  (select hei.create_time as `createTime`,hei.update_time as `updateTime`,hei.component_id from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="achieveStatus !=null and achieveStatus != ''">
+				and  (hei.event_alert_status = 6 or  hei.event_alert_status = 7 or  hei.event_alert_status = 9)
+			</if>
+		</where>
+		) hei1 ON he.ec_name_type = hei1.component_id
+	</select>
+
+	<!-- 一事一档 查询上报平台-->
+	<select id="queryEventAnalysisPartTwo" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventAnalysisVO" parameterType="java.util.Map">
+		SELECT he.ec_name AS `eventAnalysisTypeName`, he.ec_name_type AS `eventAnalysisTypeCode`,COUNT(hhs.event_id) AS `eventAnalysisTypeCount`
+		FROM hk_EClassification he
+		left join
+		(SELECT hei.event_id,hei.event_type,hei.component_id
+		FROM hk_event_info hei
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		)hhs
+		ON hhs.component_id = he.ec_name_type
+		GROUP BY he.ec_name,he.ec_name_type
+		<if test="sort != null and sort != ''">
+			order by eventAnalysisTypeCount ${sort}
+		</if>
+	</select>
+
+	<!-- 一事一档 类型统计 查询上报平台分类与自定义分类映射-->
+	<select id="queryEventAnalysisPart" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventAnalysisVO" parameterType="java.util.Map">
+		SELECT he.ec_name AS `eventAnalysisTypeName`,COUNT(hhs.event_id) AS `eventAnalysisTypeCount`
+		FROM hk_EClassification he
+		LEFT JOIN hk_eclassification_plat_custom epc on epc.ec_id = he.ec_id
+		LEFT JOIN hk_eclassification_plat ep on ep.class_id = epc.class_id
+		left join
+		(SELECT hei.event_id,hei.event_type,hei.region_index_code
+		FROM hk_event_info hei
+		left join sys_region sr on sr.region_id = hei.region_index_code
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		)hhs
+		ON hhs.event_type = ep.class_code
+		GROUP BY he.ec_name
+		order by eventAnalysisTypeCount desc
+	</select>
+
+	<!--
+		获取每个事件类型的事件总耗时
+	-->
+	<select id="eventActiveTimeByEventType" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventAnalysisVO" parameterType="java.util.Map">
+		SELECT tt.name as `eventAnalysisTypeName`,IFNULL(AVG(tt.time),0) as `eventAnalysisAvgTime`,IFNULL(SUM(tt.time),0) as `eventAnalysisSumTime`
+		FROM
+		(
+		SELECT he.ec_name AS `name`,
+		timestampdiff(SECOND,hhs.create_time,hhs.update_time) as time
+		FROM hk_EClassification he
+		LEFT JOIN hk_eclassification_plat_custom epc on epc.ec_id = he.ec_id
+		LEFT JOIN hk_eclassification_plat ep on ep.class_id = epc.class_id
+		LEFT JOIN
+		(SELECT hei.event_id,hei.event_type,hei.region_index_code,hei.create_time,hei.update_time
+		FROM hk_event_info hei
+		LEFT JOIN sys_region sr on sr.region_id = hei.region_index_code
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		)hhs
+		ON hhs.event_type = ep.class_code
+		) tt
+		GROUP BY tt.name
+		ORDER BY eventAnalysisSumTime desc
+	</select>
+
+
+	<!-- 一事一档 赋能流转 -->
+	<select id="queryEventChange"  resultType="com.ruoyi.system.domain.HkEarlyWarning.EventChangeVO" parameterType="java.util.Map">
+		SELECT hei.event_alert_status as `alterStatus` FROM hk_event_info hei
+		<where>
+			(hei.event_alert_status = '2' or hei.event_alert_status = '3' or hei.event_alert_status = '6' OR hei.event_alert_status = '7' OR hei.event_alert_status = '10')
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+		</where>
+	</select>
+
+	<!--一域一档 查询事件发生区域的信息-->
+	<select id="queryEventHappenRegionInfo" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.HkEarlyWarning.RegionLoadVO">
+		SELECT
+		count(DISTINCT upr.user_id) as userCount,
+		count( DISTINCT tt.region_id) as regionCount
+		FROM sys_user_post_region upr
+		LEFT JOIN sys_post sp ON sp.post_id = upr.post_id
+		<if test="postArr != null">
+			and upr.post_id in
+			<foreach collection="postArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		LEFT JOIN (
+		SELECT DISTINCT sd1.region_id,sd1.region_name
+		FROM hk_event_info hei
+		LEFT JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		LEFT JOIN sys_region sd1 on sd1.region_id = sd.parent_id
+		WHERE
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		group by sd1.region_id,sd1.region_name
+		) tt on upr.region_id = tt.region_id
+	</select>
+
+	<!-- 一域一档 类型统计 -->
+	<select id="queryRegionEventType" resultType="com.ruoyi.system.domain.HkEarlyWarning.RegionEventTypeVO" parameterType="java.util.Map">
+		SELECT sd4.region_name as `name`,COUNT(he.event_id)  as `value` FROM(
+		SELECT sd1.region_id,sd1.region_name FROM sys_region sd1
+		INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id
+		)sd4
+		left JOIN (SELECT sd.parent_id,hei.event_id from hk_event_info hei
+		INNER JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+			<if test="regionId !=null and regionId !=''">
+				and sd.region_id = #{regionId}
+			</if>
+		</where>
+		)he
+		ON sd4.region_id = he.parent_id
+		GROUP BY sd4.region_id
+		ORDER BY value ${desc}
+	</select>
+
+	<!-- 一域一档 事件分析 流转率 共治率 -->
+	<select id="queryRegionAnalysis" resultType="com.ruoyi.system.domain.HkEarlyWarning.RegionEventAnalysisVO" parameterType="java.util.Map">
+		SELECT sd4.region_name as `regionName`,COUNT(he.event_id)  as `eventCount` FROM(
+		SELECT sd1.region_id,sd1.region_name FROM sys_region sd1
+		INNER JOIN
+		(SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id
+		)sd4
+		left JOIN (SELECT sd.parent_id,hei.event_id from hk_event_info hei
+		INNER JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		)he
+		ON sd4.region_id = he.parent_id
+		<where>
+			<if test="regionId != null and regionId !=''">
+				sd4.region_id = #{regionId}
+			</if>
+		</where>
+		GROUP BY sd4.region_id
+		ORDER BY eventCount DESC
+	</select>
+
+	<!--一域一档  查询社区下的赋能流转-->
+	<select id="queryEventTransferByRegion" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT count(hei.event_id) as value
+		FROM hk_event_info hei
+		LEFT JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		LEFT join sys_region sd1 on sd1.region_id = sd.parent_id
+		WHERE
+		1 = 1
+		<if test="regionId != null and regionId != ''">
+			and sd1.region_id = #{regionId}
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+		</if>
+
+		<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+			and hei.create_time &gt; #{nearlyADayBegin}
+		</if>
+		<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+			and hei.create_time &lt; #{nearlyADayEnd}
+		</if>
+		<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+			and hei.create_time &gt; #{nearlyAWeekBegin}
+		</if>
+		<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+			and hei.create_time &lt; #{nearlyAWeekEnd}
+		</if>
+		<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+			and hei.create_time &gt; #{nearlyAMonthBegin}
+		</if>
+		<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+			and hei.create_time &lt; #{nearlyAMonthEnd}
+		</if>
+		<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+			and hei.create_time &gt; #{nearlyAYearBegin}
+		</if>
+		<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+			and hei.create_time &lt; #{nearlyAYearEnd}
+		</if>
+
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+	</select>
+
+
+
+	<!--查询所有人员下的事件数量-->
+	<select id="queryEventCountByAllRanks" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.HkEarlyWarning.PeopleAnalysisVO">
+		SELECT
+		tt1.user_name as userName,
+		tt1.user_id as userId,
+		IFNULL( tt2.VALUE, 0 ) AS eventCount
+		FROM
+			sys_user tt1
+			LEFT JOIN (
+			SELECT
+				count(DISTINCT hei.event_id ) AS VALUE,
+				su.user_name,
+				su.user_id
+			FROM
+				hk_event_info hei
+				LEFT JOIN hk_event_process_record epr ON epr.event_id = hei.event_id
+				LEFT JOIN sys_user su ON su.user_id = epr.handler_index_code
+				-- LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+				LEFT JOIN sys_user_post_region upr on upr.user_id = su.user_id
+			<where>
+				1 = 1
+				<if test="currentDate != null and currentDate !=''">
+					and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+				</if>
+				<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+					and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+				</if>
+				<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+					and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+				</if>
+
+
+				<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+					and hei.create_time &gt; #{nearlyADayBegin}
+				</if>
+				<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+					and hei.create_time &lt; #{nearlyADayEnd}
+				</if>
+				<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+					and hei.create_time &gt; #{nearlyAWeekBegin}
+				</if>
+				<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+					and hei.create_time &lt; #{nearlyAWeekEnd}
+				</if>
+				<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+					and hei.create_time &gt; #{nearlyAMonthBegin}
+				</if>
+				<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+					and hei.create_time &lt; #{nearlyAMonthEnd}
+				</if>
+				<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+					and hei.create_time &gt; #{nearlyAYearBegin}
+				</if>
+				<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+					and hei.create_time &lt; #{nearlyAYearEnd}
+				</if>
+
+
+
+				<if test="statusArr != null">
+					and hei.event_alert_status in
+					<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+						#{status}
+					</foreach>
+				</if>
+				<if test="processStatusArr != null">
+					and epr.process_status IN
+					<foreach collection="processStatusArr" item="status" open="(" separator="," close=")">
+						#{status}
+					</foreach>
+				</if>
+				<if test="postArr != null and postArr != ''">
+					and upr.post_id IN
+					<foreach collection="postArr" item="post" open="(" separator="," close=")">
+						#{post}
+					</foreach>
+				</if>
+				<if test="deptId != null and deptId != ''">
+					and sd.dept_id = #{deptId}
+				</if>
+				<if test="postId != null and postId != ''">
+					and upr.post_id = #{postId}
+				</if>
+			</where>
+			GROUP BY
+				epr.handler_index_code
+			) tt2 ON tt1.user_id = tt2.user_id
+		ORDER BY tt2.VALUE DESC
+		<if test="limit != null and limit != ''">
+			limit 0,${limit}
+		</if>
+	</select>
+
+
+	<!--查询符合条件的人员下的事件数量-->
+	<select id="queryEventCountByParam" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.HkEarlyWarning.PeopleAnalysisVO">
+
+		SELECT
+		IFNULL(count(DISTINCT hei.event_id ),0) as eventCount,
+		su.user_name as userName,
+		su.user_id as userId
+		FROM
+		hk_event_info hei
+		LEFT JOIN hk_event_process_record epr ON epr.event_id = hei.event_id
+		LEFT JOIN sys_user su ON su.user_id = epr.handler_index_code
+		LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+		LEFT JOIN sys_user_post_region upr on upr.user_id = su.user_id
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="processStatusArr != null">
+				and epr.process_status IN
+				<foreach collection="processStatusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="postArr != null and postArr != ''">
+				and upr.post_id IN
+				<foreach collection="postArr" item="post" open="(" separator="," close=")">
+					#{post}
+				</foreach>
+			</if>
+			<if test="deptId != null and deptId != ''">
+				and sd.dept_id = #{deptId}
+			</if>
+			<if test="postId != null and postId != ''">
+				and upr.post_id = #{postId}
+			</if>
+			<if test="userId != null and userId != ''">
+				and su.user_id = #{userId}
+			</if>
+		</where>
+		GROUP BY
+		epr.handler_index_code
+		ORDER BY eventCount DESC
+		<if test="limit != null and limit != ''">
+			limit 0,${limit}
+		</if>
+	</select>
+
+
+	<!--查询人员处置事件的耗时（从事件指派到时间完结的耗时）-->
+	<select id="queryProcessTimeByParam" parameterType="java.util.Map" resultType="java.lang.Long">
+		SELECT IFNULL(sum(tt.time),0) as value
+		FROM
+		(
+		SELECT
+		DISTINCT hei.event_id,
+		timestampdiff(SECOND,hap.create_time,hei.update_time) as time
+		FROM hk_event_info hei
+		LEFT JOIN hk_event_process_record epr ON epr.event_id = hei.event_id
+		LEFT JOIN hk_action_process hap ON hap.event_id = hei.event_id
+		LEFT JOIN sys_user su ON su.user_id = epr.handler_index_code
+		LEFT JOIN sys_dept sd ON su.dept_id = sd.dept_id
+		LEFT JOIN sys_user_post_region upr ON su.user_id = upr.user_id
+		LEFT JOIN sys_post up ON up.post_id = upr.post_id
+		<where>
+			hap.create_time is not null
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and hei.create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and hei.create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and hei.create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and hei.create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and hei.create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and hei.create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and hei.create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and hei.create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="processStatusArr != null">
+				and epr.process_status IN
+				<foreach collection="processStatusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="deptId != null and deptId != ''">
+				and sd.dept_id = #{deptId}
+			</if>
+			<if test="postId != null and postId != ''">
+				and up.post_id = #{postId}
+			</if>
+			<if test="userId != null and userId != ''">
+				and epr.handler_index_code = #{userId}
+			</if>
+		</where>
+		) tt
+	</select>
+
+	<!--查询用户的效率-->
+	<select id="queryPeopleDisposalAnalysis" resultType="com.ruoyi.system.domain.HkEarlyWarning.PeopleDisposalAnalysisVO" parameterType="java.util.Map">
+		SELECT
+		count(DISTINCT a.event_id) as value,su.user_name as name
+		FROM
+		hk_event_info AS a
+		LEFT JOIN hk_event_process_record pr ON pr.event_id = a.event_id
+		left join sys_user su on su.user_id = pr.handler_index_code
+		WHERE
+		 pr.process_status in ('4','6')
+		  and su.user_id is not null
+
+
+		<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+			and a.create_time &gt; #{nearlyADayBegin}
+		</if>
+		<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+			and a.create_time &lt; #{nearlyADayEnd}
+		</if>
+		<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+			and a.create_time &gt; #{nearlyAWeekBegin}
+		</if>
+		<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+			and a.create_time &lt; #{nearlyAWeekEnd}
+		</if>
+		<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+			and a.create_time &gt; #{nearlyAMonthBegin}
+		</if>
+		<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+			and a.create_time &lt; #{nearlyAMonthEnd}
+		</if>
+		<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+			and a.create_time &gt; #{nearlyAYearBegin}
+		</if>
+		<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+			and a.create_time &lt; #{nearlyAYearEnd}
+		</if>
+
+
+
+		 group by su.user_id,su.user_name
+		 order by value desc
+	</select>
+
+	<select id="queryEventByAlterStatus" resultType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo" parameterType="java.util.Map">
+		select hei.create_time as `createTime`,hei.update_time as `updateTime`from  hk_event_info hei
+		<where>
+			hei.event_alert_status = 6 or hei.event_alert_status = 7 or hei.event_alert_status =9
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+			<if test="thisHourMonday !='' and thisHourMonday !=null">
+				and  date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{thisHourMonday}
+			</if>
+		</where>
+	</select>
+
+
+	<select id="queryEventTrendByDay" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(0) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="startDate != null and startDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') > #{startDate}
+			</if>
+			<if test="endDate != null and endDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &lt;= #{endDate}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryEventTypeByRegion" resultType="com.ruoyi.system.domain.HkEarlyWarning.EventTypeVO"  parameterType="java.util.Map">
+		SELECT hhs.ec_name AS `name`,COUNT(hhs.ec_name_type) AS `value` FROM  sys_region sd
+		INNER JOIN(
+		SELECT sd.parent_id,he.ec_name,he.ec_name_type FROM hk_event_info hei
+		inner JOIN hk_EClassification he ON hei.event_type = he.ec_name_type
+		inner JOIN sys_region sd ON hei.region_index_code = sd.region_id
+		)hhs
+		ON hhs.parent_id = sd.region_id
+		<where>
+			<if test="regionId !=null and regionId !=''">
+				and sd.region_id = #{regionId}
+			</if>
+		</where>
+		GROUP BY hhs.ec_name
+		ORDER BY value
+		limit 4;
+	</select>
+
+	<update id="updateExtendStr" parameterType="HkEventInfo">
+		update hk_event_info set extend_str2=#{extendStr2},extend_str3=#{extendStr3} where event_id=#{eventId}
+	</update>
+
+	<select id="findExtendStr" resultMap="HkEventInfoResult" parameterType="java.lang.String">
+		select * from hk_event_info where event_id=#{eventId}
+	</select>
+
+	<!--当日各事件类型下的事件数量-->
+	<select id="queryCountByEventType" resultType="com.ruoyi.system.domain.Daping.PercentResult" parameterType="java.util.Map">
+		SELECT event_type_name as name, event_type as code,count(event_id) as value
+		from hk_event_info
+		where
+		event_type is not null
+		and event_type != ''
+		<if test="componentId !=null and componentId !=''">
+			and component_id = #{componentId}
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="statusArr != null">
+			and event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		group by event_type,event_type_name
+	</select>
+
+	<select id="queryCounts" resultType="java.lang.Integer">
+		SELECT count(event_id) as count
+		from hk_event_info
+		where
+		event_type is not null
+		and event_type != ''
+		and date_format(report_time,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')
+	</select>
+
+	<!--当日各事件状态下的事件数量-->
+	<select id="queryCountByAlertStatus" resultType="com.ruoyi.system.domain.Daping.PercentResult" parameterType="java.util.Map">
+		SELECT event_alert_status as name,count(event_id) as value
+		from hk_event_info
+		where
+		event_alert_status is not null
+		and event_alert_status != ''
+		and event_alert_status in (2,3,5)
+		<if test="currentDate != null and currentDate != ''">
+			and date_format(report_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="componentId != null and componentId != ''">
+			and component_id = #{componentId}
+		</if>
+		group by event_alert_status
+	</select>
+
+	<!--当日各处置方式下的事件数量-->
+	<select id="queryCountByLawType" resultType="com.ruoyi.system.domain.Daping.PercentResult" parameterType="java.util.Map">
+		SELECT law_enforcement_type as name,count(event_id) as value
+		from hk_event_info
+		where
+		law_enforcement_type is not null
+		and law_enforcement_type != ''
+		<if test="theDay !='' and theDay !=null">
+			and  date_format(create_time,'%Y-%m-%d')  &lt; #{theDay}
+		</if>
+		<if test="lastDay !='' and lastDay !=null">
+			and date_format(create_time,'%Y-%m-%d')  &gt;= #{lastDay}
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="componentId !='' and componentId !=null">
+			and component_id  &gt;= #{componentId}
+		</if>
+		<if test="statusArr != null">
+			and event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		group by law_enforcement_type
+	</select>
+
+<!--	 各平台获取最新一条事件记录-->
+	<select id="getNewEvent" resultType="com.ruoyi.system.domain.Daping.ShowEventVo" parameterType="java.util.Map">
+		select
+		id as eventId,
+		event_type_name as eventTypeName,
+		camera_index_code as cameraIndexCode,
+		event_address as eventAddress,
+		event_title as eventTitle,
+		component_id as componentId,
+		extend_str1 as videoPath,
+		event_image as imgPath,
+		place_type_name as placeTypeName,
+		create_time as createTime,
+		risk_level as riskLevel,
+		longitude as longitude,
+		latitude as latitude
+		from hk_event_info
+		<where>
+			1 = 1
+			<if test="componentId !=null and componentId !=''">
+				and component_id =#{componentId}
+			</if>
+			<if test="currentDate !=null and currentDate !=''">
+				and date_format(create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="statusArr != null">
+				and event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		order by report_time desc
+		limit 0,10;
+	</select>
+
+	<!--select * from
+	(select sr.region_name as name,sp.post_name as postName,count(su.user_id)as value
+	from sys_region sr
+	left join sys_user_post_region upr on sr.region_id = upr.region_id
+	left join sys_user su on su.user_id = upr.user_id
+	left join sys_post sp on sp.post_id = upr.post_id
+	where sr.del_flag = 0
+	and sr.level = 2
+	and sr.status = 0
+	and su.status = 0
+	and su.del_flag = 0
+	and sp.status = 0
+	group by sr.region_id,upr.post_id
+	)tt
+	order by tt.value desc-->
+	<select id="getDistributionOfMember" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.Daping.PercentResult">
+		select name,postName, value from
+		(select sr.region_name as name,sp.post_name as postName,count(su.user_id)as value
+			from sys_region sr
+			left join sys_user_post_region upr on sr.region_id = upr.region_id
+			left join sys_user su on su.user_id = upr.user_id
+			and su.status = 0
+			and su.del_flag = 0
+			left join sys_post sp on sp.post_id = upr.post_id
+			and sp.status = 0
+			where sr.del_flag = 0
+			and sr.level = 2
+			and sr.status = 0
+			group by sr.region_id,upr.post_id
+		)tt
+		order by tt.value desc
+	</select>
+
+	<!-- 最新一条事件详情-->
+	<!--事件关联部门，部门关联用户-->
+	<select id="getNewEventByYJ" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.Daping.ShowEventVo">
+		SELECT
+		hei.id as eventId,
+		hei.event_type_name as eventTypeName,
+		hei.event_address as eventAddress,
+		hei.event_title as eventTitle,
+		hei.component_id as componentId,
+		hei.extend_str1 as videoPath,
+		hei.event_image as imgPath,
+		hei.place_type_name as placeTypeName,
+		hei.region_name as regionName,
+		hei.report_time as reportTime,
+		hei.camera_index_code as cameraIndexCode,
+		hei.create_time as createTime,
+		hei.risk_level as riskLevel,
+		hei.longitude as longitude,
+		hei.latitude as latitude,
+		su.user_name as userName,
+		su.phonenumber as phone,
+		hei.camera_type_code as cameraTypeCode
+		FROM hk_event_info hei
+		LEFT JOIN sys_user_post_region upr on hei.region_index_code = upr.region_id
+		LEFT JOIN sys_user su on su.user_id = upr.user_id
+		where
+		1 = 1
+		<if test="componentId !=null and componentId !=''">
+			and hei.component_id =  #{componentId}
+		</if>
+		<if test="extendInt3Arr != null">
+			and hei.extend_int3 in
+			<foreach collection="extendInt3Arr" item="extendInt3" open="(" separator="," close=")">
+				#{extendInt3}
+			</foreach>
+		</if>
+		<if test="postId !=null and postId !=''">
+			and upr.post_id = #{postId}
+		</if>
+		<if test="lastRequestTime !=null and lastRequestTime !=''">
+			and date_format(hei.create_time,'%Y-%m-%d %H:%i:%S') >= #{lastRequestTime}
+		</if>
+		ORDER BY hei.create_time DESC
+		limit 0,1
+	</select>
+
+	<!--获取事件处理时间总长度-->
+	<select id="eventActiveTime" parameterType="java.util.Map" resultType="java.lang.Long">
+		SELECT IFNULL(sum(tt.time),0) as value
+		FROM
+		(
+		SELECT
+		component_id,
+		timestampdiff(SECOND,create_time,update_time) as time
+		FROM hk_event_info
+		where
+			1 = 1
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+				and date_format(create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+			</if>
+			<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+				and date_format(create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+			</if>
+			<if test="componentId != null and componentId != ''">
+				and component_id = #{componentId}
+			</if>
+			<if test="theDay !='' and theDay !=null">
+				and  date_format(create_time,'%Y-%m-%d')  &lt; #{theDay}
+			</if>
+			<if test="lastDay !='' and lastDay !=null">
+				and date_format(create_time,'%Y-%m-%d')  >= #{lastDay}
+			</if>
+
+
+			<if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+				and create_time &gt; #{nearlyADayBegin}
+			</if>
+			<if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+				and create_time &lt; #{nearlyADayEnd}
+			</if>
+			<if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+				and create_time &gt; #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+				and create_time &lt; #{nearlyAWeekEnd}
+			</if>
+			<if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+				and create_time &gt; #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+				and create_time &lt; #{nearlyAMonthEnd}
+			</if>
+			<if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+				and create_time &gt; #{nearlyAYearBegin}
+			</if>
+			<if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+				and create_time &lt; #{nearlyAYearEnd}
+			</if>
+
+
+			<if test="statusArr != null">
+				and event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		) tt
+		GROUP BY component_id
+	</select>
+
+	<!-- 查询事件信息 -->
+	<select id="getEventByParams"  parameterType="java.util.Map" resultMap="HkEventInfoResult">
+		select hei.event_id,hei.event_title,hei.create_time from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="eventAlterStatus !=null and eventAlterStatus !=''">
+				and hei.event_alert_status = #{eventAlterStatus}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and hei.component_id = #{componentId}
+			</if>
+			<if test="lastDay !='' and lastDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{lastDay}
+			</if>
+			<if test="trendWeekMonday !='' and trendWeekMonday !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{trendWeekMonday}
+			</if>
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="statusArr != null">
+				and event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询事件信息 -->
+	<select id="getMapBySubStatus" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.Daping.PercentResult">
+		select hei.event_sub_status as name,count(hei.event_id) as value from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="eventAlterStatus !=null and eventAlterStatus !=''">
+				and hei.event_alert_status = #{eventAlterStatus}
+			</if>
+			<if test="eventSubStatus !=null and eventSubStatus !=''">
+				and hei.event_sub_status = #{eventSubStatus}
+			</if>
+			<if test="eventStatus !=null and eventStatus !=''">
+				and hei.event_status = #{eventStatus}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.event_type = #{eventType}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and hei.component_id = #{componentId}
+			</if>
+			<if test="lastDay !='' and lastDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{lastDay}
+			</if>
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		group by hei.event_sub_status
+	</select>
+
+	<!-- 查询事件信息 -->
+	<!--	and LOCATE(#{eventType},hei.event_type) = 1-->
+	<select id="getMapByEventName" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.Daping.PercentResult">
+		SELECT tt.name,count(tt.id) as VALUE from
+		(
+		SELECT
+		left(hei.event_type,5) as name,
+		hei.event_id as id
+		FROM
+		hk_event_info hei
+		WHERE
+		1 = 1
+		<if test="eventAlterStatus !=null and eventAlterStatus !=''">
+			and hei.event_alert_status = #{eventAlterStatus}
+		</if>
+		<if test="eventSubStatus !=null and eventSubStatus !=''">
+			and hei.event_sub_status = #{eventSubStatus}
+		</if>
+		<if test="eventStatus !=null and eventStatus !=''">
+			and hei.event_status = #{eventStatus}
+		</if>
+		<if test="componentId !=null and componentId !=''">
+			and hei.component_id = #{componentId}
+		</if>
+		<if test="eventType !=null and eventType !=''">
+			and hei.event_type = #{eventType}
+		</if>
+		<if test="lastDay !='' and lastDay !=null">
+			and date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{lastDay}
+		</if>
+		<if test="currentDate != null and currentDate !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+		</if>
+		<if test="trendWeekMonday !=null and trendWeekMonday !=''">
+			and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+		</if>
+		<if test="trendMonthMonday !=null and trendMonthMonday != ''">
+			and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+		</if>
+		<if test="statusArr != null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="eventTypeArr != null">
+			and hei.event_type in
+			<foreach collection="eventTypeArr" item="eventType" open="(" separator="," close=")">
+				#{eventType}
+			</foreach>
+		</if>
+		) tt group by tt.name
+	</select>
+
+
+	<!-- 查询事件信息 -->
+	<select id="getMapByCameraType" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.Daping.PercentResult">
+		select hei.camera_type_code as name,IFNULL(count(hei.event_id),0) as value from hk_event_info hei
+		<where>
+			1 = 1
+			and hei.camera_type_code is not null
+			<if test="eventAlterStatus !=null and eventAlterStatus !=''">
+				and hei.event_alert_status = #{eventAlterStatus}
+			</if>
+			<if test="eventSubStatus !=null and eventSubStatus !=''">
+				and hei.event_sub_status = #{eventSubStatus}
+			</if>
+			<if test="eventStatus !=null and eventStatus !=''">
+				and hei.event_status = #{eventStatus}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and hei.component_id = #{componentId}
+			</if>
+			<if test="lastDay !='' and lastDay !=null">
+				and date_format(hei.create_time,'%Y-%m-%d')  &gt;= #{lastDay}
+			</if>
+			<if test="currentDate != null and currentDate !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+			</if>
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		group by hei.camera_type_code
+	</select>
+
+	<!-- 预警赋能-列表-待处理数 -->
+	<select id="findPendingVehicleCountByParams" parameterType="com.ruoyi.system.domain.HkEntity.EventSearchVO" resultType="java.lang.Integer">
+		select count(0) from  hk_event_info
+		<where>
+			event_alert_status = 2
+			<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+				and create_time &gt;= #{startDate}
+			</if>
+			<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+				and create_time &lt;= #{endDate}
+			</if>
+			<if test="contents != null and contents != ''">
+				AND concat(event_title,event_type_name) like concat('%', #{contents}, '%')
+			</if>
+			<if test="region != null and region != ''">
+				AND concat(region_name,event_address) like concat('%', #{region}, '%')
+			</if>
+			<if test="platCode != null and platCode != ''">
+				AND component_id = #{platCode}
+			</if>
+			<if test="riskLevel != null and riskLevel != ''">
+				AND risk_level = #{riskLevel}
+			</if>
+			<if test="reportType != null and reportType != ''">
+				AND report_type = #{reportType}
+			</if>
+			<if test="eventReadStatus != null and eventReadStatus != ''">
+				AND event_read = #{eventReadStatus}
+			</if>
+			<if test="assignDeptId != null"><!-- 结束时间检索 -->
+				and  FIND_IN_SET(#{assignDeptId},assign_dept_id) &gt; 0
+			</if>
+		</where>
+	</select>
+
+
+	<select id="findCountByParam" parameterType="com.ruoyi.system.domain.HkEntity.EventSearchVO" resultType="java.lang.Integer">
+		select count(0) from  hk_event_info
+	  	<where>
+		<if test="statusArr != null and alertStatus == null">
+			event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="contents != null and contents != ''">
+			AND concat(event_title,event_type_name) like concat('%', #{contents}, '%')
+		</if>
+		<if test="region != null and region != ''">
+			AND concat(region_name,event_address) like concat('%', #{region}, '%')
+		</if>
+		<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+			and create_time &gt;= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+			and create_time &lt;= #{endDate}
+		</if>
+		<if test="platCode != null and platCode != ''">
+			AND component_id = #{platCode}
+		</if>
+		<if test="riskLevel != null and riskLevel != ''">
+			AND risk_level = #{riskLevel}
+		</if>
+		<if test="reportType != null and reportType != ''">
+			AND report_type = #{reportType}
+		</if>
+		<if test="eventReadStatus != null and eventReadStatus != ''">
+			AND event_read = #{eventReadStatus}
+		</if>
+		<if test="assignDeptId != null"><!-- 结束时间检索 -->
+			and  FIND_IN_SET(#{assignDeptId},assign_dept_id) &gt; 0
+		</if>
+		<if test="alertStatus != null and alertStatus != ''">
+			AND event_alert_status = #{alertStatus}
+		</if>
+		</where>
+	</select>
+
+	<select id="queryEventEventIndexCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from hk_event_info where event_index_code=#{eventIndexCode}
+	</select>
+
+	<select id="queryIllegaDeail" resultMap="HkEventInfoResult" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		select * from hk_event_info where event_type='1101' AND event_create_time=#{eventCreateTime} ORDER BY create_time DESC LIMIT 1
+	</select>
+
+	<select id="selectEventList" resultMap="HkEventInfoResult" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		select * from hk_event_info
+	</select>
+
+	<select id="queryEventAllCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(*) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="startTime != null and startTime !=''">
+				and date_format(hei.event_create_time,'%Y-%m-%d') &gt;= #{startTime}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and hei.component_id = #{componentId}
+			</if>
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="queryLastEventAllCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(*) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="lastStartTime != null and lastStartTime !=''">
+				and date_format(hei.event_create_time,'%Y-%m-%d') &gt;= #{lastStartTime}
+			</if>
+			<if test="lastEndTime != null and lastEndTime !=''">
+				and date_format(hei.event_create_time,'%Y-%m-%d') &lt;= #{lastEndTime}
+			</if>
+			<if test="componentId !=null and componentId !=''">
+				and hei.component_id = #{componentId}
+			</if>
+			<if test="nearlyAWeekBegin !=null and nearlyAWeekBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAMonthBegin !=null and nearlyAMonthBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAYearBegin !=null and nearlyAYearBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAYearBegin}
+			</if>
+			<if test="statusArr != null">
+				and hei.event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="queryPlatformEvent" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(*) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="nearlyAWeekBegin !=null and nearlyAWeekBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAWeekBegin}
+			</if>
+			<if test="componentId != null">
+				and hei.component_id in
+				<foreach collection="componentId" item="componentId" open="(" separator="," close=")">
+					#{componentId}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="queryEventInfoAllList" resultMap="HkEventInfoResult" parameterType="java.util.Map">
+		select * from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="startTime !=null and startTime !=''">
+				and date_format(hei.create_time,'%Y-%m-%d %h-%i-%s') &gt;=  #{startTime}
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				and date_format(hei.create_time,'%Y-%m-%d %h-%i-%s') &lt;=  #{endTime}
+			</if>
+			<if test="status !=null and status !=''">
+				and hei.event_alert_status = #{status}
+			</if>
+			<if test="grade !=null and grade !=''">
+				and hei.risk_level = #{grade}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and hei.component_id = #{eventType}
+			</if>
+			<!--<if test="componentId != null">
+				and hei.component_id in
+				<foreach collection="componentId" item="componentId" open="(" separator="," close=")">
+					#{componentId}
+				</foreach>
+			</if>-->
+		</where>
+	</select>
+
+	<select id="queryEvaluate" resultType="java.lang.Integer">
+		select count(*) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="nearlyAWeekBegin !=null and nearlyAWeekBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAWeekBegin}
+			</if>
+			<if test="nearlyAMonthBegin !=null and nearlyAMonthBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAMonthBegin}
+			</if>
+			<if test="nearlyAYearBegin !=null and nearlyAYearBegin !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{nearlyAYearBegin}
+			</if>
+			and event_alert_status = 6
+			AND (ISNULL(evaluate) OR evaluate =1)
+		</where>
+	</select>
+
+	<select id="eventSource" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(*) from hk_event_info hei
+		<where>
+			1 = 1
+			<if test="startTime !=null and startTime !=''">
+				and date_format(hei.create_time,'%Y-%m-%d') &gt;=  #{startTime}
+			</if>
+			<if test="reportType !=null and reportType !=''">
+				and report_type =  #{reportType}
+			</if>
+			AND component_id = '1001'
+		</where>
+	</select>
+
+	<select id="queryEventOne" resultMap="HkEventInfoResult">
+		select * from hk_event_info where event_alert_status = 2 ORDER BY risk_level DESC,create_time desc LIMIT 1
+	</select>
+
+	<select id="queryeventChengInfo" resultMap="HkEventInfoResult" parameterType="java.util.Map">
+		select * from hk_event_info
+		<where>
+			1 = 1
+			<if test="startTime !=null and startTime !=''">
+				and date_format(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				and date_format(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+			</if>
+			<if test="reportType !=null and reportType !=''">
+				and reportTypeName =  #{reportType}
+			</if>
+			<if test="eventAlertStatus !=null and eventAlertStatus !=''">
+				and event_alert_status =  #{eventAlertStatus}
+			</if>
+			<if test="riskLevel !=null and riskLevel !=''">
+				and risk_level =  #{riskLevel}
+			</if>
+			AND component_id = '1001'
+		</where>
+	</select>
+
+	<select id="queryeventCountAll" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from hk_event_info
+		<where>
+			1 = 1
+			<if test="startTime !=null and startTime !=''">
+				and date_format(create_time,'%Y-%m-%d') &gt;=  #{startTime}
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				and date_format(create_time,'%Y-%m-%d') &lt;=  #{endTime}
+			</if>
+			<if test="eventType !=null and eventType !=''">
+				and component_id =  #{eventType}
+			</if>
+			<if test="status !=null and status !=''">
+				and event_alert_status =  #{status}
+			</if>
+			<if test="grade !=null and grade !=''">
+				and risk_level =  #{grade}
+			</if>
+			<if test="regionIndexCode !=null and regionIndexCode !=''">
+				and region_index_code =  #{regionIndexCode}
+			</if>
+			<if test="statusArr != null">
+				and event_alert_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+	<select id="queryLongitude" resultType="com.ruoyi.system.domain.vo.EventListCountVo" parameterType="java.util.Map">
+     select count(*) as count,longitude,latitude from hk_event_info
+		<where>
+			1 = 1
+			<if test="eventType != null and eventType !=''">
+				and event_alert_status =#{eventType}
+			</if>
+			GROUP BY longitude,latitude
+		</where>
+	</select>
+
+	<select id="queryEventCountByList" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(*) from hk_event_info
+		<where>
+			1 = 1
+			<if test="startTime !=null and startTime !=''">
+				and date_format(create_time,'%Y-%m-%d %H:%i:%S') &gt;= #{startTime}
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				and date_format(create_time,'%Y-%m-%d %H:%i:%S') &lt;= #{endTime}
+			</if>
+			<if test="cameraIndexCode != null">
+				and camera_index_code in
+				<foreach collection="cameraIndexCode" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if test="eventTypeAll != null">
+				and event_type in
+				<foreach collection="eventTypeAll" item="eventType" open="(" separator="," close=")">
+					#{eventType}
+				</foreach>
+			</if>
+			<if test="statusArr != null">
+				and event_alert_status in
+				<foreach collection="statusArr" item="eventAlertStatus" open="(" separator="," close=")">
+					#{eventAlertStatus}
+				</foreach>
+			</if>
+			AND component_id = '1001'
+		</where>
+	</select>
+
+	<select id="querycameraIndexCode" resultType="com.ruoyi.system.domain.vo.CameraIndexCodeVo" parameterType="java.util.Map">
+		select DISTINCT camera_index_code as cameraIndexCode from hk_event_info
+		<where>
+			1 = 1
+			<if test="eventTypeAll != null">
+				and event_type in
+				<foreach collection="eventTypeAll" item="eventType" open="(" separator="," close=")">
+					#{eventType}
+				</foreach>
+			</if>
+		</where>
+	</select>
+<!--	应急指挥-->
+	<select id="findEventByIdAll" resultMap="HkEventInfoResult" parameterType="java.lang.Integer">
+		select id,component_id,event_id,event_title,report_time,event_type,event_type_name,event_category,event_category_name,event_source,
+		event_source_name,event_image,event_thumbnail_image,storage_id,event_alert_status,event_alert_status_name,report_type,event_status,
+		report_type_name,law_enforcement_type,law_enforcement_type_name,time_out,current_processor_id,current_processor_name,
+		event_update_time,geometry,report_person_id,report_person_name,report_person_real_name,report_person_phone,camera_index_code,
+		camera_name,responsibility_subject,region_index_code,region_name,place_type,place_type_name,place_index_code,place_name,
+		company_legal_person,event_address,credit_union_code,company_contact_information,grid_name,grid_man,patrol_team,patrol_team_phone,extend_str1,
+		patrol_team2,patrol_team2_phone,grid_community,grid_contact_information,longitude,latitude,create_time,update_time,procdef_type,event_read,
+		event_create_time,assign_dept_id,assign_operator,assign_reason,assign_time,update_user,risk_level,plate_no,dispatch_event_time,dispatch_event_user
+		from hk_event_info where id = #{id}
+	</select>
+</mapper>

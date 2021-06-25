@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.LocationReqMapper">
+
+    <resultMap type="XlGpsWeigh" id="XlGpsWeighResult">
+        <result property="id"    column="id"    />
+        <result property="tripartName"    column="tripart_name"    />
+        <result property="tripartType"    column="tripart_type"    />
+        <result property="licensePlate"    column="license_plate"    />
+        <result property="locationSim"    column="location_sim"    />
+        <result property="tripartLng"    column="tripart_lng"    />
+        <result property="tripartLat"    column="tripart_lat"    />
+        <result property="tripartHeight"    column="tripart_height"    />
+        <result property="tripartWeight"    column="tripart_weight"    />
+        <result property="tripartSpeed"    column="tripart_speed"    />
+        <result property="tripartDirection"    column="tripart_direction"    />
+        <result property="recortTime"    column="recort_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <insert id="localhost" >
+        insert into xl_gps_weigh
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tripartName != null  and tripartName != ''">tripart_name,</if>
+            <if test="tripartType != null  and tripartType != ''">tripart_type,</if>
+            <if test="licensePlate != null  and licensePlate != ''">license_plate,</if>
+            <if test="locationSim != null  and locationSim != ''">location_sim,</if>
+            <if test="tripartLng != null  and tripartLng != ''">tripart_lng,</if>
+            <if test="tripartLat != null  and tripartLat != ''">tripart_lat,</if>
+            <if test="tripartHeight != null  and tripartHeight != ''">tripart_height,</if>
+            <if test="tripartWeight != null  and tripartWeight != ''">tripart_weight,</if>
+            <if test="tripartSpeed != null  and tripartSpeed != ''">tripart_speed,</if>
+            <if test="tripartDirection != null  and tripartDirection != ''">tripart_direction,</if>
+            <if test="recortTime != null  and recortTime != ''">recort_time,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tripartName != null  and tripartName != ''">#{tripartName},</if>
+            <if test="tripartType != null  and tripartType != ''">#{tripartType},</if>
+            <if test="licensePlate != null  and licensePlate != ''">#{licensePlate},</if>
+            <if test="locationSim != null  and locationSim != ''">#{locationSim},</if>
+            <if test="tripartLng != null  and tripartLng != ''">#{tripartLng},</if>
+            <if test="tripartLat != null  and tripartLat != ''">#{tripartLat},</if>
+            <if test="tripartHeight != null  and tripartHeight != ''">#{tripartHeight},</if>
+            <if test="tripartWeight != null  and tripartWeight != ''">#{tripartWeight},</if>
+            <if test="tripartSpeed != null  and tripartSpeed != ''">#{tripartSpeed},</if>
+            <if test="tripartDirection != null  and tripartDirection != ''">#{tripartDirection},</if>
+            <if test="recortTime != null  and recortTime != ''">#{recortTime},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <insert id="weight" >
+        insert into xl_gps_weigh
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tripartName != null  and tripartName != ''">tripart_name,</if>
+            <if test="tripartType != null  and tripartType != ''">tripart_type,</if>
+            <if test="licensePlate != null  and licensePlate != ''">license_plate,</if>
+            <if test="locationSim != null  and locationSim != ''">location_sim,</if>
+            <if test="tripartLng != null  and tripartLng != ''">tripart_lng,</if>
+            <if test="tripartLat != null  and tripartLat != ''">tripart_lat,</if>
+            <if test="tripartHeight != null  and tripartHeight != ''">tripart_height,</if>
+            <if test="tripartWeight != null  and tripartWeight != ''">tripart_weight,</if>
+            <if test="tripartSpeed != null  and tripartSpeed != ''">tripart_speed,</if>
+            <if test="tripartDirection != null  and tripartDirection != ''">tripart_direction,</if>
+            <if test="recortTime != null  and recortTime != ''">recort_time,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tripartName != null  and tripartName != ''">#{tripartName},</if>
+            <if test="tripartType != null  and tripartType != ''">#{tripartType},</if>
+            <if test="licensePlate != null  and licensePlate != ''">#{licensePlate},</if>
+            <if test="locationSim != null  and locationSim != ''">#{locationSim},</if>
+            <if test="tripartLng != null  and tripartLng != ''">#{tripartLng},</if>
+            <if test="tripartLat != null  and tripartLat != ''">#{tripartLat},</if>
+            <if test="tripartHeight != null  and tripartHeight != ''">#{tripartHeight},</if>
+            <if test="tripartWeight != null  and tripartWeight != ''">#{tripartWeight},</if>
+            <if test="tripartSpeed != null  and tripartSpeed != ''">#{tripartSpeed},</if>
+            <if test="tripartDirection != null  and tripartDirection != ''">#{tripartDirection},</if>
+            <if test="recortTime != null  and recortTime != ''">#{recortTime},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <select id="queryGarbageList" resultMap="XlGpsWeighResult" parameterType="java.util.Map">
+        select * from xl_gps_weigh
+        <where>
+            1 = 1
+            <if test="startTime !=null and startTime !=''">
+                and date_format(recort_time,'%Y-%m-%d %h-%i-%s') &gt;=  #{startTime}
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                and date_format(recort_time,'%Y-%m-%d %h-%i-%s') &lt;=  #{endTime}
+            </if>
+            and tripart_name ='垃圾车定位推送'
+            order by recort_time desc
+        </where>
+    </select>
+    <select id="queryGarbageListAll" resultMap="XlGpsWeighResult" parameterType="java.util.Map">
+        select * from xl_gps_weigh
+        <where>
+            1 = 1
+            <if test="startTime !=null and startTime !=''">
+                and date_format(recort_time,'%Y-%m-%d %h-%i-%s') &gt;=  #{startTime}
+            </if>
+            <if test="endTime !=null and endTime !=''">
+                and date_format(recort_time,'%Y-%m-%d %h-%i-%s') &lt;=  #{endTime}
+            </if>
+            and tripart_type ='GPS定位'
+            order by recort_time desc
+        </where>
+    </select>
+</mapper>

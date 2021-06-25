@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyNoticeMapper">
+
+    <resultMap type="XlPropertyNotice" id="XlPropertyNoticeResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="noticType"    column="notic_type"    />
+        <result property="fileCode"    column="file_code"    />
+        <result property="noticContent"    column="notic_content"    />
+        <result property="browseNumber"    column="browse_number"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectXlPropertyNoticeVo">
+        select id, title, notic_type, file_code, notic_content, browse_number, village_id, create_time, create_by, update_time, update_by from xl_property_notice
+    </sql>
+
+    <select id="selectXlPropertyNoticeList" parameterType="XlPropertyNotice" resultMap="XlPropertyNoticeResult">
+        <include refid="selectXlPropertyNoticeVo"/>
+        <where>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="noticType != null "> and notic_type = #{noticType}</if>
+            <if test="fileCode != null  and fileCode != ''"> and file_code = #{fileCode}</if>
+            <if test="noticContent != null  and noticContent != ''"> and notic_content = #{noticContent}</if>
+            <if test="browseNumber != null "> and browse_number = #{browseNumber}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''"><!-- 开始时间检索 -->
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginCreateTime},'%y%m%d')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''"><!-- 结束时间检索 -->
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endCreateTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyNoticeById" parameterType="Long" resultMap="XlPropertyNoticeResult">
+        <include refid="selectXlPropertyNoticeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlPropertyNotice" parameterType="XlPropertyNotice" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_property_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="noticType != null ">notic_type,</if>
+            <if test="fileCode != null  and fileCode != ''">file_code,</if>
+            <if test="noticContent != null  and noticContent != ''">notic_content,</if>
+            <if test="browseNumber != null ">browse_number,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="noticType != null ">#{noticType},</if>
+            <if test="fileCode != null  and fileCode != ''">#{fileCode},</if>
+            <if test="noticContent != null  and noticContent != ''">#{noticContent},</if>
+            <if test="browseNumber != null ">#{browseNumber},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyNotice" parameterType="XlPropertyNotice">
+        update xl_property_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="noticType != null ">notic_type = #{noticType},</if>
+            <if test="fileCode != null  and fileCode != ''">file_code = #{fileCode},</if>
+            <if test="noticContent != null  and noticContent != ''">notic_content = #{noticContent},</if>
+            <if test="browseNumber != null ">browse_number = #{browseNumber},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlPropertyNoticeById" parameterType="Long">
+        delete from xl_property_notice where id = #{id}
+    </delete>
+
+    <delete id="deleteXlPropertyNoticeByIds" parameterType="String">
+        delete from xl_property_notice where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

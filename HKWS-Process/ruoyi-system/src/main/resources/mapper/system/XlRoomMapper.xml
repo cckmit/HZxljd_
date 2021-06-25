@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlRoomMapper">
+
+    <resultMap type="XlRoom" id="XlRoomResult">
+        <result property="id"    column="id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="communityName"    column="community_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="roomLiveType"    column="room_live_type"    />
+        <result property="villageName"    column="village_name"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="building"    column="building"    />
+        <result property="unit"    column="unit"    />
+        <result property="room"    column="room"    />
+        <result property="address"    column="address"    />
+        <result property="roomType"    column="room_type"    />
+        <result property="roomCode"    column="room_code"    />
+        <result property="town"    column="town"    />
+        <result property="townId"    column="town_id"    />
+        <result property="householder"    column="householder"    />
+        <result property="economicType"    column="economic_type"    />
+        <result property="buildTime"    column="build_time"    />
+        <result property="floors"    column="floors"    />
+        <result property="areas"    column="areas"    />
+        <result property="floorSpace"    column="floor_space"    />
+        <result property="useType"    column="use_type"    />
+        <result property="around"    column="around"    />
+        <result property="buildType"    column="build_type"    />
+        <result property="structureType"    column="structure_type"    />
+        <result property="adding"    column="adding"    />
+        <result property="cellar"    column="cellar"    />
+        <result property="threeNo"    column="three_no"    />
+        <result property="board"    column="board"    />
+        <result property="procedures"    column="procedures"    />
+        <result property="planNote"    column="plan_note"    />
+        <result property="certificate"    column="certificate"    />
+        <result property="assistance"    column="assistance"    />
+        <result property="appraisal"    column="appraisal"    />
+        <result property="gisx"    column="gisx"    />
+        <result property="gisy"    column="gisy"    />
+        <result property="phone"    column="phone"    />
+        <result property="idcard"    column="idcard"    />
+        <result property="peoples"    column="peoples"    />
+        <result property="remould"    column="remould"    />
+        <result property="danger"    column="danger"    />
+        <result property="reinforce"    column="reinforce"    />
+        <result property="renovate"    column="renovate"    />
+        <result property="waterflood"    column="waterflood"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectXlRoomVo">
+        select id,community_name,room_live_type, dept_name, dept_id, village_name, village_id, building, unit, room, address, room_type, room_code, town, town_id, householder, economic_type, build_time, floors, areas, floor_space, use_type, around, build_type, structure_type, adding, cellar, three_no, board, procedures, plan_note, certificate, assistance, appraisal, gisx, gisy, phone, idcard, peoples, remould, danger, reinforce, renovate, waterflood, create_time from xl_room
+    </sql>
+
+    <select id="selectXlRoomList" parameterType="XlRoom" resultMap="XlRoomResult">
+        <include refid="selectXlRoomVo"/>
+        <where>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="deptId != null  "> and dept_id = #{deptId}</if>
+            <if test="communityName != null  and communityName != ''"> and community_name = #{communityName}</if>
+            <if test="roomLiveType != null  and roomLiveType != ''"> and room_live_type = #{roomLiveType}</if>
+            <if test="villageName != null  and villageName != ''"> and village_name like concat('%', #{villageName}, '%')</if>
+            <if test="villageId != null  and villageId != ''"> and village_id = #{villageId}</if>
+            <if test="building != null  and building != ''"> and building = #{building}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="room != null  and room != ''"> and room = #{room}</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="roomType != null  and roomType != ''"> and room_type = #{roomType}</if>
+            <if test="roomCode != null  and roomCode != ''"> and room_code = #{roomCode}</if>
+            <if test="town != null  and town != ''"> and town like concat('%', #{town}, '%') </if>
+            <if test="townId != null  and townId != ''"> and town_id = #{townId}</if>
+            <if test="householder != null  and householder != ''"> and householder = #{householder}</if>
+            <if test="economicType != null  and economicType != ''"> and economic_type = #{economicType}</if>
+            <if test="buildTime != null  and buildTime != ''"> and build_time = #{buildTime}</if>
+            <if test="floors != null  and floors != ''"> and floors = #{floors}</if>
+            <if test="areas != null  and areas != ''"> and areas = #{areas}</if>
+            <if test="floorSpace != null  and floorSpace != ''"> and floor_space = #{floorSpace}</if>
+            <if test="useType != null  and useType != ''"> and use_type = #{useType}</if>
+            <if test="around != null  and around != ''"> and around = #{around}</if>
+            <if test="buildType != null  and buildType != ''"> and build_type = #{buildType}</if>
+            <if test="structureType != null  and structureType != ''"> and structure_type = #{structureType}</if>
+            <if test="adding != null  and adding != ''"> and adding = #{adding}</if>
+            <if test="cellar != null  and cellar != ''"> and cellar = #{cellar}</if>
+            <if test="threeNo != null  and threeNo != ''"> and three_no = #{threeNo}</if>
+            <if test="board != null  and board != ''"> and board = #{board}</if>
+            <if test="procedures != null  and procedures != ''"> and procedures = #{procedures}</if>
+            <if test="planNote != null  and planNote != ''"> and plan_note = #{planNote}</if>
+            <if test="certificate != null  and certificate != ''"> and certificate = #{certificate}</if>
+            <if test="assistance != null  and assistance != ''"> and assistance = #{assistance}</if>
+            <if test="appraisal != null  and appraisal != ''"> and appraisal = #{appraisal}</if>
+            <if test="gisx != null  and gisx != ''"> and gisx = #{gisx}</if>
+            <if test="gisy != null  and gisy != ''"> and gisy = #{gisy}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="idcard != null  and idcard != ''"> and idcard = #{idcard}</if>
+            <if test="peoples != null  and peoples != ''"> and peoples = #{peoples}</if>
+            <if test="remould != null  and remould != ''"> and remould = #{remould}</if>
+            <if test="danger != null  and danger != ''"> and danger = #{danger}</if>
+            <if test="reinforce != null  and reinforce != ''"> and reinforce = #{reinforce}</if>
+            <if test="renovate != null  and renovate != ''"> and renovate = #{renovate}</if>
+            <if test="waterflood != null  and waterflood != ''"> and waterflood = #{waterflood}</if>
+        </where>
+    </select>
+
+    <select id="selectXlRoomById" parameterType="Long" resultMap="XlRoomResult">
+        <include refid="selectXlRoomVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlRoom" parameterType="XlRoom" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_room (
+            <if test="communityName != null  and communityName != ''">community_name,</if>
+            <if test="deptName != null  and deptName != ''">dept_name,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="villageName != null  and villageName != ''">village_name,</if>
+            <if test="villageId != null  and villageId != ''">village_id,</if>
+            <if test="building != null  and building != ''">building,</if>
+            <if test="unit != null  and unit != ''">unit,</if>
+            <if test="room != null  and room != ''">room,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="roomType != null  and roomType != ''">room_type,</if>
+            <if test="roomCode != null  and roomCode != ''">room_code,</if>
+            <if test="town != null  and town != ''">town,</if>
+            <if test="townId != null  and townId != ''">town_id,</if>
+            <if test="householder != null  and householder != ''">householder,</if>
+            <if test="economicType != null  and economicType != ''">economic_type,</if>
+            <if test="buildTime != null  and buildTime != ''">build_time,</if>
+            <if test="floors != null  and floors != ''">floors,</if>
+            <if test="areas != null  and areas != ''">areas,</if>
+            <if test="floorSpace != null  and floorSpace != ''">floor_space,</if>
+            <if test="useType != null  and useType != ''">use_type,</if>
+            <if test="around != null  and around != ''">around,</if>
+            <if test="buildType != null  and buildType != ''">build_type,</if>
+            <if test="structureType != null  and structureType != ''">structure_type,</if>
+            <if test="adding != null  and adding != ''">adding,</if>
+            <if test="cellar != null  and cellar != ''">cellar,</if>
+            <if test="threeNo != null  and threeNo != ''">three_no,</if>
+            <if test="board != null  and board != ''">board,</if>
+            <if test="procedures != null  and procedures != ''">procedures,</if>
+            <if test="planNote != null  and planNote != ''">plan_note,</if>
+            <if test="certificate != null  and certificate != ''">certificate,</if>
+            <if test="assistance != null  and assistance != ''">assistance,</if>
+            <if test="appraisal != null  and appraisal != ''">appraisal,</if>
+            <if test="gisx != null  and gisx != ''">gisx,</if>
+            <if test="gisy != null  and gisy != ''">gisy,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="idcard != null  and idcard != ''">idcard,</if>
+            <if test="peoples != null  and peoples != ''">peoples,</if>
+            <if test="remould != null  and remould != ''">remould,</if>
+            <if test="danger != null  and danger != ''">danger,</if>
+            <if test="reinforce != null  and reinforce != ''">reinforce,</if>
+            <if test="renovate != null  and renovate != ''">renovate,</if>
+            <if test="waterflood != null  and waterflood != ''">waterflood,</if>
+            create_time ) values (
+            <if test="communityName != null  and communityName != ''">#{communityName},</if>
+            <if test="deptName != null  and deptName != ''">#{deptName},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="villageName != null  and villageName != ''">#{villageName},</if>
+            <if test="villageId != null  and villageId != ''">#{villageId},</if>
+            <if test="building != null  and building != ''">#{building},</if>
+            <if test="unit != null  and unit != ''">#{unit},</if>
+            <if test="room != null  and room != ''">#{room},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="roomType != null  and roomType != ''">#{roomType},</if>
+            <if test="roomCode != null  and roomCode != ''">#{roomCode},</if>
+            <if test="town != null  and town != ''">#{town},</if>
+            <if test="townId != null  and townId != ''">#{townId},</if>
+            <if test="householder != null  and householder != ''">#{householder},</if>
+            <if test="economicType != null  and economicType != ''">#{economicType},</if>
+            <if test="buildTime != null  and buildTime != ''">#{buildTime},</if>
+            <if test="floors != null  and floors != ''">#{floors},</if>
+            <if test="areas != null  and areas != ''">#{areas},</if>
+            <if test="floorSpace != null  and floorSpace != ''">#{floorSpace},</if>
+            <if test="useType != null  and useType != ''">#{useType},</if>
+            <if test="around != null  and around != ''">#{around},</if>
+            <if test="buildType != null  and buildType != ''">#{buildType},</if>
+            <if test="structureType != null  and structureType != ''">#{structureType},</if>
+            <if test="adding != null  and adding != ''">#{adding},</if>
+            <if test="cellar != null  and cellar != ''">#{cellar},</if>
+            <if test="threeNo != null  and threeNo != ''">#{threeNo},</if>
+            <if test="board != null  and board != ''">#{board},</if>
+            <if test="procedures != null  and procedures != ''">#{procedures},</if>
+            <if test="planNote != null  and planNote != ''">#{planNote},</if>
+            <if test="certificate != null  and certificate != ''">#{certificate},</if>
+            <if test="assistance != null  and assistance != ''">#{assistance},</if>
+            <if test="appraisal != null  and appraisal != ''">#{appraisal},</if>
+            <if test="gisx != null  and gisx != ''">#{gisx},</if>
+            <if test="gisy != null  and gisy != ''">#{gisy},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="idcard != null  and idcard != ''">#{idcard},</if>
+            <if test="peoples != null  and peoples != ''">#{peoples},</if>
+            <if test="remould != null  and remould != ''">#{remould},</if>
+            <if test="danger != null  and danger != ''">#{danger},</if>
+            <if test="reinforce != null  and reinforce != ''">#{reinforce},</if>
+            <if test="renovate != null  and renovate != ''">#{renovate},</if>
+            <if test="waterflood != null  and waterflood != ''">#{waterflood},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+            sysdate()
+            )
+    </insert>
+
+    <update id="updateXlRoom" parameterType="XlRoom">
+        update xl_room
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="communityName != null  and communityName != ''">community_name = #{communityName},</if>
+            <if test="deptName != null  and deptName != ''">dept_name = #{deptName},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
+            <if test="villageName != null  and villageName != ''">village_name = #{villageName},</if>
+            <if test="villageId != null  and villageId != ''">village_id = #{villageId},</if>
+            <if test="building != null  and building != ''">building = #{building},</if>
+            <if test="unit != null  and unit != ''">unit = #{unit},</if>
+            <if test="room != null  and room != ''">room = #{room},</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="roomType != null  and roomType != ''">room_type = #{roomType},</if>
+            <if test="roomCode != null  and roomCode != ''">room_code = #{roomCode},</if>
+            <if test="town != null  and town != ''">town = #{town},</if>
+            <if test="townId != null  and townId != ''">town_id = #{townId},</if>
+            <if test="householder != null  and householder != ''">householder = #{householder},</if>
+            <if test="economicType != null  and economicType != ''">economic_type = #{economicType},</if>
+            <if test="buildTime != null  and buildTime != ''">build_time = #{buildTime},</if>
+            <if test="floors != null  and floors != ''">floors = #{floors},</if>
+            <if test="areas != null  and areas != ''">areas = #{areas},</if>
+            <if test="floorSpace != null  and floorSpace != ''">floor_space = #{floorSpace},</if>
+            <if test="useType != null  and useType != ''">use_type = #{useType},</if>
+            <if test="around != null  and around != ''">around = #{around},</if>
+            <if test="buildType != null  and buildType != ''">build_type = #{buildType},</if>
+            <if test="structureType != null  and structureType != ''">structure_type = #{structureType},</if>
+            <if test="adding != null  and adding != ''">adding = #{adding},</if>
+            <if test="cellar != null  and cellar != ''">cellar = #{cellar},</if>
+            <if test="threeNo != null  and threeNo != ''">three_no = #{threeNo},</if>
+            <if test="board != null  and board != ''">board = #{board},</if>
+            <if test="procedures != null  and procedures != ''">procedures = #{procedures},</if>
+            <if test="planNote != null  and planNote != ''">plan_note = #{planNote},</if>
+            <if test="certificate != null  and certificate != ''">certificate = #{certificate},</if>
+            <if test="assistance != null  and assistance != ''">assistance = #{assistance},</if>
+            <if test="appraisal != null  and appraisal != ''">appraisal = #{appraisal},</if>
+            <if test="gisx != null  and gisx != ''">gisx = #{gisx},</if>
+            <if test="gisy != null  and gisy != ''">gisy = #{gisy},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="idcard != null  and idcard != ''">idcard = #{idcard},</if>
+            <if test="peoples != null  and peoples != ''">peoples = #{peoples},</if>
+            <if test="remould != null  and remould != ''">remould = #{remould},</if>
+            <if test="danger != null  and danger != ''">danger = #{danger},</if>
+            <if test="reinforce != null  and reinforce != ''">reinforce = #{reinforce},</if>
+            <if test="renovate != null  and renovate != ''">renovate = #{renovate},</if>
+            <if test="waterflood != null  and waterflood != ''">waterflood = #{waterflood},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlRoomById" parameterType="Long">
+        delete from xl_room where id = #{id}
+    </delete>
+
+    <delete id="deleteXlRoomByIds" parameterType="String">
+        delete from xl_room where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryRoomAll" resultType="java.lang.Integer">
+        select count(*) from xl_room
+        <where>
+            1 = 1
+            <if test="communityName != null and communityName !=''">
+                and community_name= #{communityName}
+            </if>
+            <if test="roomType != null and roomType !=''">
+                and room_type= #{roomType}
+            </if>
+            <if test="roomLiveType != null and roomLiveType !=''">
+                and room_live_type= #{roomLiveType}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCommercialCount" resultType="java.lang.Integer">
+        select count(*) from xl_room
+        <where>
+            1 = 1
+            <if test="communityName != null and communityName !=''">
+                and community_name= #{communityName}
+            </if>
+            <if test="roomType != null and roomType !=''">
+                and room_type= #{roomType}
+            </if>
+            <if test="roomLiveType != null and roomLiveType !=''">
+                and room_live_type= #{roomLiveType}
+            </if>
+            and  room_type = 1
+        </where>
+    </select>
+
+    <select id="querySelfBuiltCount" resultType="java.lang.Integer">
+        select count(*) from xl_room
+        <where>
+            1 = 1
+            <if test="communityName != null and communityName !=''">
+                and community_name= #{communityName}
+            </if>
+            <if test="roomType != null and roomType !=''">
+                and room_type= #{roomType}
+            </if>
+            <if test="roomLiveType != null and roomLiveType !=''">
+                and room_live_type= #{roomLiveType}
+            </if>
+            and room_type = 2
+        </where>
+    </select>
+
+    <select id="queryRoomDetail" resultMap="XlRoomResult" parameterType="java.lang.Integer">
+        select * from xl_room where id =#{id}
+    </select>
+
+    <select id="queryRoomCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from  xl_room
+        <where>
+            1 = 1
+            <if test="housingEstate != null and housingEstate !=''">
+                and village_name= #{housingEstate}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryRoomId" resultMap="XlRoomResult" parameterType="java.lang.String">
+        select * from xl_room where address=#{address}
+    </select>
+
+    <select id="selectXlPersonnelListAll" resultMap="XlRoomResult">
+        select * from xl_room WHERE ISNULL(village_id) GROUP BY village_name
+    </select>
+
+    <update id="updatePersonVillageId" parameterType="java.util.Map">
+        update xl_room
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="villageid != null  and villageid != ''">village_id = #{villageid}</if>
+        </trim>
+        where village_name = #{villageName}
+    </update>
+
+    <select id="queryRoomAdress" resultType="java.lang.String" parameterType="java.lang.Integer">
+        select address from xl_room where id = #{roomId}
+    </select>
+
+    <select id="queryRoomListCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from xl_room
+        <where>
+            1 = 1
+            <if test="communityName != null and communityName !=''">
+                and community_name= #{communityName}
+            </if>
+            <if test="roomType != null and roomType !=''">
+                and room_type= #{roomType}
+            </if>
+            <if test="roomLiveType != null and roomLiveType !=''">
+                and room_live_type= #{roomLiveType}
+            </if>
+            <if test="villageName != null and villageName !=''">
+                and village_name like concat('%', #{villageName}, '%')
+            </if>
+            <if test="blurred != null and blurred !=''">
+                and address like concat('%', #{blurred}, '%')
+            </if>
+            <if test="regionIndexCode != null and regionIndexCode !=''">
+                and dept_id= #{regionIndexCode}
+            </if>
+            <if test="statusArr != null">
+                and room_type in
+                <foreach collection="statusArr" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="findbuilding"  resultType="java.util.Map" parameterType="integer">
+    SELECT `building_code` as buildingCode,`building` as `building` FROM xl_room
+    <where> 1=1
+       <if test="deptId != null and deptId !=''">
+                and dept_id= #{deptId}
+            </if>
+            </where>
+        <choose>
+            <when test="villageId != null and villageId!= ''">
+              and village_id = #{villageId}
+            </when>
+            <otherwise>
+                and village_id = null
+            </otherwise>
+        </choose>
+    GROUP BY `building_code`
+</select>
+<select id="findUnit" resultType="java.util.Map" parameterType="integer">
+SELECT `unit` as `unit`FROM xl_room
+ <where>
+ 1=1
+       <if test="deptId != null and deptId !=''">
+                and dept_id= #{deptId}
+            </if>
+            <if test="buildingCode != null and buildingCode !=''">
+                and building_code= #{buildingCode}
+            </if>
+            </where>
+        <choose>
+             <when test="villageId != null and villageId!= ''">
+              and village_id = #{villageId}
+            </when>
+            <otherwise>
+                and village_id = null
+            </otherwise>
+        </choose>
+ GROUP BY unit
+</select>
+
+
+</mapper>

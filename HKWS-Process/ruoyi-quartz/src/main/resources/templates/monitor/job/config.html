@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('数据接入字段配置列表')" />
+    <style type="text/css">
+		table{
+		    table-layout : automatic;
+		}
+		table td{
+		    max-width: 58px;
+		    overflow: hidden;
+		    text-overflow:ellipsis;
+		    white-space: nowrap;
+		}
+		table td:hover {
+		    overflow: auto;
+		    white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<form id="field-form">
+				<input name="sourceId" id ="sourceId" type="hidden" th:value="${source.id}">
+				<input name="id" type="hidden" th:value="${source.id}">
+				<div class="col-sm-12 select-table table-striped">
+					<table id="bootstrap-table"></table>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+    
+        var editFlag = [[${@permission.hasPermi('system:config:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:config:remove')}]];
+        var prefix = ctx + "monitor/source";
+
+        $(function() {
+            var options = {
+                url: prefix + "/fieldlist",
+                modalName: "数据接入字段配置",
+                pageSize:100,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                striped:true,
+                columns: [
+                {
+                    field: 'id', 
+                    title: '编码',
+                    formatter: function (value, row, index) {
+                    	var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].id' id='id_%s' value='%s' readonly>", index, index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'sourceId', 
+                    title: '数据源编码',
+                    visible: false
+                },
+                {
+                    field: 'columnName', 
+                    title: '列名称'
+                },
+                {
+                    field: 'columnComment', 
+                    title: '列描述'
+                },
+                {
+                    field: 'columnType', 
+                    title: '列类型',
+                    visible: false
+                },
+                {
+                    field: 'javaType', 
+                    title: 'java类型',
+                    visible: false
+                },
+                {
+                    field: 'isRequired', 
+                    title: '是否必填',
+                    visible: false
+                },
+                {
+                    field: 'sourceColumnName', 
+                    title: '来源列名称',
+                    formatter: function (value, row, index) {
+                    	if(value == 'null'){
+                    		value ='';
+                    	}
+                        var html = $.common.sprintf("<input class='form-control' type='text' placeholder='请选择源字段' onclick='selectSourceColumns(" + index + ")' name='fieldList[%s].sourceColumnName' id='sourceColumnName_%s' value='%s' readonly>", index, index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'sourceColumnComment', 
+                    title: '来源列描述',
+                    formatter: function (value, row, index) {
+                    	if(value == 'null'){
+                    		value ='';
+                    	}
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].sourceColumnComment' id='sourceColumnComment_%s' value='%s'>", index, index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'defaultValue', 
+                    title: '默认值',
+                    formatter: function (value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].defaultValue' id='defaultValue_%s' value='%s'>", index, index, '');
+                        return html;
+                    }
+                },
+                {
+                    field: 'sourceColumnType', 
+                    title: '来源列类型',
+                    visible:false
+                },
+                {
+                    field: 'sourceColumnJavaType', 
+                    title: '来源列java类型',
+                    visible: false
+                }]
+            };
+            $.table.init(options);
+        });
+        
+        // 选择来源字段
+        function selectSourceColumns(columnId) {
+            table.set();
+            var url = ctx + "monitor/source/toSelectSourceColumnPage/" + $('#sourceId').val() + '/' + columnId;
+            $.modal.open("选择来源列", url);
+        }
+        
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/saveField", $('#field-form').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

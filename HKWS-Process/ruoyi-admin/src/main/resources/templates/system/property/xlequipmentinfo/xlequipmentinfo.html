@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('公共管理/物业--设备信息列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>设备名称：</label>
+                            <input type="text" name="equipmentName" placeholder="请输入设备名称查询"/>
+                        </li>
+                        <li>
+                            <label>设备类型：</label>
+                            <select name="deviceType" th:with="type=${@dict.getType('device_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>设备序列号：</label>
+                            <input type="text" name="equipmentSerialNumber" placeholder="请输入设备序列号查询"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary" onclick="$.operate.add()" shiro:hasPermission="system/property:xlequipmentinfo:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system/property:xlequipmentinfo:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system/property:xlequipmentinfo:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system/property:xlequipmentinfo:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system/property:xlequipmentinfo:remove')}]];
+    var prefix = ctx + "system/property/xlequipmentinfo";
+    //数据字典
+    var deviceType = [[${@dict.getType('device_type')}]]; //设备分类
+    var equipmentLabel = [[${@dict.getType('equipment_label')}]]; //设备标签
+    var networkStatus = [[${@dict.getType('network_status')}]]; //网络在线状态
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            modalName: "公共管理/物业--设备信息",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '序号',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'equipmentName',
+                    title: '设备名称',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 5);
+                    }
+                },
+                {
+                    field: 'deviceType',
+                    title: '设备类型',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(deviceType, value);
+                    }
+                },
+                {
+                    field: 'equipmentSerialNumber',
+                    title: '设备序列号',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 5);
+                    }
+                },
+                {
+                    field: 'labelId',
+                    title: '标签',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(equipmentLabel, value);
+                    }
+                },
+                {
+                    field: 'verificationCode',
+                    title: '验证码'
+                },
+                {
+                    field: 'equipmentModel',
+                    title: '设备型号'
+                },
+                {
+                    field: 'equipmentAdress',
+                    title: '设备位置',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 5);
+                    }
+                },
+                {
+                    field: 'longitude',
+                    title: '经度'
+                },
+                {
+                    field: 'latitude',
+                    title: '纬度'
+                },
+                {
+                    field: 'equipmentStatus',
+                    title: '网络状态',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return $.table.selectDictLabel(networkStatus, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'villageId',
+                    title: '小区id',
+                    visible: false
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

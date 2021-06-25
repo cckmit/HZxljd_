@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkAFieldMapper">
+    <resultMap type="com.ruoyi.system.domain.HKfield.hkfield" id="HkfieldResult">
+        <id     property="id"      column="id"      />
+        <result property="uuid"    column="uuid"    />
+        <result property="commonlyId"     column="commonly_id"     />
+        <result property="actionId"   column="action_id"   />
+        <result property="fieldName"    column="field_name"    />
+        <result property="fieldEnglishName"    column="field_english_name"    />
+        <result property="fieldType"      column="field_type"      />
+        <result property="fieldLength"    column="field_length"    />
+        <result property="fieldCommit"      column="field_commit"      />
+        <result property="fieldNull"    column="field_null"    />
+        <result property="fieldSort"    column="field_sort"    />
+        <result property="fieldContent"    column="field_content"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateDate"    column="update_date"    />
+
+    </resultMap>
+
+    <resultMap type="com.ruoyi.system.domain.app.appActionNow" id="ActionNowResult">
+        <result property="actionName"       column="action_name"      />
+        <result property="commonlyId"    column="commonly_id"   />
+        <result property="handlerName"     column="handler_name"    />
+        <result property="handlerUserId"     column="handler_user_id"    />
+        <result property="isGovernance"     column="is_governance"    />
+        <collection  property="appField"   javaType="java.util.List"        resultMap="FieldResult" />
+    </resultMap>
+    <resultMap id="FieldResult" type="com.ruoyi.system.domain.app.appField">
+        <result  property="fieldEnglishName"       column="field_english_name"        />
+        <result property="fieldName"     column="field_name"      />
+        <result property="fieldType"      column="field_type"       />
+        <result property="fieldContent"     column="field_content"      />
+        <result property="fieldSort"    column="field_sort"     />
+    </resultMap>
+
+
+    <insert id="addHkAfield" parameterType="com.ruoyi.system.domain.HKfield.hkfield">
+        <selectKey resultType="String" keyProperty="uuid" order="BEFORE">
+            SELECT REPLACE(uuid(),'-','')
+        </selectKey>
+        INSERT INTO hk_field (
+        `uuid`,
+        `commonly_id`,
+        `field_name`,
+        `field_english_name`,
+        `field_type`,
+        `field_length`,
+        `field_commit`,
+        `field_null`,
+        `field_content`,
+        `create_user`,
+        `create_date`,
+        `field_sort`
+        )
+        VALUES
+        (
+        #{uuid},
+        #{commonlyId},
+        #{fieldName},
+        #{fieldEnglishName},
+        #{fieldType},
+        #{fieldLength},
+        #{fieldCommit},
+        #{fieldNull},
+        #{fieldContent},
+        #{createUser},
+        NOW(),
+        #{fieldSort}
+        );
+    </insert>
+
+    <select id="findHKAfield" parameterType="String" resultMap="HkfieldResult">
+        SELECT
+         `id`,
+        `commonly_id`,
+        `field_name`,
+        `field_english_name`,
+        `field_type`,
+        `field_length`,
+        `field_commit`,
+        `field_null`,
+        `field_content`,
+        `field_sort`,
+        `create_user`,
+        `create_date`
+        FROM
+        hk_field
+       where
+       commonly_id=#{commid};
+    </select>
+
+    <select id="selectHKAfieldBy"  resultMap="HkfieldResult">
+        SELECT
+         `id`,
+        `commonly_id`,
+        `field_name`,
+        `field_type`,
+        `field_length`,
+        `field_commit`,
+        `field_null`,
+        `field_content`,
+        `create_user`,
+        `create_date`
+        FROM
+        hk_field
+       where
+       commonly_id=#{arg0} and id=#{arg1} ;
+    </select>
+
+    <delete id="deleteHKfield" parameterType="int"  >
+        DELETE  FROM
+        hk_field
+        WHERE
+       id=#{id} ;
+    </delete>
+
+    <update id="updateField" parameterType="com.ruoyi.system.domain.HkAConfiguration">
+    UPDATE hk_field
+    SET
+    field_name = #{fieldName},
+    field_type = #{fieldType},
+    field_length = #{fieldLength},
+    field_commit = #{fieldCommit},
+    field_null = #{fieldNull},
+    field_content = #{fieldContent},
+    update_user = #{updateUser},
+    update_date = NOW()
+    WHERE
+    id = #{id}
+    </update>
+
+    <!--校验事件类型 -->
+    <select id="checkField" resultType="int" parameterType="com.ruoyi.system.domain.HKfield.hkfield">
+        select count(1) from  hk_field
+        where  field_name= #{fieldName}
+        <if test="commonlyId!=null and commonlyId!=''" >
+            and commonly_id =#{commonlyId}
+        </if>
+    </select>
+
+
+    <!--查询事件行动链当前节点的操作项-->
+    <select id="queryFieldByAction" parameterType="map" resultMap="ActionNowResult">
+		SELECT
+		DISTINCT
+		c.action_name,
+		f.commonly_id,
+		f.field_english_name,
+		f.field_name,
+		f.field_content,
+		f.field_type,
+		f.field_sort
+		FROM
+		hk_field f
+		LEFT JOIN hk_Action_Configuration c ON c.uuid = f.commonly_id
+		WHERE
+		f.commonly_id = #{actionStandardId}
+		ORDER BY
+		f.field_sort
+	</select>
+</mapper>

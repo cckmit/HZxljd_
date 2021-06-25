@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkActionApplyMapper">
+    
+    <resultMap type="HkActionApply" id="HkActionApplyResult">
+        <result property="acId"    column="ac_id"    />
+        <result property="acImageurls"    column="ac_imageUrls"    />
+        <result property="acLongitude"    column="ac_longitude"    />
+        <result property="acLatitude"    column="ac_latitude"    />
+        <result property="acApplyaddressname"    column="ac_applyAddressName"    />
+        <result property="acUserid"    column="ac_userId"    />
+        <result property="acApplydate"    column="ac_applydate"    />
+    </resultMap>
+
+    <sql id="selectHkActionApplyVo">
+        select ac_id, ac_imageUrls, ac_longitude, ac_latitude, ac_applyAddressName, ac_userId, ac_applydate from hk_action_apply
+    </sql>
+
+    <select id="selectHkActionApplyList" parameterType="HkActionApply" resultMap="HkActionApplyResult">
+        <include refid="selectHkActionApplyVo"/>
+        <where>  
+            <if test="acImageurls != null  and acImageurls != ''"> and ac_imageUrls = #{acImageurls}</if>
+            <if test="acLongitude != null  and acLongitude != ''"> and ac_longitude = #{acLongitude}</if>
+            <if test="acLatitude != null  and acLatitude != ''"> and ac_latitude = #{acLatitude}</if>
+            <if test="acApplyaddressname != null  and acApplyaddressname != ''"> and ac_applyAddressName like concat('%', #{acApplyaddressname}, '%')</if>
+            <if test="acUserid != null "> and ac_userId = #{acUserid}</if>
+            <if test="acApplydate != null "> and ac_applydate = #{acApplydate}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkActionApplyById" parameterType="Long" resultMap="HkActionApplyResult">
+        <include refid="selectHkActionApplyVo"/>
+        where ac_id = #{acId}
+    </select>
+        
+    <insert id="insertHkActionApply" parameterType="HkActionApply" useGeneratedKeys="true" keyProperty="acId">
+        insert into hk_action_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="acImageurls != null  and acImageurls != ''">ac_imageUrls,</if>
+            <if test="acLongitude != null  and acLongitude != ''">ac_longitude,</if>
+            <if test="acLatitude != null  and acLatitude != ''">ac_latitude,</if>
+            <if test="acApplyaddressname != null  and acApplyaddressname != ''">ac_applyAddressName,</if>
+            <if test="acUserid != null ">ac_userId,</if>
+            <if test="acApplydate != null ">ac_applydate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="acImageurls != null  and acImageurls != ''">#{acImageurls},</if>
+            <if test="acLongitude != null  and acLongitude != ''">#{acLongitude},</if>
+            <if test="acLatitude != null  and acLatitude != ''">#{acLatitude},</if>
+            <if test="acApplyaddressname != null  and acApplyaddressname != ''">#{acApplyaddressname},</if>
+            <if test="acUserid != null ">#{acUserid},</if>
+            <if test="acApplydate != null ">#{acApplydate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkActionApply" parameterType="HkActionApply">
+        update hk_action_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="acImageurls != null  and acImageurls != ''">ac_imageUrls = #{acImageurls},</if>
+            <if test="acLongitude != null  and acLongitude != ''">ac_longitude = #{acLongitude},</if>
+            <if test="acLatitude != null  and acLatitude != ''">ac_latitude = #{acLatitude},</if>
+            <if test="acApplyaddressname != null  and acApplyaddressname != ''">ac_applyAddressName = #{acApplyaddressname},</if>
+            <if test="acUserid != null ">ac_userId = #{acUserid},</if>
+            <if test="acApplydate != null ">ac_applydate = #{acApplydate},</if>
+        </trim>
+        where ac_id = #{acId}
+    </update>
+
+    <delete id="deleteHkActionApplyById" parameterType="Long">
+        delete from hk_action_apply where ac_id = #{acId}
+    </delete>
+
+    <delete id="deleteHkActionApplyByIds" parameterType="String">
+        delete from hk_action_apply where ac_id in 
+        <foreach item="acId" collection="array" open="(" separator="," close=")">
+            #{acId}
+        </foreach>
+    </delete>
+    
+</mapper>

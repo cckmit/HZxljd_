@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <footer th:fragment="header">
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/js/bootstrap.min.js}"></script>
+        <script th:src="@{/ruoyi/js/common.js?v=4.2.0}"></script>
+        <nav class = "navbar navbar-inverse navbar-fixed-top">
+            <div class = "container-fluid Title">
+                <div class = "navbar-header">
+                    <ul class = "nav navbar-nav ">
+                        <li class = "logo">
+
+                            <a href = "#">
+<!--                                <img src = "../static/work1.png" th:src = "@{/img/logo.png}">-->
+                                数智闲林·统一门户管理平台
+<!--                                <span style="font-size: 16px;color:#D1E9FC;vertical-align:unset;">| 应急管理</span>-->
+                            </a>
+                        </li>
+                        <li>
+                            <a href = "#">数智城管</a>
+                        </li>
+                        <li>
+                            <a href = "#">应急指挥</a>
+                        </li>
+                        <!--<li>
+                            <a href = "#">党建引领</a>
+                        </li>
+                        <li>
+                            <a href = "#">平安创建</a>
+                        </li>
+                        <li>
+                            <a href = "http://172.16.100.15:10086/quickLogin">综合治理</a>
+                        </li>
+                        <li>
+                            <a href = "http://172.16.100.14:9099">智慧城管</a>
+                        </li>
+                        <li>
+                            <a href = "http://172.16.100.13/#/MainPage?phone=15888888888" >应急管理</a>
+                        </li>
+                        <li>
+                            <a href = "#" >民生服务</a>
+                        </li>
+                        <li >
+                            <a href = "#" >产业发展</a>
+                        </li>-->
+                       <!-- <li >
+                            <a href = "https://qs.hhkj1688.cn/?code2=c6e9fbe361df1c78d9bfea716d622601" target = "_blank">助力青和</a>
+                        </li>-->
+                    </ul>
+                </div>
+                <div id = "navbar" class = "navbar-collapse collapse">
+                    <ul class = "nav navbar-nav navbar-right" style="margin: 0;">
+                        <li><a href = "#">
+                            <i class = "layui-icon layui-icon-friends"></i>
+                            <span id = "name" th:text = "${user}"></span>
+                        </a></li>
+                        <li style="margin-right: 0;"><a href = "/index" id = "configure">配置中心</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </footer>
+</head>
+
+</html>

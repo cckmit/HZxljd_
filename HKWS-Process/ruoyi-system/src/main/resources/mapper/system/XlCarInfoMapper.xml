@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlCarInfoMapper">
+
+    <resultMap type="XlCarInfo" id="XlCarInfoResult">
+        <result property="id"    column="id"    />
+        <result property="carType"    column="car_type"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="ownerName"    column="owner_name"    />
+        <result property="ownerPhone"    column="owner_phone"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlCarInfoVo">
+        select xc.id, xc.car_type, xc.car_number, xc.owner_name, xc.owner_phone, xc.village_id, xc.create_by, xc.create_time, xc.update_by, xc.update_time, xv.name as quartersName from xl_car_info xc
+        left join xl_village xv on xc.village_id = xv.id
+    </sql>
+
+    <select id="selectXlCarInfoList" parameterType="XlCarInfo" resultMap="XlCarInfoResult">
+        <include refid="selectXlCarInfoVo"/>
+        <where>
+            <if test="carType != null  and carType != ''"> and xc.car_type = #{carType}</if>
+            <if test="carNumber != null  and carNumber != ''"> and xc.car_number like concat('%', #{carNumber}, '%')</if>
+            <if test="ownerName != null  and ownerName != ''"> and xc.owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="ownerPhone != null  and ownerPhone != ''"> and xc.owner_phone like concat('%', #{ownerPhone}, '%')</if>
+            <if test="quartersName != null  and quartersName != ''"> and xv.name like concat('%', #{quartersName}, '%')</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlCarInfoById" parameterType="Long" resultMap="XlCarInfoResult">
+        <include refid="selectXlCarInfoVo"/>
+        where xc.id = #{id}
+    </select>
+
+    <insert id="insertXlCarInfo" parameterType="XlCarInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_car_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carType != null  and carType != ''">car_type,</if>
+            <if test="carNumber != null  and carNumber != ''">car_number,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="ownerPhone != null  and ownerPhone != ''">owner_phone,</if>
+            <if test="quartersName != null  and quartersName != ''">quarters_name,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="carType != null  and carType != ''">#{carType},</if>
+            <if test="carNumber != null  and carNumber != ''">#{carNumber},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="ownerPhone != null  and ownerPhone != ''">#{ownerPhone},</if>
+            <if test="quartersName != null  and quartersName != ''">#{quartersName},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlCarInfo" parameterType="XlCarInfo">
+        update xl_car_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carType != null  and carType != ''">car_type = #{carType},</if>
+            <if test="carNumber != null  and carNumber != ''">car_number = #{carNumber},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="ownerPhone != null  and ownerPhone != ''">owner_phone = #{ownerPhone},</if>
+            <if test="quartersName != null  and quartersName != ''">quarters_name = #{quartersName},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlCarInfoById" parameterType="Long">
+        delete from xl_car_info where id = #{id}
+    </delete>
+
+    <delete id="deleteXlCarInfoByIds" parameterType="String">
+        delete from xl_car_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

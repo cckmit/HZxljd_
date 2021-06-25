@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkAuthorizationApiMapper">
+    
+    <resultMap type="HkAuthorizationApi" id="HkAuthorizationApiResult">
+        <result property="aId"    column="a_id"    />
+        <result property="aName"    column="a_name"    />
+        <result property="aAddress"    column="a_address"    />
+        <result property="aDescription"    column="a_description"    />
+        <result property="aCreateTime"    column="a_create_time"    />
+        <result property="aUpdateTime"    column="a_update_time"    />
+        <result property="aCreateAdmin"    column="a_create_admin"    />
+        <result property="aType"    column="a_type"    />
+    </resultMap>
+
+    <sql id="selectHkAuthorizationApiVo">
+        select a_id, a_name, a_address, a_description, a_create_time, a_update_time, a_create_admin, a_type from hk_authorization_api
+    </sql>
+
+    <select id="selectHkAuthorizationApiList" parameterType="HkAuthorizationApi" resultMap="HkAuthorizationApiResult">
+        <include refid="selectHkAuthorizationApiVo"/>
+        <where>  
+            <if test="aName != null  and aName != ''"> and a_name like concat('%', #{aName}, '%')</if>
+            <if test="aAddress != null  and aAddress != ''"> and a_address = #{aAddress}</if>
+            <if test="aDescription != null  and aDescription != ''"> and a_description = #{aDescription}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(a_create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(a_create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="aCreateAdmin != null  and aCreateAdmin != ''"> and a_create_admin = #{aCreateAdmin}</if>
+            <if test="aType != null  and aType != ''"> and a_type = #{aType}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkAuthorizationApiById" parameterType="Long" resultMap="HkAuthorizationApiResult">
+        <include refid="selectHkAuthorizationApiVo"/>
+        where a_id = #{aId}
+    </select>
+        
+    <insert id="insertHkAuthorizationApi" parameterType="HkAuthorizationApi" useGeneratedKeys="true" keyProperty="aId">
+        insert into hk_authorization_api
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="aName != null  and aName != ''">a_name,</if>
+            <if test="aAddress != null  and aAddress != ''">a_address,</if>
+            <if test="aDescription != null  and aDescription != ''">a_description,</if>
+            <if test="aCreateTime != null ">a_create_time,</if>
+            <if test="aUpdateTime != null ">a_update_time,</if>
+            <if test="aCreateAdmin != null  and aCreateAdmin != ''">a_create_admin,</if>
+            <if test="aType != null  and aType != ''">a_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="aName != null  and aName != ''">#{aName},</if>
+            <if test="aAddress != null  and aAddress != ''">#{aAddress},</if>
+            <if test="aDescription != null  and aDescription != ''">#{aDescription},</if>
+            <if test="aCreateTime != null ">#{aCreateTime},</if>
+            <if test="aUpdateTime != null ">#{aUpdateTime},</if>
+            <if test="aCreateAdmin != null  and aCreateAdmin != ''">#{aCreateAdmin},</if>
+            <if test="aType != null  and aType != ''">#{aType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkAuthorizationApi" parameterType="HkAuthorizationApi">
+        update hk_authorization_api
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="aName != null  and aName != ''">a_name = #{aName},</if>
+            <if test="aAddress != null  and aAddress != ''">a_address = #{aAddress},</if>
+            <if test="aDescription != null  and aDescription != ''">a_description = #{aDescription},</if>
+            <if test="aCreateTime != null ">a_create_time = #{aCreateTime},</if>
+            <if test="aUpdateTime != null ">a_update_time = #{aUpdateTime},</if>
+            <if test="aCreateAdmin != null  and aCreateAdmin != ''">a_create_admin = #{aCreateAdmin},</if>
+            <if test="aType != null  and aType != ''">a_type = #{aType},</if>
+        </trim>
+        where a_id = #{aId}
+    </update>
+
+    <delete id="deleteHkAuthorizationApiById" parameterType="Long">
+        delete from hk_authorization_api where a_id = #{aId}
+    </delete>
+
+    <delete id="deleteHkAuthorizationApiByIds" parameterType="String">
+        delete from hk_authorization_api where a_id in 
+        <foreach item="aId" collection="array" open="(" separator="," close=")">
+            #{aId}
+        </foreach>
+    </delete>
+    
+</mapper>

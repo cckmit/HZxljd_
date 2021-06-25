@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增小区信息')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-village-add">
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label  is-required">小区名称：</label>
+                <div class="col-sm-8">
+                    <input name="name" id="name" class="form-control" placeholder="请填写小区名称" type="text" required>
+                </div>
+            </div>
+<!--            <div class="form-group">    -->
+<!--                <label class="col-sm-3 control-label">网格id：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input name="deptId" class="form-control" type="text">-->
+<!--                </div>-->
+<!--            </div>-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label  is-required">网格名称：</label>
+                    <div class="col-sm-8">
+                        <select name="deptId" id="deptId" class="form-control m-b" required >
+                        </select>
+                        <input name="deptName" id="deptName"  type="text"  hidden>
+                    </div>
+                </div>
+<!--            <div class="form-group">    -->
+<!--                <label class="col-sm-3 control-label">物业id：</label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <input name="propertyId" class="form-control" type="text">-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">物业名称：</label>
+                    <div class="col-sm-8">
+                        <select name="id" id="id" class="form-control select-list" required>
+                            <option value=''disabled selected hidden>请选择物业名称</option>
+                            <option th:each="det:${estateList}" th:value="${det.id}" th:text="${det.estateName}"></option>
+                        </select>
+                        <input name="propertyName" id="propertyName"  type="text"  hidden>
+                    </div>
+<!--                    <input name="propertyName" class="form-control" placeholder="请填写物业公司名称" type="text" required >-->
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/village"
+        $(function() {
+            dedao();
+        })
+        $("#form-village-add").validate({
+            onkeyup: false,
+            rules:{
+                code:{
+                    remote: {
+                        url: prefix + "/checkVillageCodeUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "xlVillageModelCode": function() {
+                                return $.common.trim($("#code").val());
+                            }
+                        },
+                        dataFilter: function(data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+                },
+                name:{
+                    remote: {
+                        url: prefix + "/checkVillageNameUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "xlVillageModelName": function() {
+                                return $.common.trim($("#name").val());
+                            }
+                        },
+                        dataFilter: function(data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+                },
+
+            },
+            messages: {
+                "code": {
+                    remote: "小区编号已经存在"
+                },
+                "name": {
+                    remote: "小区名称已经存在"
+                },
+                focusCleanup: true
+            }
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+              var text1=document.getElementById("deptId");
+              text2=text1.options[text1.selectedIndex].text;
+              $("#deptName").val(text2);
+              $("#propertyName").val(option[document.getElementById("id").selectedIndex].text);
+                $.operate.save(prefix + "/add", $('#form-village-add').serialize());
+            }
+        }
+        function dedao() {
+            $.ajax({
+                type:"GET",
+                url:prefix + "/openopen",
+                dataType:"json",
+                success:function(data){
+                    var t2 = $("#deptId").empty();
+                    t2.append("<option value=''disabled selected hidden>"+"请选择网格名称"+"</option>");
+                    for ( var i = 0; i < data.length; i++) {
+                        t2.append("<option value='"+data[i].deptId+"'>"+ data[i].deptName+"</option>");
+
+                    }
+                },
+                error:function(jqXHR){
+                    alert("发生错误："+ jqXHR.status);
+                }
+            });
+
+        }
+    </script>
+</body>
+</html>

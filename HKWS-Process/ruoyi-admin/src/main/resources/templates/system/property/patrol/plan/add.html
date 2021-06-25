@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('巡更计划配置')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-select-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-plan-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">巡更计划：</label>
+            <div class="col-sm-8">
+                <input name="planName" class="form-control" type="text" placeholder="请输入巡更计划" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">巡更路线：</label>
+            <div class="col-sm-8">
+                <select name="pathId" class="form-control m-b" required>
+                    <option value="">--请选择--</option>
+                    <option th:each="xlPropertyPatrolPath : ${xlPropertyPatrolPathList}" th:text="${xlPropertyPatrolPath.pathName}" th:value="${xlPropertyPatrolPath.pathId}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">巡更员：</label>
+            <div class="col-sm-8">
+                <select name="userIds" class="form-control noselect2 selectpicker" data-none-selected-text="请选择巡更员" multiple required>
+                    <option th:each="user:${userList}" th:value="${user.userId}" th:text="${user.userName}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">生效日期范围：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="planStartTime" readonly required class="form-control" placeholder="开始时间" type="text">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="planEndTime" readonly required class="form-control" placeholder="结束时间" type="text">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                </div>
+                <!--错误提示-->
+                <span class="help-block m-b-none" style="display: none">
+                    <i class="fa fa-info-circle"></i>
+                    <span style="color: red">结束时间必须大于或等于开始时间</span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">巡更周期：</label>
+            <div class="col-sm-8">
+                <label>
+                    <span>按</span>
+                    <input name="planCycle" type="number" min="1" max="30" step="1" value="1"/>
+                    <span>天/组</span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">巡更时间：</label>
+            <div class="col-sm-8">
+                <div id="selectcycle"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">巡更计划描述：</label>
+            <div class="col-sm-8">
+                <textarea name="planRemark" class="form-control" required></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: bootstrap-select-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/property/patrol/plan"
+    $("#form-plan-add").validate({
+        //校验巡更路计划唯一性
+        onkeyup: false,
+        rules: {
+            planName: {
+                remote: {
+                    url: prefix + "/checkPlanNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "planName": function () {
+                            return $.common.trim($("input[name=planName]").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            }
+        },
+        messages: {
+            "planName": {
+                remote: "该巡更计划已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        //开始时间
+        let startTime = $('input[name=planStartTime]').val();
+        //结束时间
+        let endTime = $('input[name=planEndTime]').val();
+        if(compareDate(startTime,endTime) > 0){
+            //开始时间大于结束时间
+            $('.help-block').css('display','block');
+        }else{
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-plan-add').serialize());
+            }
+        }
+    }
+
+    $("input[name='planStartTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "2",
+        autoclose: true
+    });
+
+    $("input[name='planEndTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "2",
+        autoclose: true
+    });
+
+    //清空日期输入框
+    $(".glyphicon-remove").click(function(){
+        $($($(this).parent()).prev()).val("");
+    });
+
+    //比较日期
+    function compareDate(str1, str2){
+        var reg = /[^\d]+/;
+        var arr1 = str1.split(reg);
+        var arr2 = str2.split(reg);
+        var d1 = new Date(arr1[0],arr1[1],arr1[2]);
+        var d2 = new Date(arr2[0],arr2[1],arr2[2]);
+        return d1 - d2;
+    }
+
+    //巡更时间
+    $(document).ready(function(){
+        let hour =
+            [0,1,2,3,4,5,6,7,8, 9,10,11,12,13,14,15,16, 17,18,19,20,21,22,23];
+        let optionHour = [];
+        hour.forEach(function(value, index, array){
+            let str = '' +
+                '<label class="check-box">\n' +
+                '\t<input name="planCycleTiming" type="checkbox" value="'+value+'">&nbsp;'+value+':00'+'\n' +
+                '</label>';
+            optionHour.push(str)
+        })
+        $('#selectcycle').html(optionHour);
+    });
+</script>
+</body>
+</html>

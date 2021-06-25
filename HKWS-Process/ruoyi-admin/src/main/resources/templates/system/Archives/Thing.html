@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang = "zh" xmlns:th = "http://www.thymeleaf.org" xmlns:shiro = "http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset = "UTF-8" />
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0" />
+    <title>数智闲林·统一门户管理平台</title>
+    <link th:href = "@{/layui/css/layui.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/bootstrap.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/icon/iconfont.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/font-awesome.min.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/public.css}" rel = "stylesheet" />
+    <link th:href = "@{/css/Thing.css}" rel = "stylesheet" />
+
+    <script>
+        //rem布局动态更改html
+        (function (win) {
+            var tid;
+
+            function refreshRem() {
+                let designSize = 1920;
+                let html = document.documentElement;
+                let wW = html.clientWidth;
+                let rem = (wW * 100) / designSize;
+                document.documentElement.style.fontSize = rem + "px";
+            }
+
+            win.addEventListener(
+                "resize",
+                function () {
+                    clearTimeout(tid);
+                    tid = setTimeout(refreshRem, 100);
+                },
+                false
+            );
+            win.addEventListener(
+                "pageshow",
+                function (e) {
+                    if (e.persisted) {
+                        clearTimeout(tid);
+                        tid = setTimeout(refreshRem, 100);
+                    }
+                },
+                false
+            );
+
+            refreshRem();
+        })(window);
+    </script>
+</head>
+<body>
+<div class = "mediaCont">
+<div th:insert="common/header :: header"></div>
+<div th:include="common/sidebar::sidebar(activeUri='thing')" class = "nav_sider"></div>
+</div>
+<div class = "mediaCont mediaCenter">
+<div class = "container-fluid nav-stacked Thing-nav" id="exportDiv">
+    <div class = "thingTab layui-row">
+        <ul class = "trend-Tabtile thingTitle layui-row" id = "dataTab">
+            <li class = "active" data-type="day">近一天</li>
+            <li class = "" data-type="week">近一周</li>
+            <li class = "" data-type="month">近一月</li>
+            <li class = "" data-type="year">近一年</li>
+        </ul>
+        <div class="trend_operation">
+            <ul class = "operationLeft operationRight">
+                <li class="operationActive" title="图表"><i class = "iconfont">&#xe60f;</i></li>
+                <li title = "报表" onclick="goToReport()"><i class = "iconfont">&#xe691;</i></li>
+            </ul>
+            <ul class="operationRight">
+                <li title = "刷新" onclick="javaScript:location.reload();"><i class = "fa fa-refresh" ></i></li>
+                <li title = "导出" onclick="exportPdf()"><i class = "fa fa-download"></i></li>
+            </ul>
+        </div>
+
+    </div>
+    <div class = "layui-row thing-title">
+
+        <div class = "layui-col-md8">
+            <div class = "layui-row" style = "height: 13vh">
+                <div class = "layui-col-md3 thing-total">
+                    <p>
+                        <i class="iconfont">&#xe6ad;</i>
+                        <span>事件总数</span>
+                        <i class="iconfont explain" data-toggle = "tooltip" data-trigger="hover" data-placement = "bottom" title = "通过智能上报和人工上报发现的事件数">&#xe623;</i>
+                    </p>
+                    <div class = "thing-num">
+                        <b class="thing-count"></b>
+                        <p class="last-week-thing-rate"></p>
+                    </div>
+                </div>
+                <div class = "layui-col-md3 thing-total">
+                    <p>
+                        <i class = "iconfont">&#xe601;</i>
+                        <span>完成总数</span>
+                        <i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "已处置完毕的事件数">&#xe623;</i>
+                    </p>
+                    <div class = "thing-num">
+                        <b class="complete-count"></b>
+                        <p class="last-week-complete-rate"></p>
+                    </div>
+                </div>
+                <div class = "layui-col-md3 thing-total">
+                    <p>
+                        <i class = "iconfont">&#xe600;</i>
+                        <span>流转率</span>
+                        <i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "已进入调度处置环节的事件数/事件总数">&#xe623;</i>
+                    </p>
+                    <div class = "thing-num">
+                        <b class="thing-turnover-rate-count"></b>
+                        <p class="last-week-thing-turnover-rate"></p>
+                    </div>
+                </div>
+                <div class = "layui-col-md3 thing-total">
+                    <p>
+                        <i class = "iconfont">&#xe60c;</i>
+                        <span>处置率</span>
+                        <i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "事件完成总数/事件总数">&#xe623;</i>
+                    </p>
+                    <div class = "thing-num">
+                        <b class="thing-treatment-rate-count"></b>
+                        <p class="last-week-thing-treatment-rate"></p>
+                    </div>
+                </div>
+            </div>
+            <div class = "layui-row thing-trend">
+                <div class = "layui-row" style = "height: 15%">
+                    <div class = "layui-col-md6 trend-title">
+                        <p>事件趋势分析<i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "本日、本周、本月发生预警事件时段趋势图">&#xe623;</i></p>
+                    </div>
+<!--                    <div class = "layui-col-md6 trend-tab">-->
+<!--                        <ul class = "layui-row trend-Tabtile" id="qushi">-->
+<!--                            <li class = "layui-col-md4 active">-->
+<!--                                本日-->
+<!--                            </li>-->
+<!--                            <li class = "layui-col-md4">本周</li>-->
+<!--                            <li class = "layui-col-md4">本月</li>-->
+<!--                        </ul>-->
+<!--                        <div class = "thing-data">-->
+<!--                            <input-->
+<!--                                    type = "text"-->
+<!--                                    class = "layui-input"-->
+<!--                                    id = "day-range"-->
+<!--                                    readonly-->
+<!--                                    placeholder = "请选择日期范围"-->
+<!--                            />-->
+<!--                            <i class = "iconfont">&#xe616;</i>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+                <div
+                        class = "layui-row"
+                        style = "height: 80%"
+                >
+                    <div
+                            class = ""
+                            id = "total"
+                            style = "width: 100%; height: 100%"
+                    ></div>
+                </div>
+            </div>
+        </div>
+        <div class = "layui-col-md4" style = "">
+            <div class = "layui-row  empowerment">
+                <div class = "layui-row thing-empowerment">
+                    <div class = "layui-col-md6 trend-title">
+                        <p>赋能流转分析<i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "近一天、近一周、近一月、近一年预警事件处置节点情况分析图">&#xe623;</i></p>
+                    </div>
+                    <!--                    <div class = "layui-col-md6 trend-tab">-->
+                    <!--                        <ul class = "trend-Tabtile layui-row " id = "funeng">-->
+                    <!--                            <li class = "layui-col-md4 active">本日</li>-->
+                    <!--                            <li class = "layui-col-md4">本周</li>-->
+                    <!--                            <li class = "layui-col-md4">本月</li>-->
+                    <!--                        </ul>-->
+                    <!--                    </div>-->
+                </div>
+                <div
+                    class = "layui-row"
+                    style = "height: 85%"
+                >
+                    <div
+                        class = ""
+                        id = "purchase"
+                        style = "width: 100%; height: 100%"
+                    ></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class = "layui-row testing">
+        <div class = "layui-col-md4 testing-ting">
+            <div class = "layui-row thing-empowerment">
+                <div class = "layui-col-md6 trend-title">
+                    <p>事件处置分析<i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "近一天、近一周、近一月、近一年预警事件处置个数数情况分析图">&#xe623;</i></p>
+                </div>
+                <div class = "layui-col-md6 trend-tab">
+
+                    <ul class = "sortCenter" id = "fenxi">
+                        <li class = "active">
+                            共治率
+                            <div class = "echartsSort">
+                                <i class = "iconfont sortUp">&#xe610;</i>
+                                <i class = "iconfont sortDown">&#xe611;</i>
+                            </div>
+                        </li>
+                        <li
+                            class = ""
+                            style = ""
+                        >
+                            流转率
+                            <div class = "echartsSort">
+                                <i class = "iconfont sortUp">&#xe610;</i>
+                                <i class = "iconfont sortDown">&#xe611;</i>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class = "layui-row"
+                style = "height: 85%"
+            >
+                <div
+                    class = ""
+                    id = "analysis"
+                    style = "width: 100%; height: 100%"
+                ></div>
+            </div>
+        </div>
+        <div class = "layui-col-md4 testing-ting">
+            <div class = "layui-row thing-empowerment">
+                <div class = "layui-col-md4 trend-title">
+                    <p>事件类型分析<i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "近一天、近一周、近一月、近一年预警事件所属类型情况分析图">&#xe623;</i></p>
+                </div>
+<!--                <div class = "layui-col-md8 trend-tab">-->
+<!--                    <ul class = "trend-Tabtile layui-row" id="tongji">-->
+<!--                        <li class = "layui-col-md4 active">本日</li>-->
+<!--                        <li class = "layui-col-md4">本周</li>-->
+<!--                        <li class = "layui-col-md4">本月</li>-->
+<!--                    </ul>-->
+<!--                    <form class = "layui-form">-->
+<!--                        <select  name = "" lay-verify = "" id="dept-name-select" lay-filter="college" class="select">-->
+<!--                            <option value = "" >请选择社区</option>-->
+<!--                        </select>-->
+<!--                    </form>-->
+<!--                </div>-->
+            </div>
+            <div
+                    class = "layui-row"
+                    style = "height: 85%"
+            >
+                <div
+                        class = ""
+                        id = "Statistics"
+                        style = "width: 100%; height: 100%"
+                ></div>
+            </div>
+        </div>
+        <div class = "layui-col-md4 testing-ting">
+
+            <div class = "layui-row thing-empowerment">
+                <div class = "layui-col-md3 trend-title">
+                    <p>事件分布分析<i class = "iconfont explain" data-toggle = "tooltip" data-trigger = "hover" data-placement = "bottom" title = "近一天、近一周、近一月、近一年预警事件所属辖区情况分析图">&#xe623;</i></p>
+                </div>
+                <div class = "layui-col-md9 trend-tab">
+                    <ul class = "sortCenter distributionAnalysis layui-col-md7">
+                        <li class = "" data-id="count">
+                            发生数
+                            <div class = "echartsSort">
+                                <i class = "iconfont sortUp">&#xe610;</i>
+                                <i class = "iconfont sortDown">&#xe611;</i>
+                            </div>
+                        </li>
+                        <li
+                            class = ""
+                            style = ""
+                            data-id="transfer"
+                        >
+                            流转率
+                            <div class = "echartsSort">
+                                    <i class = "iconfont sortUp">&#xe610;</i>
+                                    <i class = "iconfont sortDown">&#xe611;</i>
+                            </div>
+                        </li>
+                        <li
+                            class = ""
+                            style = ""
+                            data-id="governance"
+                        >
+                            共治率
+                            <div class = "echartsSort">
+                                    <i class = "iconfont sortUp">&#xe610;</i>
+                                    <i class = "iconfont sortDown">&#xe611;</i>
+                            </div>
+                        </li>
+                    </ul>
+                    <form class = "layui-form layui-col-md5" style="margin-left: 10px;">
+                        <select  name = "" lay-verify = "" lay-filter="college" class="select" id="region-name-select">
+                            <option value = "" >全部社区</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div
+                class = "layui-row "
+                style = "height: 87%"
+            >
+                <div
+                    class = ""
+                    id = "testing"
+                    style = "width: 100%; height: 100%"
+                ></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+
+<script th:src = "@{/layui/layui.js}"></script>
+<script th:src = "@{/js/echarts.min.js}"></script>
+<script th:src="@{/js/export-tools/html2canvas.min.js}"></script>
+<script th:src="@{/js/export-tools/jspdf.min.js}"></script>
+
+<!--tab切换数据-->
+<script>
+    var datazoomStart ='';
+    var regionCode = "";
+    var dateType = "";
+    var sortItem = "";
+    var sort = "";
+    var form;
+    //事件趋势 日期范围查询
+    layui.use(["laydate", "element", "form"], function () {
+        /*var laydate = layui.laydate;
+        var element = layui.element;*/
+        form = layui.form;
+        /*$('#strongBase').on('click', function () {
+            layer.msg('暂未开放')
+        });
+        $('#zongzhi').on('click', function () {
+            layer.msg('暂未开放')
+        });
+        $('#zhian').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#quyu').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#sheqing').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#minsheng').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#zhihui').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $('#pingtai').on('click', function () {
+            layer.msg('暂未开放')
+        })
+        $("#shugan").on('click',function () {
+            layer.msg('暂未开放');
+        })*/
+
+        //执行一个laydate实例
+        /*laydate.render({
+            elem: "#day-range", //指定元素
+            range: true, //范围选择
+            done:function (value, date, endDate) {
+                let startDateStr = date.year+"-"+date.month+"-"+date.date;
+                let endDateStr =  endDate.year+"-"+endDate.month+"-"+endDate.date;
+                //事件趋势 范围选择
+                $.ajax({
+                    url: "/system/archives/eventTrendByDate",
+                    data: {
+                        "startDate":startDateStr,
+                        "endDate":endDateStr
+                    },
+                    type: "get",
+                    success: function (data) {
+                        if (data.code == '0') {
+                            var total = echarts.init(document.getElementById("total"));
+                            var Toption = {
+                                tooltip: {
+                                    trigger: "axis",
+                                    axisPointer: {
+                                        type: "cross",
+                                    },
+                                },
+                                legend: {
+                                    top: "bottom",
+                                    itemWidth: 15,
+                                    itemHeight: 15,
+                                    textStyle: {
+                                        color: '#555'
+                                    }
+                                },
+                                grid: {
+                                    left: "5%",
+                                    top: "5%",
+                                    right: "5%",
+                                    bottom: "10%",
+                                    containLabel: true,
+                                },
+                                xAxis: {
+                                    type: "category",
+                                    axisLine: {
+                                        lineStyle: {
+                                            color: "#888",
+                                        },
+                                    },
+                                    axisTick: {
+                                        show: false,
+                                    },
+                                    axisLabel: {
+                                        formatter: function (params) {
+                                            var newParamsName = "";
+                                            var paramsNameNumber = params.length;
+                                            var provideNumber = 6; //一行显示几个字
+                                            var rowNumber = Math.ceil(
+                                                paramsNameNumber / provideNumber
+                                            );
+                                            if (paramsNameNumber > provideNumber) {
+                                                for (var p = 0; p < rowNumber; p++) {
+                                                    var tempStr = "";
+                                                    var start = p * provideNumber;
+                                                    var end = start + provideNumber;
+                                                    if (p == rowNumber - 1) {
+                                                        tempStr = params.substring(
+                                                            start,
+                                                            paramsNameNumber
+                                                        );
+                                                    } else {
+                                                        tempStr =
+                                                            params.substring(start, end) + "\n";
+                                                    }
+                                                    newParamsName += tempStr;
+                                                }
+                                            } else {
+                                                newParamsName = params;
+                                            }
+                                            return newParamsName;
+                                        },
+                                        textStyle: {
+                                            color: "#333",
+                                        },
+                                    },
+                                    //事件趋势时间
+                                    data: data.data.eventTrendDate,
+                                },
+                                yAxis: {
+                                    type: "value",
+                                    axisLine: {
+                                        show: false,
+                                    },
+                                    axisTick: {
+                                        show: false,
+                                    },
+                                    splitLine: {
+                                        show: true,
+                                        lineStyle: {
+                                            type: "dashed",
+                                        },
+                                    },
+                                    axisLabel: {
+                                        textStyle: {
+                                            color: "#333",
+                                        },
+                                    },
+                                    // boundaryGap: [0, 0.01],
+                                },
+                                color: ["#0070CC", "#2ACA96"],
+                                series: [
+                                    {
+                                        name: "店外违规事件",
+                                        type: "bar",
+                                        data: data.data.eventPlaceTypeTrends,
+                                        barGap: 0,
+                                        barWidth: 15,
+                                    },
+                                    {
+                                        name: "街面违规事件",
+                                        type: "bar",
+                                        data:  data.data.eventTrend,
+                                        barGap: 0,
+                                        barWidth: 15,
+                                    },
+                                ],
+                            };
+                            total.setOption(Toption);
+                        }
+                    }
+                })
+            }
+        });*/
+
+        //事件分布分析 社区选中
+        form.on("select(college)", function(data){
+            if(!("" == data.value)){
+                /*eventTypeByRegionName(data.value);*/
+                regionCode = data.value;
+                dateType = $('#dataTab li.active').data("type");
+                eventRegion(dateType,sortItem,sort,regionCode);
+            }
+        });
+    });
+
+    // 事件趋势echarts
+    $('#dataTab li').on('click', function () {
+        layui.use('form', function() {
+            regionCode = "";
+            var form = layui.form; //高版本建议把括号去掉，有的低版本，需要加()
+            //由于下拉框数据为动态加载，需添加下面这句，否则select重置不生效
+            $("#region-name-select option:first").prop('selected','selected');
+            form.render('select');
+        });
+        // 删除li的active
+        $('#dataTab li').removeClass('active');
+        // 给当前li添加active
+        $(this).addClass('active');
+        // 判断当前那个li被点击切换echarts数据
+        dateType = $(this).attr('data-type');
+        if ($('#dataTab li').is('.active')) {
+            eventCount(dateType);
+            eventTrend(dateType);
+            eventChange(dateType);
+            eventRegion(dateType);
+            eventType(dateType);
+            eventAnalysis(dateType);
+        }
+    });
+
+    //init 事件总数/完成总数/流转率/共治率
+    $(document).ready(function () {
+        dateType = "day";
+        regionNameOption();
+        eventCount(dateType);
+        eventTrend(dateType);
+        eventChange(dateType);
+        eventRegion(dateType);
+        eventType(dateType);
+        eventAnalysis(dateType);
+    });
+
+
+    function eventCount(dayType){
+        $.ajax({
+            url: "/system/archives/eventCount",
+            data: {
+                "type":dayType
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    let thingCount = data.data.thingCount;//事件总数
+                    let completeCount = data.data.completeCount;//完成总数
+                    let turnoverRate = data.data.turnoverRate;//流转率
+                    let handleRate = data.data.handleRate;//共治率
+                    let lastWeekThingRate = data.data.lastWeekThingRate;//事件总数比例
+                    let lastWeekCompleteRate = data.data.lastWeekCompleteRate;//完成总数比例
+                    let lastWeekThingTurnoverRate = data.data.lastWeekThingTurnoverRate;//流转率比例
+                    let lastWeekThingTreatmentRate = data.data.lastWeekThingTreatmentRate;//共治率比例
+                    $(".thing-count").html(thingCount);
+                    $(".complete-count").html(completeCount);
+                    $(".thing-turnover-rate-count").html(turnoverRate+'%');
+                    $(".thing-treatment-rate-count").html(handleRate+'%');
+                    $(".last-week-thing-rate").html(lastWeekThingRate);
+                    $(".last-week-complete-rate").html(lastWeekCompleteRate);
+                    $(".last-week-thing-turnover-rate").html(lastWeekThingTurnoverRate);
+                    $(".last-week-thing-treatment-rate").html(lastWeekThingTreatmentRate);
+                }
+            }
+        })
+    }
+
+    //事件趋势分析 本日/本周/本月
+    function eventTrend(dayType){
+        $.ajax({
+            url: "/system/archives/eventTrend",
+            data: {
+                "type":dayType
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    // console.log(data.data)
+                    var totalX = data.data.eventTrendDate;
+                    var totalY1 = data.data.eventTrend;//街面违规事件
+                    var totalY2 = data.data.eventPlaceTypeTrends;//店外违规事件
+                    if(totalY1.length==0){
+                        totalX.forEach(item=>{
+                            totalY1.push(0)
+                        })
+                    }
+                    if(totalY2.length==0){
+                        totalX.forEach(item=>{
+                            totalY2.push(0)
+                        })
+                    }
+                    // console.log(totalY1)
+                    var total = echarts.init(document.getElementById("total"));
+                    var Toption = {
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: {
+                                type: "cross",
+                            },
+                        },
+                        legend: {
+                            top: "bottom",
+                            itemWidth: 15,
+                            itemHeight: 15,
+                            textStyle: {
+                                color: '#555'
+                            }
+                        },
+                        grid: {
+                            left: "5%",
+                            top: "5%",
+                            right: "5%",
+                            bottom: "10%",
+                            containLabel: true,
+                        },
+                        xAxis: {
+                            type: "category",
+                            axisLine: {
+                                lineStyle: {
+                                    color: "#888",
+                                },
+                            },
+                            axisTick: {
+                                show: false,
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 30,
+                                textStyle: {
+                                    color: "#333",
+                                },
+                            },
+                            //事件趋势时间
+                            data: data.data.eventTrendDate,
+                        },
+                        yAxis: {
+                            type: "value",
+                            axisLine: {
+                                show: false,
+                            },
+                            axisTick: {
+                                show: false,
+                            },
+                            splitLine: {
+                                show: true,
+                                lineStyle: {
+                                    type: "dashed",
+                                },
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: "#333",
+                                },
+                            },
+                            // boundaryGap: [0, 0.01],
+                        },
+                        color: ["#0070CC", "#2ACA96"],
+                        series: [
+                            {
+                                name: "店外违规事件",
+                                type: "line",
+                                data: totalY2,
+                                smooth: true,
+                                itemStyle: {
+                                    borderWidth: 2,
+                                    color: {
+                                        type: "linear",
+                                        x: 0,
+                                        y: 0,
+                                        x2: 0,
+                                        y2: 1,
+                                        colorStops: [
+                                            {
+                                                offset: 0,
+                                                color: "rgba(0,112,204,0.5)", // 0% 处的颜色
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: "rgba(0,112,204,0.3)", // 100% 处的颜色
+                                            },
+                                        ],
+                                        global: false, // 缺省为 false
+                                    },
+                                },
+                                // symbolSize: 0,
+                                lineStyle: {
+                                    width: 2,
+                                    color: {
+                                        type: "linear",
+                                        x: 0,
+                                        y: 0,
+                                        x2: 1,
+                                        y2: 1,
+                                        colorStops: [
+                                            {
+                                                offset: 0,
+                                                color: "rgba(0,112,204)", // 0% 处的颜色
+                                            },
+                                            {
+                                                offset: 0.5,
+                                                color: "rgba(0,112,204)", // 0% 处的颜色
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: "rgba(0,112,204)", // 100% 处的颜色
+                                            },
+                                        ],
+                                        global: true, // 缺省为 false
+                                    },
+                                },
+                                areaStyle: [],
+                            },
+                            {
+                                name: "街面违规事件",
+                                type: "line",
+                                data: totalY1,
+                                smooth: true,
+                                itemStyle: {
+                                    borderWidth: 2,
+                                    color: {
+                                        type: "linear",
+                                        x: 0,
+                                        y: 0,
+                                        x2: 0,
+                                        y2: 1,
+                                        colorStops: [
+                                            {
+                                                offset: 0,
+                                                color: "rgba(66,202,154,0.5)", // 0% 处的颜色
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: "rgba(66,202,154,0.3)", // 100% 处的颜色
+                                            },
+                                        ],
+                                        global: false, // 缺省为 false
+                                    },
+                                },
+                                // symbolSize: 0,
+                                lineStyle: {
+                                    width: 2,
+                                    color: {
+                                        type: "linear",
+                                        x: 0,
+                                        y: 0,
+                                        x2: 1,
+                                        y2: 1,
+                                        colorStops: [
+                                            {
+                                                offset: 0,
+                                                color: "rgba(66,202,154)", // 0% 处的颜色
+                                            },
+                                            {
+                                                offset: 0.5,
+                                                color: "rgba(66,202,154)", // 0% 处的颜色
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: "rgba(66,202,154)", // 100% 处的颜色
+                                            },
+                                        ],
+                                        global: true, // 缺省为 false
+                                    },
+                                },
+                                areaStyle: [],
+                            },
+                        ],
+                    };
+                    total.setOption(Toption);
+                }
+            }
+        })
+    };
+
+    //赋能流转分析
+    function eventChange(dayType){
+        $.ajax({
+            url: "/system/archives/eventChange",
+            data: {
+                "type":dayType
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    // 赋能流转echarts
+                    var purchase = echarts.init(document.getElementById("purchase"));
+                    var Poption = {
+                        tooltip: {
+                            trigger: "item",
+                            formatter: function (params) {
+                                // console.log(params);
+                                var str =params.marker+params.name+'：'+params.value;
+                                return str;
+                            },
+                        },
+                        grid: {
+                            top: 5,
+                            left: 5,
+                            right: 5,
+                            bottom: 5,
+                        },
+                        color: ["#FEC400", "#0070CC", '#F98A65', "#2ACA96",],
+                        series: [
+                            {
+                                name: "赋能流转",
+                                type: "funnel",
+                                left: "10%",
+                                top: '5%',
+                                right: '15%',
+                                //x2: 80,
+                                bottom: '10%',
+                                // width: "80%",
+                                // height: {totalHeight} - y - y2,
+                                // min: 10,
+                                // max: 100,
+                                minSize: "0%",
+                                maxSize: "80%",
+                                sort: "descending",//倒序排列
+                                gap: 0,
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: "inside",
+                                        formatter: "{c}%",
+                                    },
+                                },
+                                labelLine: {
+                                    length: 10,
+                                    lineStyle: {
+                                        width: 1,
+                                        type: "solid",
+                                    },
+                                },
+                                itemStyle: {
+                                    borderColor: "#fff",
+                                    borderWidth: 0,
+                                },
+                                data: data.data.eventChangeRateVOS,
+                            },
+                            {
+                                name: "赋能流转",
+                                type: "funnel",
+                                left: "10%",
+                                top: '5%',
+                                right: '15%',
+                                //x2: 80,
+                                bottom: '10%',
+                                // width: "80%",
+                                // min: 10,
+                                // max: 100,
+                                minSize: "0%",
+                                maxSize: "80%",
+                                sort: "descending",
+                                gap: 0,
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        // itemStyle:{
+                                        color: "#333",
+                                        formatter: function (params) {
+                                            // console.log(params);
+                                            var str =
+                                                params.data.name +
+                                                "   " +
+                                                params.data.value;
+                                            return str;
+                                        },
+                                        // }
+                                    },
+                                },
+                                labelLine: {
+                                    length: 10,
+                                    lineStyle: {
+                                        width: 1,
+                                        type: "solid",
+                                        color: "#888",
+                                    },
+                                },
+                                itemStyle: {
+                                    borderColor: "#fff",
+                                    borderWidth: 0,
+                                },
+                                data: data.data.eventChangeVOS,
+                            },
+                        ],
+                    };
+                    purchase.setOption(Poption);
+                }
+            }
+        })
+    }
+
+    //事件分布分析
+    function eventRegion(dayType,item,sort,regionCode){
+        $.ajax({
+            url: "/system/archives/eventRegion",
+            data: {
+                "regionCode":regionCode,
+                "type":dayType,
+                "sortItem":item,
+                "sort":sort
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    var testing = echarts.init(document.getElementById("testing"));
+                    var toption = {
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: {
+                                // 坐标轴指示器，坐标轴触发有效
+                                type: "cross", // 默认为直线，可选为：'line' | 'shadow'
+                            },
+                            formatter:function (params) {
+                                // console.log(params);
+                                var str = params[0].name+'<br />';
+                                params.forEach(item=>{
+                                    // console.log(item)
+                                    if(item.seriesName=='事件发生数'){
+                                        str +=item.marker+ item.seriesName+'：'+item.value+ '<br />';
+                                    }else{
+                                        str += item.marker + item.seriesName + '：' + item.value + '%<br />';
+                                    }
+                                })
+                                return str;
+                            }
+                        },
+                        legend: {
+                            top: "bottom",
+                            itemWidth: 15,
+                            itemHeight: 15,
+                            textStyle: {
+                                color: '#555'
+                            }
+                        },
+                        grid: {
+                            top: 5,
+                            left: "3%",
+                            right: "4%",
+                            bottom: "8%",
+                            containLabel: true,
+                        },
+                        xAxis: {
+                            type: "value",
+                            axisLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: "#888",
+                                },
+                            },
+                            axisTick: {
+                                show: false,
+                            },
+                            splitLine: {
+                                show: true,
+                                lineStyle: {
+                                    type: "dashed",
+                                },
+                            },
+                        },
+                        yAxis: {
+                            type: "category",
+                            data: data.data.regionName,
+                            axisLine: {
+                                lineStyle: {
+                                    color: "#333",
+                                },
+                            },
+                            axisTick: {
+                                show: false,
+                            },
+                        },
+                        color: ['#FEC400',"#0070CC", "#2ACA96"],
+                        dataZoom: [
+                            {
+                                // type: "slider",
+                                type: "inside",//在内部缩放
+                                // minSpan: 45,//用于限制窗口大小的最小值
+                                show: true,//是否显示
+                                realtime: true,//拖动时，是否实时更新系列的视图
+                                width: "3%",
+                                start: 0,//数据窗口范围的起始百分比
+                                // end: 55,//数据窗口范围的结束百分比
+                                bottom: "0%",//组件离容器下侧的距离
+                                left: "0%",//组件离容器下侧的距离
+                                orient: 'vertical',//组件的布局方式
+                                minValueSpan: 4,//最小显示值
+                                maxValueSpan: 4,//最大显示值
+                            },
+                        ],
+                        series: [
+                            {
+                                name: "事件发生数",
+                                type: "bar",
+                                barGap: 0,
+                                data: data.data.eventCount,
+                                barWidth: 15,
+                            },
+                            {
+                                name: "流转率",
+                                type: "bar",
+                                // stack: "总量",
+                                data: data.data.transferRate,
+                                barWidth: 15,
+                            },
+                            {
+                                name: "共治率",
+                                type: "bar",
+                                // stack: "总量",
+                                data: data.data.governanceRate,
+                                barWidth: 15,
+                            },
+                        ],
+                    };
+                    console.log()
+                    var datazoom= toption.dataZoom;
+                    // console.log(datazoom)
+                    datazoom.forEach(item=>{
+                        // datazoomStart =
+                    })
+                    testing.setOption(toption);
+                }
+            }
+        })
+    }
+
+    //事件类型分析-社区列表加载
+    function regionNameOption(){
+        $.ajax({
+            url: "/system/archives/regionNames",
+            data: {
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    let selectDept = $("#region-name-select");
+                    data.data.forEach(function (o,i) {
+                        // selectDept.append("<option value = "+o.regionId+">"+o.regionName+"</option>");
+                        selectDept.append(new Option(o.regionName,o.regionId));
+                    })
+                }
+            }
+        })
+    }
+
+    //事件类型分析-社区选择
+    function eventTypeByRegionName(value){
+        $.ajax({
+            url: "/system/archives/regionEventTypeByRegion",
+            data: {
+                regionId:value
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    // 类型统计echarts
+                    var Soption = {
+                        // tooltip: {
+                        //     trigger: "item",
+                        //     formatter: "{a} <br/>{b}: {c} ({d}%)",
+                        // },
+                        grid: {
+                            top: "5%",
+                            left: 5,
+                            right: 5,
+                            bottom: "20%",
+                            containLabel: true,
+                        },
+                        legend: {
+                            // orient: 'or',
+                            top: "bottom",
+                            itemWidth: 15,
+                            itemHeight: 15,
+                        },
+                        color: ["#6395F9", "#2867CC", "#6587CB", "#B7CFFF", "#8CB2FF","#6395F9", "#2867CC","#6395F9"],
+                        series: [
+                            {
+                                name: "类型统计",
+                                type: "pie",
+                                radius: ["45%", "65%"],
+                                avoidLabelOverlap: true,
+                                label: {
+                                    show: true,
+                                    position: "outside",
+                                    formatter: "{d}% {b} ",
+                                },
+
+                                labelLine: {
+                                    show: true,
+                                },
+                                data: data.data,
+                            },
+                        ],
+                    };
+                    eventTypeEcharts.setOption(Soption);
+                    initEventTypeFlag = 1;
+                }
+            }
+        })
+    }
+
+    //事件类型分析
+    function eventType(dayType){
+        $.ajax({
+            url: "/system/archives/eventType",
+            data: {
+                "type":dayType
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    var Statistics = echarts.init(document.getElementById("Statistics"));
+                    var Soption = {
+                        tooltip: {
+                            trigger: "item",
+                            formatter: function (params) {
+                                var result = '';
+                                result += params.marker + params.data.name + '：' + params.data.value + '(' + params.percent + '%)';
+                                return result
+                            }
+                        },
+                        grid: {
+                            top: "5%",
+                            left: 5,
+                            right: 5,
+                            bottom: "20%",
+                            containLabel: true,
+                        },
+                        legend: {
+                            // orient: 'or',
+                            top: "bottom",
+                            itemWidth: 15,
+                            itemHeight: 15,
+                            textStyle: {
+                                color: '#555'
+                            }
+                        },
+                        color: ["#217FCD", "#44CCA0", "#F8C721", "#6E7E9B", "#F98A65"],
+                        series: [
+                            {
+                                name: "类型统计",
+                                type: "pie",
+                                radius: ["45%", "65%"],
+                                avoidLabelOverlap: true,
+                                label: {
+                                    show: true,
+                                    position: "outside",
+                                    formatter: "{d}% {b} ",
+                                },
+
+                                labelLine: {
+                                    show: true,
+                                },
+                                data: data.data,
+                            },
+                        ],
+                    };
+                    Statistics.setOption(Soption);
+                }
+            }
+        })
+    }
+
+    //事件处置分析
+    function eventAnalysis(type,item,sort){
+        $.ajax({
+            // url: "/system/archives/eventAnalysis",
+            url: "/system/archives/eventProcessAnalysis",
+            data: {
+                "type":type,
+                "sortItem":item,
+                "sort":sort
+            },
+            type: "get",
+            success: function (data) {
+                if (data.code == '0') {
+                    var analysis = echarts.init(document.getElementById("analysis"));
+                    var Aoption = {
+                        tooltip: {
+                            trigger: "axis",
+                            axisPointer: {
+                                // 坐标轴指示器，坐标轴触发有效
+                                type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+                            },
+                            formatter:function (params) {
+                                var str = params[0].marker+params[0].name+params[0].value;
+                                return str
+                            }
+                        },
+                        grid: {
+                            top: "5%",
+                            left: "5%",
+                            right: "5%",
+                            bottom: "3%",
+                            containLabel: true,
+                        },
+                        xAxis: [
+                            {
+                                type: "value",
+
+                                axisTick: {
+                                    show: false,
+                                },
+                                axisLine: {
+                                    show: false,
+                                },
+                                axisLabel: {
+                                    show: false,
+                                },
+                                splitLine: {
+                                    show: false,
+                                },
+                            },
+                        ],
+                        yAxis: [
+                            {
+                                type: "category",
+                                axisTick: {
+                                    show: false,
+                                },
+                                axisLine: {
+                                    show: false,
+                                },
+                                data:data.data.eventAnalysisTypeNames,
+                                axisLabel: {
+                                    color: '#333'
+                                }
+                            },
+                        ],
+                        dataZoom: [
+                            {
+                                type: "inside",//在内部缩放
+                                minSpan: 55,//用于限制窗口大小的最小值
+                                show: true,//是否显示
+                                realtime: true,//拖动时，是否实时更新系列的视图
+                                width: "3%",
+                                start: 0,//数据窗口范围的起始百分比
+                                end: 55,//数据窗口范围的结束百分比
+                                bottom: "0%",//组件离容器下侧的距离
+                                left: "0%",//组件离容器下侧的距离
+                                orient: 'vertical',//组件的布局方式
+                                minValueSpan: 4,//最小显示值
+                                maxValueSpan: 4,//最小显示值
+                            },
+                        ],
+                        series: [
+                            {
+                                name: "分析率",
+                                type: "bar",
+                                barWidth: "60%",
+                                stack: 1,
+                                data: data.data.eventAnalysisTypeCounts,
+                                barWidth: 10,
+                                label: {
+                                    show: true,
+                                    position: "right",
+                                },
+                                itemStyle: {
+                                    barBorderRadius: 15,
+                                    color: function (params) {
+                                        var colorList = [
+                                            "#FFEF8E",
+                                            "#FECD27",
+                                            "#C4CCE7",
+                                            "#7484A0",
+                                            "#A0F4CA",
+                                            "#4AD2A6",
+                                            "#97DDFF",
+                                            "#2785D3",
+                                        ];
+                                        return colorList[params.dataIndex];
+                                    },
+                                },
+                            },
+                        ],
+                    };
+                    analysis.setOption(Aoption);
+                }
+            }
+        })
+    }
+
+    setTimeout(() => {
+        var total = echarts.init(document.getElementById("total"));
+        var purchase = echarts.init(document.getElementById("purchase"));
+        var testing = echarts.init(document.getElementById("testing"));
+        var Statistics = echarts.init(document.getElementById("Statistics"));
+        var analysis = echarts.init(document.getElementById("analysis"));
+        window.onresize = function () {
+            purchase.resize();
+            testing.resize();
+            Statistics.resize();
+            total.resize();
+            analysis.resize();
+        };
+    }, 500);
+
+    // 设置提示框组件
+    $('[data-toggle="tooltip"]').tooltip();
+    // 处置分析排序
+    var sortId = 0;
+    $('#fenxi li').on('click', function () {
+        // 删除li的active
+        $('#fenxi li').removeClass('active');
+        // 给当前li添加active
+        $(this).addClass('active');
+        // 判断当前那个li被点击切换echarts数据
+        if ($('#fenxi li').is('.active')) {
+            // 控制其他排序按钮显示
+            $('#fenxi li').find('.iconfont').show()
+            if (sortId == 0) {
+                // 控制当前排序按钮显示隐藏
+                $(this).find('.sortDown').hide();
+                $(this).find('.sortUp').show();
+
+                sortId = 1;
+            } else {
+                $(this).find('.sortUp').hide();
+                $(this).find('.sortDown').show();
+                sortId = 0;
+            }
+
+        }
+    })
+    // 分布分析排序
+    var distributionAnalysis =0;
+    $('.distributionAnalysis li').on('click', function () {
+        dateType = $('#dataTab li.active').data("type");
+        // 删除li的active
+        $('.distributionAnalysis li').removeClass('active');
+        // 给当前li添加active
+        $(this).addClass('active');
+        // 判断当前那个li被点击切换echarts数据
+        if ($('.distributionAnalysis li').is('.active')) {
+            // 控制其他排序按钮显示
+            sortItem = $(this).attr("data-id");
+            $('.distributionAnalysis li').find('.iconfont').show()
+            if (distributionAnalysis == 0) {
+                sort = "DESC";
+                $(this).find('.sortDown').hide();
+                $(this).find('.sortUp').show();
+                distributionAnalysis = 1;
+                var html = $('#dataTab').children();
+                $.each(html,function(index, value, array){
+                    if(value.className == 'active'){
+                        eventRegion(dateType,sortItem,sort,regionCode);
+                        return;
+                    }
+                });
+            } else {
+                sort = "ASC";
+                $(this).find('.sortUp').hide();
+                $(this).find('.sortDown').show();
+                distributionAnalysis = 0;
+                var html = $('#dataTab').children();
+                $.each(html,function(index, value, array){
+                    if(value.className == 'active'){
+                        eventRegion(dateType,sortItem,sort,regionCode);
+                        return;
+                    }
+                });
+            }
+        }
+    })
+
+    function goToReport(){
+        location.href = '/system/archives/ThingEventList';
+    }
+
+    //导出pdf报告
+    function exportPdf() {
+        window.scrollTo(0, 0); // 避免内容缺失
+        html2canvas($('#exportDiv'), {
+            onrendered: function (canvas) {
+                let contentWidth = canvas.width;
+                let contentHeight = canvas.height;
+
+                //一页pdf显示html页面生成的canvas高度;
+                let pageHeight = (contentWidth / 595.28) * 841.89;
+                //未生成pdf的html页面高度
+                let leftHeight = contentHeight;
+                //pdf页面偏移
+                let position = 0;
+                //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+                let imgWidth = 555.28;
+                let imgHeight = (555.28 / contentWidth) * contentHeight;
+
+                let pageData = canvas.toDataURL("image/jpeg", 1.0);
+
+                let pdf = new jsPDF("", "pt", "a4");
+                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                //当内容未超过pdf一页显示的范围，无需分页
+                if (leftHeight < pageHeight) {
+                    pdf.addImage(pageData, "JPEG", 20, 0, imgWidth, imgHeight);
+                } else {
+                    while (leftHeight > 0) {
+                        pdf.addImage(
+                            pageData,
+                            "JPEG",
+                            20,
+                            position,
+                            imgWidth,
+                            imgHeight
+                        );
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
+                        //避免添加空白页
+                        if (leftHeight > 0) {
+                            pdf.addPage();
+                        }
+                    }
+                }
+                pdf.save("一事一档图表报告.pdf");
+            },
+        });
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlApplyInspectionMapper">
+    
+    <resultMap type="XlApplyInspection" id="XlApplyInspectionResult">
+        <result property="id"    column="id"    />
+        <result property="inspectionId"    column="inspection_id"    />
+        <result property="status"    column="status"    />
+        <result property="regionId"    column="region_id"    />
+        <result property="thingId"    column="thing_id"    />
+        <result property="createDate"    column="create_date"    />
+    </resultMap>
+
+    <sql id="selectXlApplyInspectionVo">
+        select id, inspection_id, status, region_id, thing_id, create_date from xl_apply_inspection
+    </sql>
+
+    <select id="selectXlApplyInspectionList" parameterType="XlApplyInspection" resultMap="XlApplyInspectionResult">
+        <include refid="selectXlApplyInspectionVo"/>
+        <where>  
+            <if test="inspectionId != null "> and inspection_id = #{inspectionId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="regionId != null  and regionId != ''"> and region_id = #{regionId}</if>
+            <if test="thingId != null  and thingId != ''"> and thing_id = #{thingId}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlApplyInspectionById" parameterType="Long" resultMap="XlApplyInspectionResult">
+        <include refid="selectXlApplyInspectionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertXlApplyInspection" parameterType="XlApplyInspection" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_apply_inspection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inspectionId != null ">inspection_id,</if>
+            <if test="status != null ">status,</if>
+            <if test="regionId != null  and regionId != ''">region_id,</if>
+            <if test="thingId != null  and thingId != ''">thing_id,</if>
+            <if test="createDate != null ">create_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inspectionId != null ">#{inspectionId},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="regionId != null  and regionId != ''">#{regionId},</if>
+            <if test="thingId != null  and thingId != ''">#{thingId},</if>
+            <if test="createDate != null ">#{createDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlApplyInspection" parameterType="XlApplyInspection">
+        update xl_apply_inspection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inspectionId != null ">inspection_id = #{inspectionId},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="regionId != null  and regionId != ''">region_id = #{regionId},</if>
+            <if test="thingId != null  and thingId != ''">thing_id = #{thingId},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlApplyInspectionById" parameterType="Long">
+        delete from xl_apply_inspection where id = #{id}
+    </delete>
+
+    <delete id="deleteXlApplyInspectionByIds" parameterType="String">
+        delete from xl_apply_inspection where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

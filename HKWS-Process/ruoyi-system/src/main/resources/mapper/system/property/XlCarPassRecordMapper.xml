@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlCarPassRecordMapper">
+
+    <resultMap type="XlCarPassRecord" id="XlCarPassRecordResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="carType"    column="car_type"    />
+        <result property="passType"    column="pass_type"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="accessTime"    column="access_time"    />
+        <result property="carPhoto"    column="car_photo"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlCarPassRecordVo">
+        select record_id, car_number, car_type, pass_type, device_id, device_name, access_time, car_photo, del_flag, create_by, create_time, update_by, update_time from xl_car_pass_record
+    </sql>
+
+    <select id="selectXlCarPassRecordList" parameterType="XlCarPassRecord" resultMap="XlCarPassRecordResult">
+        <include refid="selectXlCarPassRecordVo"/>
+        <where>
+            <if test="carNumber != null  and carNumber != ''"> and car_number like concat('%', #{carNumber}, '%')</if>
+            <if test="carType != null "> and car_type = #{carType}</if>
+            <if test="passType != null "> and pass_type = #{passType}</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="params.beginAccessTime != null and params.beginAccessTime != ''"><!-- 开始时间检索 -->
+                AND date_format(access_time,'%y%m%d') &gt;= date_format(#{params.beginAccessTime},'%y%m%d')
+            </if>
+            <if test="params.endAccessTime != null and params.endAccessTime != ''"><!-- 结束时间检索 -->
+                AND date_format(access_time,'%y%m%d') &lt;= date_format(#{params.endAccessTime},'%y%m%d')
+            </if>
+            <if test="carPhoto != null  and carPhoto != ''"> and car_photo = #{carPhoto}</if>
+        </where>
+    </select>
+
+    <select id="selectXlCarPassRecordById" parameterType="Long" resultMap="XlCarPassRecordResult">
+        <include refid="selectXlCarPassRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertXlCarPassRecord" parameterType="XlCarPassRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into xl_car_pass_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">car_number,</if>
+            <if test="carType != null ">car_type,</if>
+            <if test="passType != null ">pass_type,</if>
+            <if test="deviceId != null  and deviceId != ''">device_id,</if>
+            <if test="deviceName != null  and deviceName != ''">device_name,</if>
+            <if test="accessTime != null ">access_time,</if>
+            <if test="carPhoto != null  and carPhoto != ''">car_photo,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">#{carNumber},</if>
+            <if test="carType != null ">#{carType},</if>
+            <if test="passType != null ">#{passType},</if>
+            <if test="deviceId != null  and deviceId != ''">#{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="accessTime != null ">#{accessTime},</if>
+            <if test="carPhoto != null  and carPhoto != ''">#{carPhoto},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlCarPassRecord" parameterType="XlCarPassRecord">
+        update xl_car_pass_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">car_number = #{carNumber},</if>
+            <if test="carType != null ">car_type = #{carType},</if>
+            <if test="passType != null ">pass_type = #{passType},</if>
+            <if test="deviceId != null  and deviceId != ''">device_id = #{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="accessTime != null ">access_time = #{accessTime},</if>
+            <if test="carPhoto != null  and carPhoto != ''">car_photo = #{carPhoto},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteXlCarPassRecordById" parameterType="Long">
+        delete from xl_car_pass_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteXlCarPassRecordByIds" parameterType="String">
+        delete from xl_car_pass_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+</mapper>

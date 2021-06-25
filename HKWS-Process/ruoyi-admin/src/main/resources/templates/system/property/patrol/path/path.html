@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业-巡更路线列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>巡更路线名称：</label>
+                            <input type="text" name="pathName" placeholder="请输入巡更路线名称查询"/>
+                        </li>
+                        <li>
+                            <label>巡更路线描述：</label>
+                            <input type="text" name="pathRemark" placeholder="请输入巡更路线描述查询"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary" onclick="$.operate.add()" shiro:hasPermission="system/property/patrol:path:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system/property/patrol:path:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <!--<a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system/property/patrol:path:remove">-->
+            <!--    <i class="fa fa-remove"></i> 删除-->
+            <!--</a>-->
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system/property/patrol:path:edit')}]];
+    var prefix = ctx + "system/property/patrol/path";
+    //数据字典
+    var pathStatus = [[${@dict.getType('property_patrol_status')}]]; //巡更计划状态
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            detailUrl: prefix + "/detail/{id}",
+            modalName: "物业-巡更路线",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'pathId',
+                    title: '序号',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'pathName',
+                    title: '巡更路线名称'
+                },
+                {
+                    field: 'pointNames',
+                    title: '巡更点',
+                    align: 'left',
+                    formatter: function(value, row, index){
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'pathStatus',
+                    title: '巡更路线状态',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return $.table.selectDictLabel(pathStatus, value)
+                    }
+                },
+                {
+                    field: 'patrolDuration',
+                    title: '巡更时长(分钟)'
+                },
+                {
+                    field: 'pathRemark',
+                    title: '巡更路线描述',
+                    align: 'left',
+                    formatter: function(value, row, index){
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'villageId',
+                    title: '小区id',
+                    visible: false
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.pathId + '\')"><i class="fa fa-search"></i>查看</a>&nbsp;');
+                        actions.push('<a class="exdeft' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.pathId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft" onclick="deleteRatrolPath(\'' + row.pathId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    //删除巡更路线
+    function deleteRatrolPath(pathId){
+        //第一次删除确认
+        $.modal.confirm("确定删除这条巡更路线吗？",function(){
+            let result = checkRel(pathId);
+            if(result){
+                //关联的巡更计划存在，第二次确认
+                $.modal.confirm("此操作会影响巡更计划的配置，确定删除该巡更路线吗",function(){
+                    removePath(pathId);
+                });
+            }else{
+                removePath(pathId);
+            }
+        });
+    }
+
+    //移除巡更路线
+    function removePath(pathId){
+        $.ajax({
+            url: prefix +  '/remove',
+            type: 'post',
+            data: {
+                'ids': pathId,
+            },
+            dataType: 'json',
+            success: function(res){
+                $.modal.msgReload("操作成功！", modal_status.SUCCESS);
+            }
+        });
+    }
+
+    //校验关联的巡更计划是否存在
+    function checkRel(pathId){
+        let result;
+        $.ajax({
+            url: prefix + '/checkRel',
+            type: 'post',
+            data: {
+                'pathId': pathId
+            },
+            dataType: 'json',
+            async:false, //使用同步请求，因为异步请求不能将返回值传给全局变量；
+            success: function(res){
+                if(res.data == 1){
+                    result = true;
+                }else{
+                    result = false;
+                }
+            }
+        });
+        return result;
+    }
+</script>
+</body>
+</html>

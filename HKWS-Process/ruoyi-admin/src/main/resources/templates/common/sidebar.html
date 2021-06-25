@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <footer th:fragment="sidebar">
+        <div class = "sidebar">
+            <ul class = "nav nav-pills nav-stacked nav-tabs" role = "tablist">
+                <li role = "presentation" th:class="${activeUri=='work'?'active':''}" >
+                    <a href = "/system/work">
+                        <i class="layui-icon layui-icon-home" style="color: #999;"></i>
+                        <span>工作概览</span>
+                    </a>
+                </li>
+                <li>
+                    <div class = "page-header">
+                        <small>档案库</small>
+                    </div>
+                </li>
+                <li role = "presentation" th:class="${activeUri=='thing'?'active':''}">
+                    <a href = "/system/archives/Thinglist">
+                        <i class="layui-icon layui-icon-note" style="color: #999;"></i>
+                        <span>一事一档</span>
+                    </a>
+                </li>
+                <li role = "presentation"  th:class="${activeUri=='field'?'active':''}">
+                    <a href = "/system/archives/Fieldlist">
+                        <i class="layui-icon layui-icon-form" style="color: #999;"></i>
+                        <span>一域一档</span>
+                    </a>
+                </li>
+                <li role = "presentation" th:class="${activeUri=='person'?'active':''}">
+                    <a href = "/system/archives/Personlist">
+                        <i class="layui-icon layui-icon-user" style="color: #999;"></i>
+                        <span>一人一档</span>
+                    </a>
+                </li>
+                <li role = "presentation" th:class="${activeUri=='stage'?'active':''}">
+                    <a href = "/system/archives/Stagelist">
+                        <i class="layui-icon layui-icon-date" style="color: #999;"></i>
+                        <span>一期一档</span>
+                    </a>
+                </li>
+                <!--<li>
+                    <div class = "page-header">
+                        <small>全域智治中心</small>
+                    </div>
+                </li>-->
+                <!--<li>
+                    <a href="http://172.16.100.11:8590/" target="_blank">
+                        <i class = "iconfont">&#xe7ea;</i>
+                        <span>数智闲林驾驶舱</span>
+                    </a>
+                </li>-->
+                <li>
+                    <div class = "page-header">
+                        <small>事处风控中心</small>
+                    </div>
+                </li>
+                <li role = "presentation" th:class="${activeUri=='event'?'active':''}">
+                    <a href = "/system/event">
+                        <i class = "iconfont">&#xe625;</i>
+                        <span>预警风控</span>
+                    </a>
+                </li>
+                <li role = "presentation" th:class="${activeUri=='eventRecord'?'active':''}">
+                    <a href = "/system/eventRecord">
+                        <i class = "iconfont">&#xe609;</i>
+                        <span>综合赋能</span>
+                    </a>
+                </li>
+
+                <!--<li>
+                    <div class = "page-header">
+                        <small>百场景</small>
+                    </div>
+                </li>
+                <li>
+                    <a href = "#">
+                        <i class = "icc8"></i>
+                        <span>环境美</span>
+                    </a>
+                </li>
+                <li>
+                    <a href = "#">
+                        <i class = "icc10"></i>
+                        <span>生活美</span>
+                    </a>
+                </li>
+                <li>
+                    <a href = "#">
+                        <i class = "icc9"></i>
+                        <span>产业美</span>
+                    </a>
+                </li>
+                <li>
+                    <a href = "#">
+                        <i class = "icc4"></i>
+                        <span>人文美</span>
+                    </a>
+                </li>
+                <li>
+                    <a href = "#">
+                        <i class = "icc1"></i>
+                        <span>治理美</span>
+                    </a>
+                </li>-->
+                <!-- <li>
+                     <div class="page-header">
+                         <i class="Iconfont">&#xe67a;</i>
+                         <small>百场景</small>
+                     </div>
+                 </li>-->
+            </ul>
+        </div>
+        </div>
+    </footer>
+</head>
+
+
+</html>

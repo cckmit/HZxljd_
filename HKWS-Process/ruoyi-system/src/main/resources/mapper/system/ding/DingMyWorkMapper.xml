@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ding.DingMyWorkMapper">
+
+	<resultMap type="HkActionProcess" id="HkActionProcessResult">
+		<id     property="id"     column="id"     />
+		<result property="actionChainId"     column="action_chain_id"     />
+		<result property="eventId"   column="event_id"   />
+		<result property="handlerUserId"   column="handler_user_id"   />
+		<result property="actionStandardId"     column="action_standard_id"     />
+		<result property="handlerOrder"     column="handler_order"      />
+		<result property="isComplete"     column="is_complete"      />
+		<result property="createUser"      column="create_user"       />
+		<result property="createTime"      column="create_time"       />
+		<result property="updateUser"      column="update_user"       />
+		<result property="updateTime"      column="update_time"       />
+		<result property="isGovernance"      column="is_governance"       />
+	</resultMap>
+
+	<!-- 统计待处理事件的总数(普通人员) -->
+	<select id="toDoCount" parameterType="map" resultType="int">
+
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		WHERE
+		 NOW() &lt; e.time_out
+		AND hap.handler_user_id = #{userId}
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		<if test="eventTitle!= null and eventTitle!=''">
+			AND e.event_title LIKE CONCAT('%',#{eventTitle},'%')
+		</if>
+		<if test="componentId!= null and componentId!=''">
+			AND e.component_id = #{componentId}
+		</if>
+		)
+
+	</select>
+
+	<!-- 统计已完成事件的总数(普通人员) -->
+	<!--<select id="completedCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		a.handler_user_id = #{userId} and
+		e.event_alert_status = 6
+		and a.return_flag = 0
+		<if test="nowDay!=null and nowDay!=''" >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+	</select>-->
+
+	<!-- 统计已完成事件的总数(普通人员) 处置事件页面选择未处置提交的事件也算到该用户的已处置事件列表-->
+	<!--此处以人的维度查询，只要参与过且非退回的事件都算当前人的已完成事件-->
+	<select id="completedCount" parameterType="map" resultType="int">
+		select count(1) FROM
+		(SELECT
+		DISTINCT
+		a.event_id AS eventId
+		FROM
+		hk_event_info AS a
+		LEFT JOIN hk_action_process AS b ON a.event_id = b.event_id
+		LEFT JOIN hk_event_process_record pr ON pr.event_id = a.event_id
+		and b.handler_user_id = pr.handler_index_code
+		WHERE
+		b.handler_user_id = #{userId}
+		and b.return_flag = 0
+		and (a.event_alert_status = 6 or pr.process_status = '4')
+		<if test="nowDay!=null and nowDay!=''" >
+			AND a.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		<if test="eventTitle!= null and eventTitle!=''">
+			AND a.event_title LIKE CONCAT('%',#{eventTitle},'%')
+		</if>
+		<if test="componentId!= null and componentId!=''">
+			AND a.component_id = #{componentId}
+		</if>
+		) tt
+	</select>
+
+
+	<!-- 统计已逾期事件的总数(普通人员) -->
+	<select id="overdueCount" parameterType="map" resultType="int">
+
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		WHERE
+		NOW() &gt; e.time_out
+		AND hap.handler_user_id = #{userId}
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		<if test="eventTitle!= null and eventTitle!=''">
+			AND e.event_title LIKE CONCAT('%',#{eventTitle},'%')
+		</if>
+		<if test="componentId!= null and componentId!=''">
+			AND e.component_id = #{componentId}
+		</if>
+		)
+
+	</select>
+
+	<!-- 统计待处理事件的总数(管理员) -->
+	<select id="adminToDoCount" parameterType="map" resultType="int">
+
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		LEFT JOIN sys_user u ON u.user_id = hap.handler_user_id
+		AND d.ho = hap.handler_order
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND NOW() &lt; e.time_out
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		)
+
+	</select>
+
+	<!-- 统计已完成事件的总数(管理员) -->
+	<select id="adminCompletedCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND
+		e.event_alert_status = 6
+		<if test="nowDay!=null and nowDay!=''" >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+
+	</select>
+
+	<!-- 统计已逾期事件的总数(普通人员) -->
+	<select id="adminOverdueCount" parameterType="map" resultType="int">
+		SELECT
+		count(1)
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		LEFT JOIN sys_user u ON u.user_id = hap.handler_user_id
+		AND d.ho = hap.handler_order
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND NOW() &gt; e.time_out
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		<if test="nowDay!=null and nowDay!='' " >
+			AND e.create_time  between #{lastDay} and #{nowDay}
+		</if>
+		)
+
+	</select>
+
+</mapper> 

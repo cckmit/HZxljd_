@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业-巡更记录列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>巡更路线：</label>
+                            <input type="text" name="planName" placeholder="请输入巡更路线查询"/>
+                        </li>
+                        <li>
+                            <label>巡更员：</label>
+                            <input type="text" name="userName" placeholder="请输入巡更员查询"/>
+                        </li>
+                        <li class="select-time">
+                            <label>巡更日期：</label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginPatrolStartTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endPatrolStartTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system/property/patrol:record:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/property/patrol/record";
+    var removeFlag = [[${@permission.hasPermi('system/property/patrol:record:remove')}]];
+    //数据字典
+    var patrolStatus = [[${@dict.getType('property_handle_status')}]];//状态
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            removeUrl: prefix + "/remove",
+            modalName: "物业-巡更记录",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'recordId',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'userName',
+                    title: '巡更员'
+                },
+                {
+                    field: 'pathName',
+                    title: '巡更路线'
+                },
+                {
+                    field: 'planName',
+                    title: '巡更计划'
+                },
+                {
+                    field: 'patrolTime',
+                    title: '巡更时间',
+                    align: 'center'
+                },
+                {
+                    field: 'patrolDuration',
+                    title: '巡更时长（分钟）',
+                    align: 'center'
+                },
+                {
+                    field: 'handleStatus',
+                    title: '巡更状态',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return $.table.selectDictLabel(patrolStatus, value)
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft" onclick="checkDetail(\''+row.recordId +'\')"><i class="fa fa-search"></i>详情</a>');
+                        actions.push('<a class="exdeft' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.recordId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    //查看详情
+    function checkDetail(recordId){
+        let url = prefix + "/detail/" + recordId;
+        $.modal.openTab("巡更详情", url, true);
+    }
+</script>
+</body>
+</html>

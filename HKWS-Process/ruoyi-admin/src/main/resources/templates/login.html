@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>数智闲林·统一门户管理平台</title>
+    <meta name="description" content="数智闲林项目">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link href="../static/css/login.min.css" th:href="@{/css/login.min.css}" rel="stylesheet"/>
+    <link href="../static/ruoyi/css/ry-ui.css" th:href="@{/ruoyi/css/ry-ui.css?v=4.0.0}" rel="stylesheet"/>
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="../static/favicon.ico" th:href="@{favicon.ico}"/>
+    <style type="text/css">
+        label.error { position:inherit;  }
+        html,body { font-size: 16px;height: 100%;width: 100%; }
+        .page{
+            height: 100%;
+            width: 100%;
+            display: -webkit-box;
+            /*Safari*/
+            display: -moz-box;
+            /*Firefox*/
+            display: -ms-flexbox;
+        }
+    </style>
+    <script>
+        if(window.top!==window.self){window.top.location=window.location};
+    </script>
+</head>
+
+<body class="signin">
+<div class="signin_body">
+    <div class="siginBody page" id = "item-0">
+        <div class = "signinpanel">
+            <div class = "row">
+                <div class = "col-sm-8">
+                    <div class = "signin-info">
+                        <div class = "logopanel m-b">
+                            "数智闲林"
+                            <!--<h1><img alt="[ 若依 ]" src="../static/ruoyi.png" th:src="@{/ruoyi.png}"></h1>-->
+                        </div>
+                        <div class = "m-b">统一门户管理平台</div>
+                        <!--<h4>欢迎使用 <strong>闲鹿工作流管理系统 v[[${version}]]</strong></h4>-->
+                        <!--<ul class="m-b">-->
+                        <!--<li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Activiti 6.x</li>-->
+                        <!--<li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> SpringBoot 2.x</li>-->
+                        <!--<li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Thymeleaf 3.x</li>-->
+                        <!--<li><i class="fa fa-arrow-circle-o-right m-r-xs"></i> Bootstrap 3.x</li>-->
+                        <!--</ul>-->
+                        <!--<div style="color: black;">-->
+                        <!--<h4>流程用户和用户组 (密码均为 123456)：</h4>-->
+                        <!--<ol>-->
+                        <!--<li>普通员工：chengxy 程序猿</li>-->
+                        <!--<li>部门领导：axianlu 一只闲鹿</li>-->
+                        <!--<li>人事：    rensm  人事喵</li>-->
+                        <!--</ol>-->
+                        <!--<h4>p.s. 流程管理请使用 admin 账号维护</h4>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+                <div class = "col-sm-4">
+                    <form id = "signupForm">
+                        <h4 class = "no-margins">登录：</h4>
+                        <!--<p class="m-t-md">你若不离不弃，我必生死相依</p>-->
+                        <input type = "text" name = "username" class = "form-control uname" placeholder = "用户名" value="admin"/>
+                        <input type = "password" name = "password" class = "form-control pword" placeholder = "密码" value="123456"/>
+                        <div class = "row m-t" th:if = "${captchaEnabled==true}">
+                            <div class = "col-xs-6">
+                                <input type = "text" name = "validateCode" class = "form-control code" placeholder = "验证码" maxlength = "5" autocomplete = "off">
+                            </div>
+                            <div class = "col-xs-6">
+                                <a href = "javascript:void(0);" title = "点击更换验证码">
+                                    <img th:src = "@{captcha/captchaImage(type=${captchaType})}" class = "imgcode" width = "85%" />
+                                </a>
+                            </div>
+                        </div>
+                        <div class = "checkbox-custom" th:classappend = "${captchaEnabled==false} ? 'm-t'">
+                            <input type = "checkbox" id = "rememberme" name = "rememberme">
+                            <label for = "rememberme">记住我</label>
+                        </div>
+                        <button class = "btn btn-success btn-block" id = "btnSubmit" data-loading = "正在验证登录，请稍后...">登录</button>
+                    </form>
+                </div>
+            </div>
+            <div class = "signup-footer">
+                <!--<div class="pull-left">-->
+                <!--&copy; 2019 All Rights Reserved. RuoYi, made with <a href="https://gitee.com/calvinhwang123/RuoYi-Process" target="_blank">一只闲鹿 🦌</a>.<br>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+    <!--<div class = "page" id = "item-1" style = "background-color: palegreen;">Prat 1</div>
+    <div class = "page" id = "item-2" style = "background-color: yellow;">Prat 2</div>
+    <div class = "page" id = "item-3" style = "background-color: #E91E63;">Prat 3</div>
+    <div class = "page" id = "item-4" style = "background-color: teal;">Prat 4</div>
+    <div class = "page" id = "item-5" style = "background: wheat;">Prat 5</div>
+    <div class = "page" id = "item-6" style = "background-color: yellowgreen;">Prat 6</div>-->
+</div>
+<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<!-- 全局js -->
+<script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<!-- 验证插件 -->
+<script src="../static/ajax/libs/validate/jquery.validate.min.js" th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script src="../static/ajax/libs/validate/messages_zh.min.js" th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script src="../static/ajax/libs/layer/layer.min.js" th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script src="../static/ajax/libs/blockUI/jquery.blockUI.js" th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script src="../static/ruoyi/js/ry-ui.js" th:src="@{/ruoyi/js/ry-ui.js?v=4.0.0}"></script>
+<script src="../static/ruoyi/login.js" th:src="@{/ruoyi/login.js}"></script>
+<script src="../static/js/public.js" th:src="@{/js/public.js}"></script>
+</body>
+<!--<script>
+    window.onresize = function () {
+        var scrWidth = window.innerWidth;
+        var scrHeight = window.innerHeight;
+        console.log(scrHeight,scrWidth)
+        if (scrWidth > 3860 && scrHeight >= 2160) {
+            // console.log('a')
+            $('body').css({
+                "width": '3860px',
+                "height": '2160px',
+                "margin": '0 auto'
+            })
+        }else if(scrWidth == 3860 && scrHeight == 1080){
+            $('body').css({
+                "width": '1920px',
+                "height": '1080px',
+                "margin": 'auto',
+            })
+        }else{
+            $('body').css({
+                "width": '100%',
+                "height": '100%',
+                "margin": '0',
+
+            })
+        }
+    }
+
+</script>-->
+<script>
+    $(function ($) {
+        $.fn.screen = function (options) {
+            var $this = this;//第一个div
+            var set = $.extend({
+                before: [],
+                after: []
+            }, options);
+
+            $this.css({
+                overflow: 'hidden',
+                position: 'absolute',
+                width: '1920px',
+                height: '100%',
+                left: '0',
+                top: '0'
+            });
+            var ch = $this.children('div');
+            $this.empty();
+            var secondDiv = $('<div></div>').css({
+                position: "relative",
+                left: '0',
+                top: '0',
+                width: '100%',
+                height: '100%',
+                visibility: "visible"
+            });
+            secondDiv.appendTo($this);
+            ch.css({
+                height: '100%',
+                width: '100%'
+            }).appendTo(secondDiv);
+            //console.log(navbarUl.height()); //打印0
+            //先将其添加到HTML文档流对象中，再设置其top位置，不然其位置计算会忽略掉其自身高度。
+            //console.log(navbarUl.height()); //打印182高度
+            var wheelName = navigator.userAgent.indexOf("Firefox") > 0 ? "DOMMouseScroll" : "mousewheel";
+
+            $this.bind(wheelName, function () {
+                var event = window.event || arguments.callee.caller.arguments[0];
+                //console.log(event);
+                var contentV = 0;
+                //统一线下滚动为负数
+                if (event.wheelDelta) {
+                    contentV = Math.floor(event.wheelDelta / 120) * 60;
+
+                } else if (event.detail) {
+                    contentV = -Math.floor(event.detail / 3) * 60;
+                }
+                //console.log(contentV);
+                if (contentV < 0) {
+                    //向下滚动为1，向上滚动为-1
+                    console.log("下滚动作");
+                    slide(1);
+                } else {
+                    console.log("上滚动作");
+                    slide(-1);
+                }
+            });
+
+            var currentPage = 0;//当前的页数
+            var lg = secondDiv.children("div").length;
+            //var sht=_i.children('div').outerHeight();//得到屏内容的高度。也就是每次要切屏时div向上向下移动的量。
+            var flag = true;
+
+            //n是1就向下切屏，n是-1就向上切屏。
+            function slide(n) {
+                if (!flag) {
+
+                    return;
+                }
+                flag = false;
+                if (n > 0 && currentPage < (lg - 1)) {
+                    console.log("执行下滚");
+                    if (set.before[currentPage]) {
+                        set.before[currentPage]();
+                    }
+                    currentPage++;
+                    animateDown(currentPage);
+
+                } else {
+                    if (n < 0 && currentPage > 0) {
+                        console.log("执行上滚")
+                        if (set.before[currentPage]) {
+                            set.before[currentPage]();
+                        }
+                        currentPage--;
+                        animateDown(currentPage);
+                    } else {
+                        flag = true;
+                    }
+                }
+            }
+
+            function animateDown(c) {
+                secondDiv.animate({top: -c * 100 + '%'}, 'slow', function () {
+                    if (set.after[c]) {
+                        set.after[c]();
+                    }
+                    flag = true;
+                });
+            }
+
+            //初始化容器高度
+            ch.height($(window).height());
+            //窗口改变，容器高度也改变
+            $(window).resize(function () {
+                ch.height($(window).height());
+            });
+        }
+    }(jQuery));
+
+
+</script>
+<script>
+    //引用方法
+    $(function () {
+        // $('.signin_body').screen();
+    });
+</script>
+</html>

@@ -1,0 +1,16 @@
+{
+  "id": "2174401",
+  "name": "HK",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "13598988",
+      "name": "党徽",
+      "font_class": "danghui",
+      "unicode": "e71a",
+      "unicode_decimal": 59162
+    }
+  ]
+}

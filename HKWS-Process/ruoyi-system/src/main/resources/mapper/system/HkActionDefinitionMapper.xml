@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkActionDefinitionMapper">
+
+	<resultMap type="HkActionDefinition" id="HkActionDefinitionResult">
+		<id     property="id"     column="id"     />
+		<result property="actionChainId"     column="action_chain_id"     />
+		<result property="handlerUserId"   column="handler_user_id"   />
+		<result property="actionStandardId"   column="action_standard_id"   />
+		<result property="handlerOrder"     column="handler_order"     />
+		<result property="createUser"     column="create_user"      />
+		<result property="createTime"      column="create_time"       />
+		<result property="updateUser"      column="update_user"       />
+		<result property="updateTime"      column="update_time"       />
+		<result property="isGovernance"      column="is_governance"       />
+		<result property="handlerPostId"      column="handler_post_id"       />
+	</resultMap>
+
+	<select id="findDefinitionByChainId" resultMap="HkActionDefinitionResult" parameterType="HkActionDefinition">
+		select * from hk_action_definition where action_chain_id=#{actionChainId}
+	</select>
+
+	<select id="findDefinitionByHandlerOrder" resultMap="HkActionDefinitionResult" parameterType="HkActionDefinition">
+		select * from hk_action_definition where action_chain_id=#{actionChainId} and handler_order = #{handlerOrder}
+	</select>
+	<insert id="insertHkActionDe" parameterType="HkActionDefinition">
+		insert into hk_action_definition(
+		action_chain_id,
+		handler_user_id,
+		action_standard_id,
+		handler_order,
+		create_user,
+		create_time,
+		is_governance
+		)values(
+		#{actionChainId},
+		#{handlerUserId},
+		#{actionStandardId},
+		#{handlerOrder},
+		#{createUser},
+		#{createTime},
+		#{isGovernance}
+		)
+	</insert>
+
+	<delete id="deleteDefinition" parameterType="HkActionDefinition">
+		delete from hk_action_definition where action_chain_id=#{actionChainId} AND handler_user_id=#{handlerUserId} AND action_standard_id=#{actionStandardId} AND handler_order= 1
+	</delete>
+	<delete id="deleteDefinitionTwo" parameterType="HkActionDefinition">
+		delete from hk_action_definition where action_chain_id=#{actionChainId} AND handler_user_id=#{handlerUserId} AND action_standard_id=#{actionStandardId} AND handler_order= 2
+	</delete>
+
+	<update id="updateDefinition" parameterType="HkActionDefinition">
+		update hk_action_definition set
+		handler_user_id=#{handlerUserId},
+		action_standard_id=#{actionStandardId},
+		update_user=#{updateUser},
+		update_time=#{updateTime},
+		is_governance=#{isGovernance}
+		where id=#{id}
+	</update>
+
+	<select id="selectDefinitionAndConfigAndSysUser" resultType="map">
+		select b.action_name as actionName,c.post_name AS postName,#{actionRegion} as actionRegion,a.handler_order as handlerOrder from hk_action_definition a
+		INNER JOIN hk_Action_Configuration b on a.action_standard_id = b.uuid
+		inner join sys_post c on a.handler_post_id = c.post_id
+		where a.action_chain_id = #{actionChainId}
+	</select>
+
+	<insert id="insertHkActionDeByList" parameterType="HkActionDefinition">
+		insert  into hk_action_definition (action_chain_id,action_standard_id,handler_order,create_user,create_time,handler_post_id)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.actionChainId},#{item.actionStandardId},#{item.handlerOrder},#{item.createUser},#{item.createTime},#{item.handlerPostId})
+		</foreach>
+	</insert>
+
+	<delete id="deleteDefinitionByChainIds">
+		delete from hk_action_definition where action_chain_id in
+		<foreach collection="array" item="chainId" separator="," open="(" close=")">
+			#{chainId}
+		</foreach>
+	</delete>
+</mapper>

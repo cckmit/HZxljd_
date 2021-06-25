@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改配置信息')" />
+	<th:block th:include="include :: select2-css" />
+	<style type="text/css">
+	</style>
+</head>
+<body class="gray-bg" style="font: 14px Helvetica Neue, Helvetica, PingFang SC, 微软雅黑, Tahoma, Arial, sans-serif !important;">
+    <section class="section-content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content" style="border-style:none;">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="#tab-basic" data-toggle="tab" aria-expanded="false">连接信息</a></li>
+                            <li class="active"><a href="#tab-field" data-toggle="tab" aria-expanded="true">字段映射</a></li>
+                            <li><a href="#tab-filter" data-toggle="tab" aria-expanded="false">同步条件配置</a></li>
+                            <li class="pull-right header">
+								<i class="fa fa-code"></i> 数据同步配置配置
+							</li>
+                        </ul>
+                        <form id="form-field-edit" class="form-horizontal" th:object="${source}">
+                        	<input name="sourceId" id ="sourceId" type="hidden" th:value="*{id}">
+                        	<input name="sourceAccess" id ="sourceAccess" type="hidden" th:value="*{sourceAccess}">
+							<input name="id" type="hidden" th:value="*{id}">
+	                        <div class="tab-content">
+	                            <!-- 基本信息 -->
+	                            <div class="tab-pane" id="tab-basic">
+					            	<div class="form-group">
+						                <label class="col-sm-3 control-label is-required"> 数据源名称:</label>
+						                <div class="col-sm-8">
+						                    <input class="form-control" type="text" name="sourceName" id="sourceName" th:field="*{sourceName}" onchange="aa()">
+						                </div>
+						            </div>
+						            <div class="form-group" >
+						                <label class="col-sm-3 control-label is-required ">接入方式:</label>
+						                <div class="col-xs-3">
+						                    <input class="form-control" type="text" name="sourceAccess" id="sourceAccess" th:field="*{sourceAccess}" readonly >
+						                </div>
+						                <div class="col-xs-5" id="parentId2" >
+						                    <input class="form-control" type="text" name="dataType" id="dataType" th:field="*{dataType}" readonly >
+						                </div>
+						
+						            </div>
+						            <div class="form-group " id="parentId1" >
+						                <label class="col-sm-3 control-label is-required ">地址：</label>
+						                <div class="col-sm-8">
+						                    <input class="form-control" type="text" name="sourceAddress" id="sourceAddress" th:field="*{sourceAddress}" required >
+						                </div>
+						            </div>
+						            <div class="form-group" id="sourceSynchronize1">
+						                <label class="col-sm-3 control-label is-required ">同步频率:</label>
+						                <div class="col-xs-3">
+						                    <select class="form-control" name="sourceSynchronize" id="sourceSynchronize" th:field="*{sourceSynchronize}">
+						                        <option value="按秒">按秒</option>
+						                        <option value="按分钟">按分钟</option>
+						                        <option value="按小时">按小时</option>
+						                        <option value="按整天">按整天</option>
+						                    </select>
+						                </div>
+						                <div class="col-xs-3">
+						                    <input class="form-control" type="text" name="sourceSynRateVal" id="sourceSynRateVal" th:field="*{sourceSynRateVal}" required >
+						                </div>
+						            </div>
+						            <div class="form-group" id="sourceHost1">
+						                <label class="col-sm-3 control-label is-required ">主机：</label>
+						                <div class="col-sm-3">
+						                    <input class="form-control" type="text" name="sourceHost" id="sourceHost" th:field="*{sourceHost}" required >
+						                </div>
+						                
+						                 <div class="" id="sourcePort1">
+							                <label class="col-sm-2 control-label is-required ">端口：</label>
+							                <div class="col-sm-3">
+							                    <input class="form-control" type="text" name="sourcePort" id="sourcePort" th:field="*{sourcePort}" required >
+							                </div>
+							            </div>
+						            </div>
+						           
+						            <div class="form-group" id="sourceUsername1">
+						                <label class="col-sm-3 control-label is-required ">用户名：</label>
+						                <div class="col-sm-3">
+						                    <input class="form-control" type="text" name="sourceUsername" id="sourceUsername" th:field="*{sourceUsername}" required >
+						                </div>
+						                
+						                <div class="" id="sourcePassword1">
+							                <label class="col-sm-2 control-label is-required ">密码：</label>
+							                <div class="col-sm-3">
+							                    <input class="form-control" type="text" name="sourcePassword" id="sourcePassword" th:field="*{sourcePassword}" required >
+							                </div>
+							            </div>
+						            </div>
+						            
+									<div class="form-group" id="sourceDBdiv">
+										<label class="col-sm-3 control-label is-required ">数据库名：</label>
+										<div class="col-sm-3">
+											<input class="form-control" type="text" name="sourceDbName" id="sourceDbName" th:field="*{sourceDbName}" required >
+										</div>
+										
+										<label class="col-sm-2 control-label is-required ">表名：</label>
+										<div class="col-sm-3">
+											<input class="form-control" type="text" name="sourceTableName" id="sourceTableName" th:field="*{sourceTableName}"  required >
+										</div>
+									</div>
+						
+						            <div class="form-group" style="display:none;">
+						                <label class="col-sm-3 control-label">修改人：</label>
+						                <div class="col-sm-3">
+						                   <input th:field="*{updateUser}" id="updateUser" class="form-control" readonly="readonly" type="text" name="updateUser"/>
+						                </div>
+						            </div>
+						            <div class="form-group">
+						                <label class="col-sm-3 control-label  ">备注：</label>
+						                <div class="col-sm-8">
+						                    <textarea class="form-control" type="text" name="sourceRemarks" id="sourceRemarks" th:field="*{sourceRemarks}" ></textarea>
+						                </div>
+						            </div>
+	                            </div>
+	                            
+	                            <!-- 字段信息 -->
+	                            <div class="tab-pane active" id="tab-field">
+	                                <div class="select-table table-striped" style="margin-top: 0px;padding-top: 0px;padding-bottom: 0px;">
+									    <table id="bootstrap-table"></table>
+									</div>
+	                            </div>
+	                            
+	                            <!-- 条件配置 -->
+	                            <div class="tab-pane" id="tab-filter">
+						            <div class="select-table table-striped" style="margin-top: 0px;padding-top: 0px;padding-bottom: 0px;">
+									    <table id="bootstrap-table-filter"></table>
+									</div>
+	                            </div>
+	                        </div>
+                        </form>
+                    </div>
+                </div>
+               <div class="box-footer">
+			       <div class="col-sm-offset-5 col-sm-6">
+			           <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+			           <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+			       </div>
+           	   </div>
+            </div>
+        </div>
+    </div>
+	</section>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: bootstrap-table-reorder-js" />
+    <script th:src="@{/js/jquery.tmpl.js}"></script>
+    <script type="text/javascript">
+    	var prefix = ctx + "monitor/source";
+    	
+    	var sourceAccess = $("#sourceAccess").val();
+    	
+	    function submitHandler() {
+	        if ($.validate.form()) {
+	        	$.operate.saveTab(prefix + "/saveField", $("#form-field-edit").serializeArray());
+	        }
+	    }
+        $(function() {
+            var options = {
+                id:"bootstrap-table",
+                url: prefix + "/fieldlist",
+                modalName: "数据接入字段配置",
+                pagination: false,
+		        showSearch: false,
+		        showRefresh: false,
+		        showToggle: false,
+		        showColumns: false,
+                columns: [
+                {
+                    field: 'id', 
+                    title: '编码',
+                    formatter: function (value, row, index) {
+                    	var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].id' id='id_%s' value='%s' readonly>", index, index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'sourceId', 
+                    title: '数据源编码',
+                    visible: false
+                },
+                {
+                    field: 'columnName', 
+                    title: '列名称'
+                },
+                {
+                    field: 'columnComment', 
+                    title: '列描述'
+                },
+                {
+                    field: 'columnType', 
+                    title: '列类型',
+                    visible: false
+                },
+                {
+                    field: 'javaType', 
+                    title: 'java类型',
+                    visible: false
+                },
+                {
+                    field: 'isRequired', 
+                    title: '是否必填',
+                    visible: false
+                },
+                {
+                    field: 'sourceColumnName', 
+                    title: '来源列名称',
+                    formatter: function (value, row, index) {
+                    	if(value == 'null' || value == null){
+                    		value ='';
+                    	}
+                    	if(sourceAccess == 'DB'){
+	                        var html = $.common.sprintf("<input class='form-control' type='text' placeholder='请选择源字段' onclick='selectSourceColumns(" + index + ")' name='fieldList[%s].sourceColumnName' id='sourceColumnName_%s' value='%s' readonly>", index, index, value);
+	                        return html;
+                    	}else{
+                    		var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].sourceColumnName' id='sourceColumnName_%s' value='%s'>", index, index, value);
+                            return html;
+                    	}
+                    }
+                },
+                {
+                    field: 'sourceColumnComment', 
+                    title: '来源列描述',
+                    formatter: function (value, row, index) {
+                    	if(value == 'null' || value == null){
+                    		value ='';
+                    	}
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].sourceColumnComment' id='sourceColumnComment_%s' value='%s'>", index, index, value);
+                        return html;
+                    }
+                },
+                {
+                    field: 'defaultValue', 
+                    title: '默认值',
+                    formatter: function (value, row, index) {
+                        var html = $.common.sprintf("<input class='form-control' type='text' name='fieldList[%s].defaultValue' id='defaultValue_%s' value='%s'>", index, index, '');
+                        return html;
+                    }
+                },
+                {
+                    field: 'sourceColumnType', 
+                    title: '来源列类型',
+                    visible:false
+                },
+                {
+                    field: 'sourceColumnJavaType', 
+                    title: '来源列java类型',
+                    visible: false
+                }]
+            };
+            $.table.init(options);
+            
+            
+            
+            var options = {
+            		id:"bootstrap-table-filter",
+                    url: ctx + "source/filter/list",
+                    pagination: false,
+    		        showSearch: false,
+    		        showRefresh: false,
+    		        showToggle: false,
+    		        showColumns: false,
+                    modalName: "数据接入条件",
+                    columns: [{
+                        checkbox: true
+                    },
+                    {
+                        field: 'id', 
+                        title: '编号',
+                        formatter: function (value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='filterList[%s].id' id='id%s' value='%s'>", index, index, value);
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'sourceId', 
+                        title: '数据源ID',
+                        visible: false
+                    },
+                    {
+                        field: 'filterTitle', 
+                        title: '条件名称',
+                        formatter: function (value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='filterList[%s].filterTitle' id='filterTitle%s' value='%s'>", index, index, value);
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'filterKey', 
+                        title: '过滤字段名称',
+                        formatter: function (value, row, index) {
+                        	if(value == 'null'){
+                        		value='';
+                        	}
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='filterList[%s].filterKey' id='filterKey%s' value='%s'>", index, index, value);
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'filterOperator', 
+                        title: '运算符',
+                        formatter: function (value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='filterList[%s].filterOperator' id='filterOperator%s' value='%s'>", index, index, value);
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'filterValue', 
+                        title: '过滤值',
+                        formatter: function (value, row, index) {
+                            var html = $.common.sprintf("<input class='form-control' type='text' name='filterList[%s].filterValue' id='filterValue%s' value='%s'>", index, index, value);
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'valueSource', 
+                        title: '值类型',
+                        visible: false
+                    },
+                    {
+                        field: 'isRequired', 
+                        title: '是否必填',
+                        visible: false
+                    },
+                    {
+                        field: 'filterDesc', 
+                        title: '源字段描述',
+                        visible: false
+                    }]
+                };
+                $.table.init(options);
+        });
+        
+        
+        
+        function show(){
+            var t=document.getElementById("sourceAccess").value;
+            var p1=document.getElementById("parentId1");
+            var p2=document.getElementById("parentId2");
+            var p3=document.getElementById("sourceHost1");
+            var p4=document.getElementById("sourcePort1");
+            var p5=document.getElementById("sourceUsername1");
+            var p6=document.getElementById("sourcePassword1");
+            var p7=document.getElementById("sourceSynchronize1");
+  /*           var excal=document.getElementById("excal");
+            var test=document.getElementById("test"); */
+            if(t=="API" ){
+                p1.style.display="";
+                p2.style.display="none";
+                p3.style.display="none";
+                p4.style.display="none";
+                p5.style.display="none";
+                p6.style.display="none";
+                p7.style.display="";
+                /* excal.style.display="none"; */
+                $("#sourceDBdiv").attr("style","display:none;");
+            }else{
+                p1.style.display="none";
+            }
+            if(t=="DB"){
+                p2.style.display="";
+                p3.style.display="";
+                p4.style.display="";
+                p5.style.display="";
+                p6.style.display="";
+                p7.style.display="";
+            /*     excal.style.display="none"; */
+                $("#sourceDBdiv").attr("style","display:block;");
+            } else{
+                p2.style.display="none";
+            }
+            if(t=="Excel"){
+                p1.style.display="none";
+                p2.style.display="none";
+                p3.style.display="none";
+                p4.style.display="none";
+                p5.style.display="none";
+                p6.style.display="none";
+                p7.style.display="none";
+              /*   excal.style.display=""; */
+               /*  test.style.display="none"; */
+                $("#sourceDBdiv").attr("style","display:none;");
+            }
+        }
+        show();
+        
+        
+        // 选择来源字段
+        function selectSourceColumns(columnId) {
+            table.set();
+            var url = ctx + "monitor/source/toSelectSourceColumnPage/" + $('#sourceId').val() + '/' + columnId;
+            $.modal.open("选择来源列", url);
+        }
+        
+    </script>
+</body>
+</html>
+
+

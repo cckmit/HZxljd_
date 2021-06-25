@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlPersonnelMapper">
+
+    <resultMap type="com.ruoyi.system.domain.XlPersonnel" id="XlPersonnelResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="nation"    column="nation"    />
+        <result property="nativePlace"    column="native_place"    />
+        <result property="nativeAddress"    column="native_address"    />
+        <result property="phone"    column="phone"    />
+        <result property="idcard"    column="idcard"    />
+        <result property="gender"    column="gender"    />
+        <result property="birthDate"    column="birth_date"    />
+        <result property="age"    column="age"    />
+        <result property="education"    column="education"    />
+        <result property="marry"    column="marry"    />
+        <result property="workUnit"    column="work_unit"    />
+        <result property="polity"    column="polity"    />
+        <result property="communist"    column="communist"    />
+        <result property="branch"    column="branch"    />
+        <result property="joinTime"    column="join_time"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="villageCode"    column="village_code"    />
+        <result property="villageName"    column="village_name"    />
+        <result property="building"    column="building"    />
+        <result property="unit"    column="unit"    />
+        <result property="room"    column="room"    />
+        <result property="address"    column="address"    />
+        <result property="personnelPhoto"    column="personnel_photo"    />
+        <result property="roomType"    column="room_type"    />
+        <result property="personnelType"    column="personnel_type"    />
+        <result property="liveType"    column="live_type"    />
+        <result property="householderRelation"    column="householder_relation"    />
+        <result property="propertyRight"    column="property_right"    />
+        <result property="roomCode"    column="room_code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+  <association property="xlWorkRecord" javaType="com.ruoyi.system.domain.XlWorkRecord">
+         <id property="workId"    column="work_id"    />
+        <result property="inspectDate"    column="inspect_date"    />
+        <result property="inspectUser"    column="inspect_user"    />
+        <result property="communityId"    column="community_id"    />
+        <result property="communityName"    column="community_name"    />
+        <result property="gridId"    column="grid_id"    />
+        <result property="gridName"    column="grid_name"    />
+        <result property="inspectResult"    column="inspect_result"    />
+        <result property="rectificationResult"    column="rectification_result"    />
+        <result property="inspectionType"    column="Inspection_type"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="inspectLoction"    column="inspect_loction"    />
+  </association>
+    </resultMap>
+
+    <sql id="selectXlPersonnelVo">
+        select id, name, nation, native_place, native_address, phone, idcard, gender, birth_date, age, education, marry, work_unit, polity, communist, branch, join_time, dept_id, dept_name, village_id, village_code, village_name, building, unit, room, address, personnel_photo, room_type, personnel_type, live_type, householder_relation, property_right, room_code, create_time, update_time from xl_personnel
+    </sql>
+
+    <select id="selectXlPersonnelList" parameterType="XlPersonnel" resultMap="XlPersonnelResult">
+        <include refid="selectXlPersonnelVo"/>
+        <where>
+        <if test="id != null  and id != ''"> and id = #{id}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="nation != null  and nation != ''"> and nation = #{nation}</if>
+            <if test="nativePlace != null  and nativePlace != ''"> and native_place like concat('%', #{nativePlace}, '%')</if>
+            <if test="nativeAddress != null  and nativeAddress != ''"> and native_address like concat('%', #{nativeAddress}, '%')</if>
+            <if test="phone != null  and phone != ''">and phone like concat('%', #{phone}, '%')</if>
+            <if test="idcard != null  and idcard != ''"> and idcard like concat('%', #{idcard}, '%')</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="birthDate != null "> and birth_date = #{birthDate}</if>
+            <if test="age != null  and age != ''"> and age = #{age}</if>
+            <if test="education != null  and education != ''"> and education = #{education}</if>
+            <if test="marry != null  and marry != ''"> and marry = #{marry}</if>
+            <if test="workUnit != null  and workUnit != ''"> and work_unit = #{workUnit}</if>
+            <if test="polity != null  and polity != ''"> and polity = #{polity}</if>
+            <if test="communist != null  and communist != ''"> and communist = #{communist}</if>
+            <if test="branch != null  and branch != ''"> and branch = #{branch}</if>
+            <if test="joinTime != null  and joinTime != ''"> and join_time = #{joinTime}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+            <if test="villageCode != null  and villageCode != ''"> and village_code = #{villageCode}</if>
+            <if test="villageName != null  and villageName != ''"> and village_name like concat('%', #{villageName}, '%')</if>
+            <if test="building != null  and building != ''"> and building = #{building}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="room != null  and room != ''"> and room = #{room}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="personnelPhoto != null  and personnelPhoto != ''"> and personnel_photo = #{personnelPhoto}</if>
+            <if test="roomType != null "> and room_type = #{roomType}</if>
+            <if test="personnelType != null  and personnelType != ''"> and personnel_type = #{personnelType}</if>
+            <if test="liveType != null "> and live_type = #{liveType}</if>
+            <if test="householderRelation != null "> and householder_relation = #{householderRelation}</if>
+            <if test="propertyRight != null "> and property_right = #{propertyRight}</if>
+            <if test="roomCode != null  and roomCode != ''"> and room_code = #{roomCode}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPersonnelById" parameterType="Long" resultMap="XlPersonnelResult">
+        <include refid="selectXlPersonnelVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlPersonnel" parameterType="XlPersonnel" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_personnel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="nation != null  and nation != ''">nation,</if>
+            <if test="nativePlace != null  and nativePlace != ''">native_place,</if>
+            <if test="nativeAddress != null  and nativeAddress != ''">native_address,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="idcard != null  and idcard != ''">idcard,</if>
+            <if test="gender != null  and gender != ''">gender,</if>
+            <if test="birthDate != null ">birth_date,</if>
+            <if test="age != null  and age != ''">age,</if>
+            <if test="education != null  and education != ''">education,</if>
+            <if test="marry != null  and marry != ''">marry,</if>
+            <if test="workUnit != null  and workUnit != ''">work_unit,</if>
+            <if test="polity != null  and polity != ''">polity,</if>
+            <if test="communist != null  and communist != ''">communist,</if>
+            <if test="branch != null  and branch != ''">branch,</if>
+            <if test="joinTime != null  and joinTime != ''">join_time,</if>
+            <if test="deptId != null  and deptId != ''">dept_id,</if>
+            <if test="deptName != null  and deptName != ''">dept_name,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="villageCode != null  and villageCode != ''">village_code,</if>
+            <if test="villageName != null  and villageName != ''">village_name,</if>
+            <if test="building != null  and building != ''">building,</if>
+            <if test="unit != null  and unit != ''">unit,</if>
+            <if test="room != null  and room != ''">room,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="personnelPhoto != null  and personnelPhoto != ''">personnel_photo,</if>
+            <if test="roomType != null ">room_type,</if>
+            <if test="personnelType != null  and personnelType != ''">personnel_type,</if>
+            <if test="liveType != null ">live_type,</if>
+            <if test="householderRelation != null ">householder_relation,</if>
+            <if test="propertyRight != null ">property_right,</if>
+            <if test="roomCode != null  and roomCode != ''">room_code,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="nation != null  and nation != ''">#{nation},</if>
+            <if test="nativePlace != null  and nativePlace != ''">#{nativePlace},</if>
+            <if test="nativeAddress != null  and nativeAddress != ''">#{nativeAddress},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="idcard != null  and idcard != ''">#{idcard},</if>
+            <if test="gender != null  and gender != ''">#{gender},</if>
+            <if test="birthDate != null ">#{birthDate},</if>
+            <if test="age != null  and age != ''">#{age},</if>
+            <if test="education != null  and education != ''">#{education},</if>
+            <if test="marry != null  and marry != ''">#{marry},</if>
+            <if test="workUnit != null  and workUnit != ''">#{workUnit},</if>
+            <if test="polity != null  and polity != ''">#{polity},</if>
+            <if test="communist != null  and communist != ''">#{communist},</if>
+            <if test="branch != null  and branch != ''">#{branch},</if>
+            <if test="joinTime != null  and joinTime != ''">#{joinTime},</if>
+            <if test="deptId != null  and deptId != ''">#{deptId},</if>
+            <if test="deptName != null  and deptName != ''">#{deptName},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="villageCode != null  and villageCode != ''">#{villageCode},</if>
+            <if test="villageName != null  and villageName != ''">#{villageName},</if>
+            <if test="building != null  and building != ''">#{building},</if>
+            <if test="unit != null  and unit != ''">#{unit},</if>
+            <if test="room != null  and room != ''">#{room},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="personnelPhoto != null  and personnelPhoto != ''">#{personnelPhoto},</if>
+            <if test="roomType != null ">#{roomType},</if>
+            <if test="personnelType != null  and personnelType != ''">#{personnelType},</if>
+            <if test="liveType != null ">#{liveType},</if>
+            <if test="householderRelation != null ">#{householderRelation},</if>
+            <if test="propertyRight != null ">#{propertyRight},</if>
+            <if test="roomCode != null  and roomCode != ''">#{roomCode},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPersonnel" parameterType="XlPersonnel">
+        update xl_personnel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="nation != null  and nation != ''">nation = #{nation},</if>
+            <if test="nativePlace != null  and nativePlace != ''">native_place = #{nativePlace},</if>
+            <if test="nativeAddress != null  and nativeAddress != ''">native_address = #{nativeAddress},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="idcard != null  and idcard != ''">idcard = #{idcard},</if>
+            <if test="gender != null  and gender != ''">gender = #{gender},</if>
+            <if test="birthDate != null ">birth_date = #{birthDate},</if>
+            <if test="age != null  and age != ''">age = #{age},</if>
+            <if test="education != null  and education != ''">education = #{education},</if>
+            <if test="marry != null  and marry != ''">marry = #{marry},</if>
+            <if test="workUnit != null  and workUnit != ''">work_unit = #{workUnit},</if>
+            <if test="polity != null  and polity != ''">polity = #{polity},</if>
+            <if test="communist != null  and communist != ''">communist = #{communist},</if>
+            <if test="branch != null  and branch != ''">branch = #{branch},</if>
+            <if test="joinTime != null  and joinTime != ''">join_time = #{joinTime},</if>
+            <if test="deptId != null  and deptId != ''">dept_id = #{deptId},</if>
+            <if test="deptName != null  and deptName != ''">dept_name = #{deptName},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="villageCode != null  and villageCode != ''">village_code = #{villageCode},</if>
+            <if test="villageName != null  and villageName != ''">village_name = #{villageName},</if>
+            <if test="building != null  and building != ''">building = #{building},</if>
+            <if test="unit != null  and unit != ''">unit = #{unit},</if>
+            <if test="room != null  and room != ''">room = #{room},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="personnelPhoto != null  and personnelPhoto != ''">personnel_photo = #{personnelPhoto},</if>
+            <if test="roomType != null ">room_type = #{roomType},</if>
+            <if test="personnelType != null  and personnelType != ''">personnel_type = #{personnelType},</if>
+            <if test="liveType != null ">live_type = #{liveType},</if>
+            <if test="householderRelation != null ">householder_relation = #{householderRelation},</if>
+            <if test="propertyRight != null ">property_right = #{propertyRight},</if>
+            <if test="roomCode != null  and roomCode != ''">room_code = #{roomCode},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlPersonnelById" parameterType="Long">
+        delete from xl_personnel where id = #{id}
+    </delete>
+
+    <delete id="deleteXlPersonnelByIds" parameterType="String">
+        delete from xl_personnel where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectXlPersonnelByIdcard" resultType="com.ruoyi.system.domain.XlPersonnel">
+        select * from xl_personnel where idcard = #{idcard}
+    </select>
+
+    <select id="selectXlPersonnelInIds" resultMap="XlPersonnelResult" parameterType="string">
+        <include refid="selectXlPersonnelVo"></include>
+        where id in <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+    </foreach>
+    </select>
+
+
+
+    <select id="queryPersonCount" resultType="java.lang.Integer">
+        select count(*) from xl_personnel
+        <where>
+            1 = 1
+            <if test="nativePlace != null and nativePlace !=''">
+                and native_place like concat('%', #{nativePlace}, '%')
+            </if>
+            <if test="gender != null and gender !=''">
+                and gender = #{gender}
+            </if>
+            <if test="age != null and age !=''">
+                and age = #{age}
+            </if>
+            <if test="polity != null and polity !=''">
+                and polity = #{polity}
+            </if>
+        </where>
+    </select>
+    <select id="queryLiuPopulation" resultType="java.lang.Integer">
+        select count(*) from xl_personnel where live_type = 1
+    </select>
+    <select id="queryHuPopulation" resultType="java.lang.Integer">
+        select count(*) from xl_personnel where live_type = 2
+    </select>
+
+    <select id="queryPersonCountAll" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from xl_personnel
+        <where>
+            1 = 1
+            <if test="housingEstate != null and housingEstate !=''">
+                and village_name like concat('%', #{housingEstate}, '%')
+            </if>
+            <if test="liveType != null and liveType !=''">
+                and live_type =#{liveType}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryPersonHu" resultMap="XlPersonnelResult" parameterType="java.util.Map">
+        select * from xl_personnel
+        <where>
+            1 = 1
+            <if test="name != null and name !=''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            and live_type = 2
+        </where>
+    </select>
+    <select id="queryPersonVillageCode" resultType="java.lang.String" parameterType="java.lang.Integer">
+        select village_code from xl_personnel where id = #{nameId}
+    </select>
+
+    <select id="queryPersonAllList" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from xl_personnel
+        <where>
+            1 = 1
+            <if test="nativePlace != null and nativePlace !=''">
+                and native_place like concat('%', #{nativePlace}, '%')
+            </if>
+            <if test="phone != null and phone !=''">
+                and phone like concat('%', #{phone}, '%')
+            </if>
+            <if test="idcard != null and idcard !=''">
+                and idcard like concat('%', #{idcard}, '%')
+            </if>
+            <if test="personName != null and personName !=''">
+                and name like concat('%', #{personName}, '%')
+            </if>
+            <if test="villageName != null and villageName !=''">
+                and village_name like concat('%', #{villageName}, '%')
+            </if>
+            <if test="ethnicGroup != null and ethnicGroup !=''">
+                and nation like concat('%', #{ethnicGroup}, '%')
+            </if>
+            <if test="liveType != null and liveType !=''">
+                and live_type = #{liveType}
+            </if>
+            <if test="polity != null and polity !=''">
+                and polity = #{polity}
+            </if>
+            <if test="regionIndexCode != null and regionIndexCode !=''">
+                and dept_id = #{regionIndexCode}
+            </if>
+            <if test="statusArr != null">
+                and live_type in
+                <foreach collection="statusArr" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectXlPersonnelWork" resultMap="XlPersonnelResult"  parameterType="com.ruoyi.system.domain.XlPersonnel">
+            SELECT * FROM `xl_work_record` a LEFT JOIN `xl_personnel` b
+            ON a.`general_id`=b.id
+</select>
+<select id="estatePersonnelList" resultMap="XlPersonnelResult" parameterType="hashmap">
+    SELECT a.id, a.name, nation, native_place, native_address, phone, idcard,
+    gender, birth_date, age, education, marry, work_unit, polity, communist, branch,
+    join_time, a.dept_id, a.dept_name, a.village_id, village_code, village_name, building,
+    unit, room, address, personnel_photo, room_type, personnel_type, live_type,
+    householder_relation, property_right, room_code, a.create_time, a.update_time
+    FROM xl_personnel a
+    INNER JOIN  xl_village b ON a.village_id=b.id
+	<where>
+	1=1
+	<if test="xlPersonnel.id != null  and xlPersonnel.id != ''"> and a.id = #{xlPersonnel.id}</if>
+            <if test="xlPersonnel.name != null  and xlPersonnel.name != ''"> and a.name like concat('%', #{xlPersonnel.name}, '%')</if>
+            <if test="xlPersonnel.nation != null  and xlPersonnel.nation != ''"> and a.nation = #{xlPersonnel.nation}</if>
+            <if test="xlPersonnel.nativePlace != null  and xlPersonnel.nativePlace != ''"> and a.native_place like concat('%', #{xlPersonnel.nativePlace}, '%')</if>
+            <if test="xlPersonnel.nativeAddress != null  and xlPersonnel.nativeAddress != ''"> and a.native_address like concat('%', #{xlPersonnel.nativeAddress}, '%')</if>
+            <if test="xlPersonnel.phone != null  and xlPersonnel.phone != ''">and a.phone like concat('%', #{xlPersonnel.phone}, '%')</if>
+            <if test="xlPersonnel.idcard != null  and xlPersonnel.idcard != ''"> and a.idcard like concat('%', #{xlPersonnel.idcard}, '%')</if>
+            <if test="xlPersonnel.gender != null  and xlPersonnel.gender != ''"> and a.gender = #{xlPersonnel.gender}</if>
+            <if test="xlPersonnel.birthDate != null "> and a.birth_date = #{xlPersonnel.birthDate}</if>
+            <if test="xlPersonnel.age != null  and xlPersonnel.age != ''"> and a.age = #{xlPersonnel.age}</if>
+            <if test="xlPersonnel.education != null  and xlPersonnel.education != ''"> and a.education = #{xlPersonnel.education}</if>
+            <if test="xlPersonnel.marry != null  and xlPersonnel.marry != ''"> and a.marry = #{xlPersonnel.marry}</if>
+            <if test="xlPersonnel.workUnit != null  and xlPersonnel.workUnit != ''"> and a.work_unit = #{xlPersonnel.workUnit}</if>
+            <if test="xlPersonnel.polity != null  and xlPersonnel.polity != ''"> and a.polity = #{xlPersonnel.polity}</if>
+            <if test="xlPersonnel.communist != null  and xlPersonnel.communist != ''"> and a.communist = #{xlPersonnel.communist}</if>
+            <if test="xlPersonnel.branch != null  and xlPersonnel.branch != ''"> and a.branch = #{xlPersonnel.branch}</if>
+            <if test="xlPersonnel.joinTime != null  and xlPersonnel.joinTime != ''"> and a.join_time = #{xlPersonnel.joinTime}</if>
+            <if test="xlPersonnel.deptId != null  and xlPersonnel.deptId != ''"> and a.dept_id = #{xlPersonnel.deptId}</if>
+            <if test="xlPersonnel.deptName != null  and xlPersonnel.deptName != ''"> and a.dept_name like concat('%', #{xlPersonnel.deptName}, '%')</if>
+            <if test="xlPersonnel.villageId != null "> and xlPersonnel.village_id = #{xlPersonnel.villageId}</if>
+            <if test="xlPersonnel.villageCode != null  and xlPersonnel.villageCode != ''"> and a.village_code = #{xlPersonnel.villageCode}</if>
+            <if test="xlPersonnel.villageName != null  and xlPersonnel.villageName != ''"> and a.village_name like concat('%', #{xlPersonnel.villageName}, '%')</if>
+            <if test="xlPersonnel.building != null  and xlPersonnel.building != ''"> and a.building = #{xlPersonnel.building}</if>
+            <if test="xlPersonnel.unit != null  and xlPersonnel.unit != ''"> and a.unit = #{xlPersonnel.unit}</if>
+            <if test="xlPersonnel.room != null  and xlPersonnel.room != ''"> and a.room = #{xlPersonnel.room}</if>
+            <if test="xlPersonnel.address != null  and xlPersonnel.address != ''"> and a.address = #{address}</if>
+            <if test="xlPersonnel.personnelPhoto != null  and xlPersonnel.personnelPhoto != ''"> and a.personnel_photo = #{xlPersonnel.personnelPhoto}</if>
+            <if test="xlPersonnel.roomType != null "> and a.room_type = #{xlPersonnel.roomType}</if>
+            <if test="xlPersonnel.personnelType != null  and xlPersonnel.personnelType != ''"> and a.personnel_type = #{xlPersonnel.personnelType}</if>
+            <if test="xlPersonnel.householderRelation != null "> and a.householder_relation = #{xlPersonnel.householderRelation}</if>
+            <if test="xlPersonnel.propertyRight != null "> and a.property_right = #{xlPersonnel.propertyRight}</if>
+            <if test="xlPersonnel.roomCode != null  and roomCode != ''"> and a.room_code = #{xlPersonnel.roomCode}</if>
+            and b.property_id=#{estateId}
+            and a.live_type = #{xlPersonnel.liveType}
+</where>
+ </select>
+
+</mapper>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业-巡更排班列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>巡更员：</label>
+                            <input type="text" name="userName" placeholder="请输入巡更员查询"/>
+                        </li>
+                        <li>
+                            <label>巡更计划：</label>
+                            <input type="text" name="planName" placeholder="请输入巡更计划查询"/>
+                        </li>
+                        <li>
+                            <label>巡更路线：</label>
+                            <input type="text" name="pathName" placeholder="请输入巡更路线查询"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system/property/patrol:schedule:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/property/patrol/schedule";
+    var removeFlag = [[${@permission.hasPermi('system/property/patrol:schedule:remove')}]];
+    //数据字典
+    var patrolType = [[${@dict.getType('property_patrol_type')}]]; //巡更方式
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            removeUrl: prefix + "/remove",
+            modalName: "物业-巡更排班",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'scheduleId',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'userName',
+                    title: '巡更员'
+                },
+                {
+                    field: 'pathName',
+                    title: '巡更路线'
+                },
+                {
+                    field: 'planName',
+                    title: '巡更计划',
+                },
+                {
+                    field: 'patrolType',
+                    title: '巡更方式',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(patrolType, value);
+                    }
+                },
+                {
+                    field: 'patrolDate',
+                    title: '巡更日期'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.scheduleId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

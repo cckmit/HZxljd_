@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('公共管理--企业信息详情')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-enterpriseInfo-edit" th:object="${xlEnterpriseInfo}">
+        <!--<input name="id" th:field="*{id}" type="hidden">-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label">企业名称：</label>
+            <div class="form-control-static" th:text="*{enterpriseName}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">企业地址：</label>
+            <div class="form-control-static" th:text="*{enterpriseAdress}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">经营状态：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('enterprise_status',xlEnterpriseInfo.enterpriseStatus)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公司类型：</label>
+            <div class="form-control-static" th:text="*{enterpriseType}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">成立日期：</label>
+            <div class="form-control-static" th:text="${#dates.format(xlEnterpriseInfo.establishDate, 'yyyy-MM-dd')}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">法人代表：</label>
+            <div class="form-control-static" th:text="*{establishPerson}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">公司更新时间：</label>
+            <div class="form-control-static" th:text="${#dates.format(xlEnterpriseInfo.enterpriseUpdateDate, 'yyyy-MM-dd')}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">信息状态：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('information_status',xlEnterpriseInfo.informationStatus)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">邮箱地址：</label>
+            <div class="form-control-static" th:text="*{mailbox}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">注册资金：</label>
+            <div class="form-control-static" th:text="*{registeredCapital}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">登记机关：</label>
+            <div class="form-control-static" th:text="*{registrationAuthority}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">统一信用代码：</label>
+            <div class="form-control-static" th:text="*{unifiedCreditCode}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">注册号：</label>
+            <div class="form-control-static" th:text="*{registrationNumber}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">组织结构：</label>
+            <div class="form-control-static" th:text="*{organization}">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+</body>
+</html>

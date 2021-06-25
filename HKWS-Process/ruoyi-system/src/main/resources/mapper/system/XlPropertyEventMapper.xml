@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlPropertyEventMapper">
+
+    <resultMap type="XlPropertyEvent" id="XlPropertyEventResult">
+        <result property="eventId" column="event_id"/>
+        <result property="villageId" column="village_id"/>
+        <result property="propertyId" column="property_id"/>
+        <result property="eventTitle" column="event_title"/>
+        <result property="eventSource" column="event_source"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventStatus" column="event_status"/>
+        <result property="eventAddress" column="event_address"/>
+        <result property="reporter" column="reporter"/>
+        <result property="reporterPhone" column="reporter_phone"/>
+        <result property="reportTime" column="report_time"/>
+        <result property="reportContent" column="report_content"/>
+        <result property="reportImage" column="report_image"/>
+        <result property="handler" column="handler"/>
+        <result property="handlerPhone" column="handler_phone"/>
+        <result property="handlerId" column="handler_id"/>
+        <result property="handleTime" column="handle_time"/>
+        <result property="handleContent" column="handle_content"/>
+        <result property="handleImage" column="handle_image"/>
+        <result property="finishTime" column="finish_time"/>
+        <result property="finishContent" column="finish_content"/>
+        <result property="finishImage" column="finish_image"/>
+        <result property="expectedFinishTime" column="expected_finish_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+        <resultMap type="com.ruoyi.system.domain.honey.PropertyEventVo" id="PropertyEventVoResult">
+<!--        <result property="eventId" column="event_id"/>-->
+        <result property="name" column="name"/>
+<!--        <result property="propertyName" column="property_name"/>-->
+        <result property="villageId" column="village_id"/>
+        <result property="eventTitle" column="event_title"/>
+        <result property="eventSource" column="event_source"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventStatus" column="event_status"/>
+        <result property="eventAddress" column="event_address"/>
+        <result property="reporter" column="reporter"/>
+        <result property="reporterPhone" column="reporter_phone"/>
+        <result property="reportTime" column="report_time"/>
+        <result property="reportContent" column="report_content"/>
+        <result property="reportImage" column="report_image"/>
+        <result property="handler" column="handler"/>
+<!--        <result property="handlerPhone" column="handler_phone"/>-->
+        <result property="handlerId" column="handler_id"/>
+        <result property="handleTime" column="handle_time"/>
+        <result property="handleContent" column="handle_content"/>
+        <result property="handleImage" column="handle_image"/>
+        <result property="finishTime" column="finish_time"/>
+        <result property="finishContent" column="finish_content"/>
+        <result property="finishImage" column="finish_image"/>
+        <result property="expectedFinishTime" column="expected_finish_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectXlPropertyEventVo">
+            select event_id, village_id, property_id,event_title, event_source, event_type, event_status, event_address, reporter, reporter_phone, report_time, report_content, report_image, handler, handler_id, handle_time, handle_content, handle_image, finish_time, finish_content, finish_image, expected_finish_time, create_by, create_time, update_by, update_time from xl_property_event
+    </sql>
+
+    <select id="selectXlPropertyEventList" parameterType="XlPropertyEvent" resultMap="XlPropertyEventResult">
+        <include refid="selectXlPropertyEventVo"/>
+        <where>
+            <if test="villageId != null ">and village_id = #{villageId}</if>
+            <if test="propertyId != null ">and property_id = #{propertyId}</if>
+            <if test="eventTitle != null  and eventTitle != ''">and event_title like concat('%', #{eventTitle}, '%')</if>
+            <if test="eventSource != null ">and event_source = #{eventSource}</if>
+            <if test="eventType != null ">and event_type = #{eventType}</if>
+            <if test="eventStatus != null ">and event_status = #{eventStatus}</if>
+            <if test="eventAddress != null  and eventAddress != ''">and event_address = #{eventAddress}</if>
+            <if test="reporter != null  and reporter != ''">and reporter like concat('%', #{reporter}, '%')</if>
+            <if test="reporterPhone != null  and reporterPhone != ''">and reporter_phone = #{reporterPhone}</if>
+            <if test="params.reportTime != null and params.reportTime != ''"><!-- 开始时间检索 -->
+                AND date_format(report_time,'%y%m%d') &gt;= date_format(#{params.reportTime},'%y%m%d')
+            </if>
+            <if test="params.endingTime != null and params.endingTime != ''"><!-- 结束时间检索 -->
+                AND date_format(report_time,'%y%m%d') &lt;= date_format(#{params.endingTime},'%y%m%d')
+            </if>
+            <if test="reportContent != null  and reportContent != ''">and report_content = #{reportContent}</if>
+            <if test="reportImage != null  and reportImage != ''">and report_image = #{reportImage}</if>
+            <if test="handler != null  and handler != ''">and handler like concat('%', #{handler}, '%')</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">and handler_phone = #{handlerPhone}</if>
+            <if test="handlerId != null ">and handler_id = #{handlerId}</if>
+            <if test="handleTime != null ">and handle_time = #{handleTime}</if>
+            <if test="handleContent != null  and handleContent != ''">and handle_content = #{handleContent}</if>
+            <if test="handleImage != null  and handleImage != ''">and handle_image = #{handleImage}</if>
+            <if test="finishTime != null ">and finish_time = #{finishTime}</if>
+            <if test="finishContent != null  and finishContent != ''">and finish_content = #{finishContent}</if>
+            <if test="finishImage != null  and finishImage != ''">and finish_image = #{finishImage}</if>
+            <if test="expectedFinishTime != null ">and expected_finish_time = #{expectedFinishTime}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyEventById" parameterType="Long" resultMap="XlPropertyEventResult">
+        <include refid="selectXlPropertyEventVo"/>
+        where event_id = #{eventId}
+    </select>
+
+    <select id="selectPropertyEventVoList" resultMap="PropertyEventVoResult"
+            parameterType="com.ruoyi.system.domain.honey.PropertyEventVo">
+            select
+            b.`event_id` as eventId,
+            a.`name` as name,
+            a.`property_name` as propertyName,
+            village_id,
+			event_title,
+			event_source,
+			event_type,
+			event_status,
+			event_address,reporter,
+			reporter_phone,
+			report_time,
+			report_content,
+			report_image,
+			handler, handler_id,
+			handle_time,
+			handle_content,
+			handle_image,
+			finish_time,
+			finish_content,
+			finish_image,
+			expected_finish_time,
+			b.create_by,
+			b.create_time,
+			b.update_by,
+			b.update_time,
+			b.equipment_serial_number,
+			b.equipment_name
+			from xl_property_event b
+			LEFT JOIN `xl_village` a ON a.`id`=`village_id`
+        <where>
+            <if test="eventId != null ">and event_id = #{eventId}</if>
+            <if test="handlerId != null ">and handler_id = #{handlerId}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="eventSource != null ">and event_source = #{eventSource}</if>
+            <if test="eventType != null ">and event_type = #{eventType}</if>
+            <if test="reporter != null ">and reporter like concat('%', #{reporter}, '%')</if>
+            <if test="propertyName != null ">and property_name like concat('%', #{propertyName}, '%')</if>
+            <if test="eventStatus != null ">and event_status = #{eventStatus}</if>
+            <if test="params.reportTime != null and params.reportTime != ''"><!-- 开始时间检索 -->
+                AND date_format(report_time,'%Y%m%d') &gt;= date_format(#{params.reportTime},'%Y%m%d')
+            </if>
+            <if test="params.endingTime != null and params.endingTime != ''"><!-- 结束时间检索 -->
+                AND date_format(report_time,'%Y%m%d') &lt;= date_format(#{params.endingTime},'%Y%m%d')
+            </if>
+
+            <if test="params.handleTime != null and params.handleTime != ''"><!-- 开始时间检索 -->
+                AND date_format(handle_time,'%Y%m%d') &gt;= date_format(#{params.handleTime},'%Y%m%d')
+            </if>
+            <if test="params.finishTime != null and params.finishTime != ''"><!-- 结束时间检索 -->
+                AND date_format(handle_time,'%Y%m%d') &lt;= date_format(#{params.finishTime},'%Y%m%d')
+            </if>
+            <if test="equipmentSerialNumber != null "> and equipment_serial_number = #{equipmentSerialNumber}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+        </where>
+    </select>
+
+
+    <insert id="insertXlPropertyEvent" parameterType="XlPropertyEvent" useGeneratedKeys="true" keyProperty="eventId">
+        insert into xl_property_event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="villageId != null ">village_id,</if>
+            <if test="propertyId != null ">property_id,</if>
+            <if test="eventTitle != null  and eventTitle != ''">event_title,</if>
+            <if test="eventSource != null ">event_source,</if>
+            <if test="eventType != null ">event_type,</if>
+            <if test="eventStatus != null ">event_status,</if>
+            <if test="eventAddress != null  and eventAddress != ''">event_address,</if>
+            <if test="reporter != null  and reporter != ''">reporter,</if>
+            <if test="reporterPhone != null  and reporterPhone != ''">reporter_phone,</if>
+            <if test="reportTime != null ">report_time,</if>
+            <if test="reportContent != null  and reportContent != ''">report_content,</if>
+            <if test="reportImage != null  and reportImage != ''">report_image,</if>
+            <if test="handler != null  and handler != ''">handler,</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">handler_phone,</if>
+            <if test="handlerId != null ">handler_id,</if>
+            <if test="handleTime != null ">handle_time,</if>
+            <if test="handleContent != null  and handleContent != ''">handle_content,</if>
+            <if test="handleImage != null  and handleImage != ''">handle_image,</if>
+            <if test="finishTime != null ">finish_time,</if>
+            <if test="finishContent != null  and finishContent != ''">finish_content,</if>
+            <if test="finishImage != null  and finishImage != ''">finish_image,</if>
+            <if test="expectedFinishTime != null ">expected_finish_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="propertyId != null ">#{propertyId},</if>
+            <if test="eventTitle != null  and eventTitle != ''">#{eventTitle},</if>
+            <if test="eventSource != null ">#{eventSource},</if>
+            <if test="eventType != null ">#{eventType},</if>
+<!--            <if test="repairsType != null ">#{repairsType},</if>-->
+            <if test="eventStatus != null ">#{eventStatus},</if>
+            <if test="eventAddress != null  and eventAddress != ''">#{eventAddress},</if>
+            <if test="reporter != null  and reporter != ''">#{reporter},</if>
+            <if test="reporterPhone != null  and reporterPhone != ''">#{reporterPhone},</if>
+            <if test="reportTime != null ">#{reportTime},</if>
+            <if test="reportContent != null  and reportContent != ''">#{reportContent},</if>
+            <if test="reportImage != null  and reportImage != ''">#{reportImage},</if>
+            <if test="handler != null  and handler != ''">#{handler},</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">#{handlerPhone},</if>
+            <if test="handlerId != null ">#{handlerId},</if>
+            <if test="handleTime != null ">#{handleTime},</if>
+            <if test="handleContent != null  and handleContent != ''">#{handleContent},</if>
+            <if test="handleImage != null  and handleImage != ''">#{handleImage},</if>
+            <if test="finishTime != null ">#{finishTime},</if>
+            <if test="finishContent != null  and finishContent != ''">#{finishContent},</if>
+            <if test="finishImage != null  and finishImage != ''">#{finishImage},</if>
+            <if test="expectedFinishTime != null ">#{expectedFinishTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyEvent" parameterType="XlPropertyEvent">
+        update xl_property_event
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="propertyId != null ">property_id = #{propertyId},</if>
+            <if test="eventTitle != null  and eventTitle != ''">event_title = #{eventTitle},</if>
+            <if test="eventSource != null ">event_source = #{eventSource},</if>
+            <if test="eventType != null ">event_type = #{eventType},</if>
+            <if test="eventStatus != null ">event_status = #{eventStatus},</if>
+            <if test="eventAddress != null  and eventAddress != ''">event_address = #{eventAddress},</if>
+            <if test="reporter != null  and reporter != ''">reporter = #{reporter},</if>
+            <if test="reporterPhone != null  and reporterPhone != ''">reporter_phone = #{reporterPhone},</if>
+            <if test="reportTime != null ">report_time = #{reportTime},</if>
+            <if test="reportContent != null  and reportContent != ''">report_content = #{reportContent},</if>
+            <if test="reportImage != null  and reportImage != ''">report_image = #{reportImage},</if>
+            <if test="handler != null  and handler != ''">handler = #{handler},</if>
+            <if test="handlerPhone != null  and handlerPhone != ''">handler_phone = #{handlerPhone},</if>
+            <if test="handlerId != null ">handler_id = #{handlerId},</if>
+            <if test="handleTime != null ">handle_time = #{handleTime},</if>
+            <if test="handleContent != null  and handleContent != ''">handle_content = #{handleContent},</if>
+            <if test="handleImage != null  and handleImage != ''">handle_image = #{handleImage},</if>
+            <if test="finishTime != null ">finish_time = #{finishTime},</if>
+            <if test="finishContent != null  and finishContent != ''">finish_content = #{finishContent},</if>
+            <if test="finishImage != null  and finishImage != ''">finish_image = #{finishImage},</if>
+            <if test="expectedFinishTime != null ">expected_finish_time = #{expectedFinishTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where event_id = #{eventId}
+    </update>
+
+    <delete id="deleteXlPropertyEventById" parameterType="Long">
+        delete from xl_property_event where event_id = #{eventId}
+    </delete>
+
+    <delete id="deleteXlPropertyEventByIds" parameterType="String">
+        delete from xl_property_event where event_id in
+        <foreach item="eventId" collection="array" open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
+    </delete>
+
+    <select id="selectPropertyEventVo" parameterType="com.ruoyi.system.domain.honey.PropertyEventVo"
+            resultType="com.ruoyi.system.domain.honey.PropertyEventVo">
+        SELECT
+        a.`event_title` AS 'eventTitle',
+        a.`event_type` AS 'eventType',
+        a.`event_status` AS 'eventStatus',
+        a.`reporter` AS 'reporter',
+        a.`reporter_phone` AS 'reporterPhone',
+        a.`report_time` AS 'reportTime',
+        a.`report_image` AS 'reportImage',
+        a.`report_content` AS 'reportContent',
+
+        a.`handler` AS 'handler',
+        a.`handler_id` AS 'handlerId',
+
+        a.`handle_time` AS 'handleTime',
+        a.`handle_content` AS 'handleContent',
+        a.`handle_image` AS 'handleImage',
+
+        a.`finish_time` AS 'finishTime',
+        a.`finish_content` AS 'finishContent',
+        a.`finish_image` AS 'finishImage',
+
+        b.`appeal_person` AS 'appealPerson',
+        b.`appeal_time` AS 'appealTime',
+        b.`appeal_content` AS 'appealContent',
+        b.`appeal_image` AS 'appealImage',
+
+        b.`appeal_property` AS 'appealProperty',
+        b.`appeal_property_time` AS 'appealPropertyTime',
+        b.`appeal_property_content` AS 'appealPropertyContent',
+        b.`appeal_property_image` AS 'appealPropertyImage',
+
+        b.`appeal_result` AS 'appealResult',
+        b.`appeal_result_time` AS 'appealResultTime'
+
+        FROM `xl_property_event` a
+        LEFT JOIN `xl_appeal_record` b ON a.`event_id`=b.`event_id`
+        WHERE a.`event_id`=#{id}
+    </select>
+    <select id="selectPropertyEventVoProjectList" resultMap="PropertyEventVoResult" parameterType="hashmap">
+            select event_id, village_id, event_title, event_source, event_type, event_status, event_address, reporter,
+            reporter_phone, report_time, report_content, report_image, handler, handler_id, handle_time, handle_content,
+            handle_image, finish_time, finish_content, finish_image, expected_finish_time, create_by, create_time, update_by, update_time
+            from xl_property_event
+        <where>
+        1=1
+            <if test="event.villageId != null ">and village_id = #{event.villageId}</if>
+            <if test="event.eventTitle != null  and event.eventTitle != ''">and event_title = #{event.eventTitle}</if>
+            <if test="event.eventSource != null ">and event_source = #{event.eventSource}</if>
+            <if test="event.eventType != null ">and event_type = #{event.eventType}</if>
+            <if test="event.eventStatus != null ">and event_status = #{eventStatus}</if>
+            <if test="event.eventAddress != null  and event.eventAddress != ''">and event_address = #{event.eventAddress}</if>
+            <if test="event.reporter != null  and event.reporter != ''">and reporter = #{event.reporter}</if>
+            <if test="event.reporterPhone != null  and event.reporterPhone != ''">and reporter_phone = #{event.reporterPhone}</if>
+        </where>
+     <choose>
+            <when test="villageId != null and villageId!= '' and villageId.length!=0">
+              and village_id  in <foreach item="villageId" collection="villageId" open="(" separator="," close=")">#{villageId} </foreach>
+            </when>
+            <otherwise>
+                and village_id  in (null)
+            </otherwise>
+        </choose>
+</select>
+
+</mapper>

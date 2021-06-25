@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业--考核扣分列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>事件来源：</label>
+                            <select name="eventSource" th:with="type=${@dict.getType('property_event_source')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>事件发生时间：</label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginReportTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endReportTime]"/>
+                        </li>
+                        <li>
+                            <label>处理人：</label>
+                            <input type="text" name="handler" placeholder="请输入处理人姓名查询"/>
+                        </li>
+                        <li class="select-time">
+                            <label>处理时间：</label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginHandleTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endHandleTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system/property:xldeductionrecord:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system/property:xldeductionrecord:remove')}]];
+    var prefix = ctx + "system/property/xldeductionrecord";
+    //数据字典
+    var eventType = [[${@dict.getType('property_event_type')}]];  //事件类型
+    var eventSource = [[${@dict.getType('property_event_source')}]]; //事件来源
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            detailUrl: prefix + "/detail",
+            modalName: "物业--考核扣分",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'xlPropertyEvent.handler',
+                    title: '处理人'
+                },
+                {
+                    field: 'xlPropertyEvent.handleTime',
+                    title: '处理时间'
+                },
+                {
+                    field: 'eventId',
+                    title: '事件id',
+                    visible: false
+                },
+                {
+                    field: 'xlPropertyEvent.eventSource',
+                    title: '事件来源',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(eventSource, value);
+                    }
+                },
+                {
+                    field: 'xlPropertyEvent.eventType',
+                    title: '事件类型',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(eventType, value);
+                    }
+                },
+                {
+                    field: 'xlPropertyEvent.reportContent',
+                    title: '事件内容'
+                },
+                {
+                    field: 'deductionNumber',
+                    title: '扣分'
+                },
+                {
+                    field: 'xlPropertyEvent.reportTime',
+                    title: '事件发生时间'
+                },
+                {
+                    field: 'assessmentResults',
+                    title: '考核结果'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft" onclick="checkProcess(\'' + row.id + '\')"><i class="fa fa-search"></i>查看流程</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    //查看
+    function checkProcess(id){
+        var url = prefix + '/process/' + id;
+        $.modal.open('处理流程', url);
+    }
+</script>
+</body>
+</html>

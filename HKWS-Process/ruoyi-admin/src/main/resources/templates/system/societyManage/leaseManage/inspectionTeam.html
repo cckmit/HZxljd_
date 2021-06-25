@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('网格员--检查组信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>检查组名称：</label>
+                                <input type="text" name="teamName"/>
+                            </li>
+                            <li class="select-time">
+                                <label>创建时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginCreateDate]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endCreateDate]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary" onclick="$.operate.add()" shiro:hasPermission="system:inspectionTeam:add">
+                    <i class="fa fa-plus"></i> 新建
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:inspectionTeam:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:inspectionTeam:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-primary" onclick="$.table.exportExcel()" shiro:hasPermission="system:inspectionTeam:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:inspectionTeam:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:inspectionTeam:remove')}]];
+        var applyFlag = [[${@permission.hasPermi('system:inspectionTeam:apply')}]];
+        var prefix = ctx + "system/inspectionTeam";
+
+        $(function() {
+            var options = {
+                url: prefix + "/listLeaseManage",
+                createUrl: prefix + "/addLM",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "网格员--检查组信息",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'teamId',
+                    title: '检查组id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'teamName',
+                    title: '检查组名称'
+                },
+                {
+                    field: 'counts',
+                    title: '检查项数量'
+                },
+                {
+                    field: 'createDate',
+                    title: '创建时间'
+                },
+                {
+                    field: 'createUser',
+                    title: '创建人'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.teamId + '\')"><i class="fa fa-edit"></i>修改</a> ');
+                        actions.push('<a class="exdeft ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.teamId + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        actions.push('<a class="exdeft ' + applyFlag + '" href="javascript:void(0)" onclick="apply(\'' + row.teamId + '\')"><i class="fa fa-xing"></i>应用</a> ');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /*包含记录数据列表-详细*/
+        function apply(teamId) {
+            var url = prefix + '/applyLM/' + teamId;
+            $.modal.openTab("应用检查组", url);
+        }
+    </script>
+</body>
+</html>

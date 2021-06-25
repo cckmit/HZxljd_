@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改街道管理--会议记录')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-meeting-edit" th:object="${xlMeeting}">
+        <input name="id" id="meetingId" th:field="*{id}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">会议标题：</label>
+            <div class="col-sm-8">
+                <input name="meetingTitle" th:field="*{meetingTitle}" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">会议地址：</label>
+            <div class="col-sm-8">
+                <input name="meetingAddress" th:field="*{meetingAddress}" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">会议内容：</label>
+            <div class="col-sm-8">
+                <input name="meetingContent" th:field="*{meetingContent}" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">会议记录人：</label>
+            <div class="col-sm-8">
+                <input name="meetingRecordPerson" th:field="*{meetingRecordPerson}" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label  is-required">会议时间：</label>
+            <div class="col-sm-8">
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input name="meetingDate" th:value="${#dates.format(xlMeeting.meetingDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label  is-required">会议创建人：</label>
+            <div class="col-sm-8">
+                <input name="meetingUser" th:field="*{meetingUser}" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label  is-required">修改人：</label>
+            <div class="col-sm-8">
+                <input name="updateUser" th:field="*{updateUser}" class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">会议图片：</label>
+            <div class="col-sm-8">
+                <input id="input-id" name="file" multiple="multiple"  type="file"  mustwrite="true" />
+                <input id="meetingImage" name="meetingImage" th:field="*{meetingImage}" class="form-control" type="text" th:type="hidden" >
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: bootstrap-fileinput-js" />
+<script type="text/javascript" th:inline="javascript">
+    var prefix = ctx + "system/meeting";
+    var message = [[${xlMeeting}]];
+    var meetingimgs=message.meetingImage;
+
+    //原图片数组
+    var myArray=new Array();
+    //对应得初始化图片参数
+    var myArraycofig=new Array();
+    var idT=message.id;
+
+    $(function () {
+        initimgsConfig()
+        initupload(myArray)
+    });
+
+    function initimgsConfig() {
+
+            myArray = meetingimgs.split(",").filter(str => {
+                return !!str
+            });
+            debugger
+            for (var i = 0; i < myArray.length; i++) {
+                // [{caption: "fref", size: 576237, url: "deletePic", key: 1}]
+                var config = {
+                    url: prefix + "/deleteImage",
+                    key: myArray[i],
+                    caption: '图' + (i + 1),
+                    extra: function () {
+                        return {"id": idT};
+                    }
+                }
+                myArraycofig.push(config)
+            }
+
+    }
+
+    function delImg(sPath) {
+        $.ajax({
+            type: "POST",
+            url: prefix + "/deleteImage",
+            dataType: "json",
+            data: {
+                "sPath":sPath
+            },
+            success: function (data) {
+
+            }
+        })
+    }
+
+    //   $("#input-id").fileinput('_initFileActions');//这行代码就是调用绑定删除事件的
+    function initupload(myArray){
+        var sPath="";
+        let jQuery = $("#input-id").fileinput({
+            lanuage:'zh',//设置语言
+            'uploadUrl': prefix + "/UpLoadImage",
+            uploadAsync: false, //默认异步上传
+     //       'deleteUrl':,
+            allowedFileExtensions:['jpg','gif','png','bmp'],
+            showCaption:true,//是否显示被选文件的简介
+            showUpload:false,       // 显示上传按钮
+            showRemove:true,//是否显示删除按钮
+            overwriteInitial:false,//不覆盖已存在的图片
+            removeFromPreviewOnError:true,
+            enctype:'multipart/form-data',
+          layoutTemplates :{
+            // footer:'',//隐藏全部小图标；
+            // actionUpload:'',//去除上传预览缩略图中的上传图片；
+        //     indicator:'', //去除上传状态图标(左侧➕)
+        //    actionDrag:'',//去除拖动图标(通常编辑的时候会显示这个图标)
+      //      actionDelete:'',//去除删除图标
+              actionUpload:''//让文件上传中的文件去除上传按钮
+          },
+        //    browseClass:'btn btn-primary',
+            maxFileCount:5,
+            // minFileCount:1,
+            //初始化图片
+            initialPreview: myArray,
+            initialPreviewAsData:true,
+             initialPreviewConfig:myArraycofig,
+            uploadExtraData:function () {   //向后台传递的附带参数
+                var data = {id:$("#id").val()}
+                return data;
+            },
+        }).on('filebatchuploadsuccess', function(event, data, previewId, index) {     //上传中
+            console.log('文件正在上传');
+        }).on("filebatchuploadsuccess", function (event, data, previewId, index) {    //一个文件上传成功
+            debugger
+            var form = data.form, files = data.files, extra = data.extra,
+                    response = data.response, reader = data.reader;
+            console.log(response);//打印出返回的json
+            console.log(response.status);//打印出路径
+            // $("#meetingImage").val(response.imgs);
+            // var imgt = document.getElementById("meetingImage").value;
+            // $("#meetingImage").val(imgt+response.imgs);
+            //组装新的图片路径
+            //判断是否有新上传图片
+            if(undefined !=response.imgs && null!=response.imgs&&response.imgs!=""){
+                var newImgs =response.imgs.split(',')
+                for(var x=0;x<newImgs.length;x++){
+                    //合并新图片
+                    myArray.push(newImgs[x])
+                }
+            }else {
+
+            }
+            initimgsConfig()
+            //转换最终新图片
+            $("#meetingImage").val(myArray.join(','));
+            $.operate.save(prefix + "/edit", $('#form-meeting-edit').serialize());
+        }).on('filedeleted', function(event, key) {
+            debugger
+            //删除成功
+            //对比删除图片保证图片名称唯一
+            var deleName =key.split("/") ;
+            for(var j =0 ;j<myArray.length ;j++){
+                var oldName =myArray[j].split("/")
+                if(deleName[deleName.length-1]==oldName[oldName.length-1]){
+                    sPath=deleName[deleName.length-1];
+                    delImg(sPath);
+                    //数组删除
+                    myArray.splice(j,1)
+                }
+            }
+
+            initimgsConfig()
+            console.log('Key = ' + key);
+        }).on('filecleared', function() {      //移除按钮触发事件
+            debugger
+
+        }).on('filepredelete',function (event,key) {
+
+            console.log("删除预处理，删除之前做的事");
+        });
+
+    }
+
+    $("#form-meeting-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $("#input-id").fileinput("upload");
+        }
+    }
+
+    $("input[name='meetingDate']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='createDate']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='updateDate']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+</script>
+</body>
+</html>

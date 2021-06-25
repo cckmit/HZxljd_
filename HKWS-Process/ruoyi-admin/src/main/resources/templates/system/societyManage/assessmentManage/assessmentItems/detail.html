@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('查看考核项目')" />
+    <style>
+        table{
+            border: 1px solid grey;
+            width: 75%;
+            padding-top: 0px;
+            margin-top: 0px;
+        }
+        tr{
+            height: 35px;
+            text-align: center;
+        }
+        th{
+            border: 1px solid grey;
+            height: 40px;
+            text-align: center;
+            /*vertical-align: top;*/
+        }
+        td{
+            border: 1px solid grey;
+        }
+    </style>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+
+        <form class="form-horizontal m" id="form-assessmentItems-detail" th:object="${xlAssessmentItems}">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">考核项目：</label>
+                <div class="form-control-static" th:text="*{assessmentName}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">创建时间：</label>
+                <div class="form-control-static" th:text="${#dates.format(xlAssessmentItems.createDate, 'yyyy-MM-dd HH:mm:ss')}">
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px"><label class="col-sm-3 control-label">细   分   项：</label></div>
+                <table align="center">
+                   <thead>
+                      <tr>
+                         <th>细分项名称</th>  
+                         <th>分值</th>  
+                         <th>考核周期</th> 
+                      </tr>   
+                    </thead>  
+                   <tbody id="tbMain"></tbody>  
+                </table>  
+        </form>
+</div>
+<th:block th:include="include :: footer" />
+
+<script th:inline="javascript">
+    var subdivides = [[${subdivides}]];
+    window.onload = function(){
+        var tbody = document.getElementById('tbMain');
+
+        for(var i = 0;i < subdivides.length; i++){ //遍历json数据 
+            var trow = getDataRow(subdivides[i]); //定义方法,返回tr数据  
+            tbody.appendChild(trow);
+        }
+    }
+
+    function getDataRow(h) {
+        var row = document.createElement('tr'); //创建行  
+
+        var idCell = document.createElement('td'); //创建第一列  
+        idCell.innerHTML = h.subdivideName; //填充数据  
+        row.appendChild(idCell); //加入行  ，下面类似  
+
+        var nameCell = document.createElement('td');//创建第二列  
+        nameCell.innerHTML = h.assessmentScore;
+        row.appendChild(nameCell);
+
+        var jobCell = document.createElement('td');//创建第三列
+        jobCell.innerHTML = h.assessmentCycle;
+        row.appendChild(jobCell);
+        return row;
+    }
+</script>
+
+</body>
+</html>

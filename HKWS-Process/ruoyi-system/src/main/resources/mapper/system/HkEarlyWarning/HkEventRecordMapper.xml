@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkEventRecordMapper">
+
+	<resultMap type="HkEventInfo" id="HkEventInfoResult">
+		<id     property="id"     column="id"     />
+		<result property="eventId"     column="event_id"     />
+		<result property="componentId"  column="component_id"   />
+		<result property="eventIndexCode"   column="event_index_code"   />
+		<result property="eventTitle"   column="event_title"   />
+		<result property="reportTime"     column="report_time"      />
+		<result property="eventType"      column="event_type"       />
+		<result property="eventTypeName"      column="event_type_name"       />
+		<result property="eventCategory"      column="event_category"       />
+		<result property="eventCategoryName"      column="event_category_name"       />
+		<result property="eventSource"     column="event_source"      />
+		<result property="eventSourceName"    column="event_source_name"    />
+		<result property="eventImage"   column="event_image"   />
+		<result property="eventThumbnailImage" column="event_thumbnail_image" />
+		<result property="storageId"   column="storage_id"   />
+		<result property="eventStatus"     column="event_status"     />
+		<result property="eventStatusName"     column="event_status_name"     />
+		<result property="eventAlertStatus"     column="event_alert_status"     />
+		<result property="eventAlertStatusName"     column="event_alert_status_name"     />
+		<result property="eventSubStatus"   column="event_sub_status"   />
+		<result property="eventSubStatusName"  column="event_sub_status_name"   />
+		<result property="reportType"   column="report_type"   />
+		<result property="reportTypeName"   column="report_type_name"   />
+		<result property="lawEnforcementType"     column="law_enforcement_type"      />
+		<result property="lawEnforcementTypeName"      column="law_enforcement_type_name"       />
+		<result property="timeOut"      column="time_out"       />
+		<result property="riskLevel"     column="risk_level"      />
+		<result property="currentProcessorId"    column="current_processor_id"    />
+		<result property="currentProcessorName" column="current_processor_name" />
+		<result property="eventUpdateTime"   column="event_update_time"   />
+		<result property="geometry" column="geometry" />
+		<result property="reportPersonId"   column="report_person_id"   />
+		<result property="reportPersonName" column="report_person_name" />
+		<result property="reportPersonRealName"      column="report_person_real_name"       />
+		<result property="reportPersonPhone"     column="report_person_phone"      />
+		<result property="cameraIndexCode"    column="camera_index_code"    />
+		<result property="cameraName" column="camera_name" />
+		<result property="responsibilitySubject"   column="responsibility_subject"   />
+		<result property="regionIndexCode" column="region_index_code" />
+		<result property="regionName"   column="region_name"   />
+		<result property="placeType" column="place_type" />
+		<result property="placeTypeName"      column="place_type_name"       />
+		<result property="placeIndexCode"     column="place_index_code"      />
+		<result property="placeName"    column="place_name"    />
+		<result property="companyLegalPerson" column="company_legal_person" />
+		<result property="eventAddress"   column="event_address"   />
+		<result property="creditUnionCode" column="credit_union_code" />
+		<result property="companyContactInformation"   column="company_contact_information"   />
+		<result property="gridName" column="grid_name" />
+		<result property="gridMan"      column="grid_man"       />
+		<result property="patrolTeam"     column="patrol_team"      />
+		<result property="patrolTeamPhone"     column="patrol_team_phone"      />
+		<result property="patrolTeam2"     column="patrol_team2"      />
+		<result property="patrolTeam2Phone"     column="patrol_team2_phone"      />
+		<result property="gridCommunity"    column="grid_community"    />
+		<result property="gridContactInformation" column="grid_contact_information" />
+		<result property="longitude"   column="longitude"   />
+		<result property="latitude" column="latitude" />
+		<result property="routingAddress"   column="routing_address"   />
+		<result property="extendInt1" column="extend_int1" />
+		<result property="extendInt2"      column="extend_int2"       />
+		<result property="extendInt3"     column="extend_int3"      />
+		<result property="extendStr1"    column="extend_str1"    />
+		<result property="extendStr2" column="extend_str2" />
+		<result property="extendStr3"   column="extend_str3"   />
+		<result property="extendJson" column="extendJson" />
+		<result property="createTime"   column="create_time"   />
+		<result property="updateTime" column="update_time" />
+		<result property="assId" column="ass_id" />
+		<result property="eventInfoId" column="event_info_id" />
+		<result property="lmId" column="lm_id" />
+		<result property="procdefType" column="procdef_type" />
+		<result property="eventRead" column="event_read" />
+		<result property="eventRemarks" column="event_remarks" />
+		<result property="updateUser" column="update_user" />
+		<result property="evaluate" column="evaluate" />
+	</resultMap>
+
+
+	<select id="eventRecordList" resultMap="HkEventInfoResult" parameterType="HkEventInfo">
+		select * from hk_event_info where event_alert_status = 3 OR event_alert_status = 5 ORDER BY create_time DESC
+	</select>
+
+	<select id="recordDetailById" resultMap="HkEventInfoResult" parameterType="java.lang.Integer">
+		select * from hk_event_info where id=#{id}
+	</select>
+
+	<select id="findRecordOne" resultMap="HkEventInfoResult">
+		select hei.* from hk_event_info hei
+		left join hk_action_process hap on hei.event_id = hap.event_id and hap.handler_order = "1"
+		where hei.event_alert_status in (3,4,5,6)
+		ORDER BY hap.create_time DESC
+		LIMIT 1
+	</select>
+
+	<select id="findSearchVague" resultMap="HkEventInfoResult" parameterType="com.ruoyi.system.domain.HkEntity.EventSearchVO">
+		select
+		hei.id,
+		hei.component_id,
+		hei.event_id,
+		hei.event_title,
+		hei.report_time,
+		hei.event_type,
+		hei.event_image,
+		hei.event_alert_status,
+		hei.report_type,
+		hei.event_status,
+		hei.time_out,
+		hei.current_processor_id,
+		hei.camera_index_code,
+		hei.region_index_code,
+		hei.region_name,
+		hei.place_name,
+		hei.event_address,
+		hei.extend_str1,
+		hei.longitude,
+		hei.latitude,
+		hei.create_time,
+		hei.update_time,
+		hei.procdef_type,
+		hei.event_read,
+		hei.assign_dept_id,
+		hei.assign_operator,
+		hei.assign_reason,
+		hei.assign_time,
+		hei.update_user,
+		hei.risk_level
+		from hk_event_info hei
+		left join hk_action_process hap on hei.event_id = hap.event_id and hap.handler_order = "1"
+		where 1 = 1
+		<if test="contents != null and contents != ''">
+			AND concat(hei.event_title,hei.event_type_name) like concat('%', #{contents}, '%')
+		</if>
+		<if test="region != null and region != ''">
+			AND concat(hei.region_name,hei.event_address) like concat('%', #{region}, '%')
+		</if>
+		<if test="platCode != null and platCode != ''">
+			AND hei.component_id = #{platCode}
+		</if>
+		<if test="reportType != null and reportType != ''">
+			AND hei.report_type = #{reportType}
+		</if>
+		<if test="riskLevel != null and riskLevel != ''">
+			AND hei.risk_level = #{riskLevel}
+		</if>
+		<if test="alertStatus != null and alertStatus != ''">
+			AND hei.event_alert_status = #{alertStatus}
+		</if>
+		<if test="alertStatus == null or alertStatus == ''">
+			AND hei.event_alert_status in (3,4,5,6)
+		</if>
+		<choose>
+			<when test="overdueStatus == '0' ">
+				and hei.time_out &lt;= now()
+			</when>
+			<when test="overdueStatus == '1' ">
+				and hei.time_out &gt; now()
+			</when>
+			<otherwise></otherwise>
+		</choose>
+		<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+			and  hap.create_time &gt;= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+			and  hap.create_time &lt;= #{endDate}
+		</if>
+		<if test="assignDeptId != null">
+			and  FIND_IN_SET(#{assignDeptId},assign_dept_id) &gt; 0
+		</if>
+		<if test="targetId != null">
+			-- 此排序把通过a标签跳转的事件置顶,紧接着是退回事件,其次是根据处理警情时间(包括中心确认警情和客户端操作改变警情状态)倒叙,已完成放在最后.
+			ORDER BY field(hei.id,#{targetId}) DESC,hei.risk_level desc, field(hei.event_alert_status,'4') desc, field(hei.event_alert_status,'6') asc, hap.create_time DESC
+		</if>
+
+		<if test="targetId == null">
+			-- 此排序把退回事件置顶,其次是根据处理警情时间(包括中心确认警情和客户端操作改变警情状态)倒叙,已完成放在最后.
+			ORDER BY hei.risk_level desc,field(hei.event_alert_status,'4') desc, field(hei.event_alert_status,'6') asc, hap.create_time DESC
+		</if>
+
+
+	</select>
+
+	<select id="findCountByParam" parameterType="com.ruoyi.system.domain.HkEntity.EventSearchVO" resultType="java.lang.Integer">
+		select count(hei.event_id)
+		from hk_event_info hei
+		left join hk_action_process hap on hei.event_id = hap.event_id and hap.handler_order = "1"
+		where 1 = 1
+		<if test="statusArr != null and alertStatus == null">
+			and hei.event_alert_status in
+			<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="contents != null and contents != ''">
+			AND concat(hei.event_title,hei.event_type_name) like concat('%', #{contents}, '%')
+		</if>
+		<if test="region != null and region != ''">
+			AND concat(hei.region_name,hei.event_address) like concat('%', #{region}, '%')
+		</if>
+		<if test="platCode != null and platCode != ''">
+			AND hei.component_id = #{platCode}
+		</if>
+		<if test="reportType != null and reportType != ''">
+			AND hei.report_type = #{reportType}
+		</if>
+		<if test="riskLevel != null and riskLevel != ''">
+			AND hei.risk_level = #{riskLevel}
+		</if>
+		<if test="alertStatus != null and alertStatus != ''">
+			AND hei.event_alert_status = #{alertStatus}
+		</if>
+		<if test="alertStatus != null and alertStatus != ''">
+			AND hei.event_alert_status = #{alertStatus}
+		</if>
+		<if test="startDate != null and startDate != ''"><!-- 开始时间检索 -->
+			and  hap.create_time &gt;= #{startDate}
+		</if>
+		<if test="endDate != null and endDate != ''"><!-- 结束时间检索 -->
+			and  hap.create_time &lt;= #{endDate}
+		</if>
+		<if test="assignDeptId != null">
+			and  FIND_IN_SET(#{assignDeptId},assign_dept_id) &gt; 0
+		</if>
+	</select>
+
+
+	<update id="updateEndEvent" parameterType="java.lang.Integer">
+		update hk_event_info_record
+		set
+		event_alert_status = 6,
+		event_alert_status_name = '已完结'
+		where id = #{id}
+	</update>
+
+	<update id="updateEventRecord" parameterType="HkEventInfoRecord">
+		update hk_event_info_record
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="extendStr1 != null  and extendStr1 != ''">extend_str1 = #{extendStr1}</if>
+		</trim>
+		where event_id=#{eventId}
+	</update>
+
+	<select id="findSignName" resultMap="HkEventInfoResult" parameterType="HkEventInfo">
+		select * from hk_event_info where event_id = #{eventId}
+	</select>
+
+	<update id="updateEventRemarks" parameterType="HkEventInfo">
+		update hk_event_info
+		set
+		event_alert_status = 6,
+		event_alert_status_name = '完结',
+		event_status = 3,
+		event_status_name = '中心处理',
+		event_remarks = #{eventRemarks},
+		current_processor_id=#{currentProcessorId},
+		update_time = #{updateTime},
+		update_user = #{updateUser}
+		where event_id = #{eventId}
+	</update>
+
+	<update id="updateEventAlertStatus" parameterType="HkEventInfo">
+		update hk_event_info set event_alert_status = 3,event_alert_status_name = '待处理' where event_id=#{eventId}
+	</update>
+
+	<select id="findEventId" resultMap="HkEventInfoResult" parameterType="java.lang.String">
+		select * from hk_event_info where event_id=#{eventId}
+	</select>
+
+	<update id="updateEventInfo" parameterType="HkEventInfo">
+		update hk_event_info set evaluate = #{evaluate} where id=#{id}
+	</update>
+</mapper>

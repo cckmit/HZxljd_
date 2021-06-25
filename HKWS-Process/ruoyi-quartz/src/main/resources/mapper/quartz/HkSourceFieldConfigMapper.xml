@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quartz.mapper.HkSourceFieldConfigMapper">
+    
+    <resultMap type="HkSourceFieldConfig" id="HkSourceFieldConfigResult">
+        <result property="id"    column="id"    />
+        <result property="sourceId"    column="source_Id"    />
+        <result property="isShow"    column="is_show"    />
+        <result property="columnName"    column="column_name"    />
+        <result property="columnComment"    column="column_comment"    />
+        <result property="columnType"    column="column_type"    />
+        <result property="javaType"    column="java_type"    />
+        <result property="isRequired"    column="is_required"    />
+        <result property="sourceColumnName"    column="source_column_name"    />
+        <result property="sourceColumnComment"    column="source_column_comment"    />
+        <result property="sourceColumnType"    column="source_column_type"    />
+        <result property="sourceColumnJavaType"    column="source_column_java_type"    />
+        <result property="defaultValue"    column="default_value"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectHkSourceFieldConfigVo">
+        select id, source_Id, column_name, column_comment, column_type, java_type, is_required, source_column_name, source_column_comment, source_column_type, source_column_java_type, default_value, create_by, create_time, update_by, update_time from hk_source_field_config
+    </sql>
+
+    <select id="selectHkSourceFieldConfigList" parameterType="HkSourceFieldConfig" resultMap="HkSourceFieldConfigResult">
+        <include refid="selectHkSourceFieldConfigVo"/>
+        <where>  
+            <if test="sourceId != null "> and source_Id = #{sourceId}</if>
+            <if test="isShow != null "> and is_show = #{isShow}</if>
+            <if test="columnName != null  and columnName != ''"> and column_name like concat('%', #{columnName}, '%')</if>
+            <if test="columnComment != null  and columnComment != ''"> and column_comment = #{columnComment}</if>
+            <if test="columnType != null  and columnType != ''"> and column_type = #{columnType}</if>
+            <if test="javaType != null  and javaType != ''"> and java_type = #{javaType}</if>
+            <if test="isRequired != null  and isRequired != ''"> and is_required = #{isRequired}</if>
+            <if test="sourceColumnName != null  and sourceColumnName != ''"> and source_column_name like concat('%', #{sourceColumnName}, '%')</if>
+            <if test="sourceColumnComment != null  and sourceColumnComment != ''"> and source_column_comment = #{sourceColumnComment}</if>
+            <if test="sourceColumnType != null "> and source_column_type = #{sourceColumnType}</if>
+            <if test="sourceColumnJavaType != null  and sourceColumnJavaType != ''"> and source_column_java_type = #{sourceColumnJavaType}</if>
+            <if test="defaultValue != null  and defaultValue != ''"> and default_value = #{defaultValue}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkSourceFieldConfigById" parameterType="Long" resultMap="HkSourceFieldConfigResult">
+        <include refid="selectHkSourceFieldConfigVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHkSourceFieldConfig" parameterType="HkSourceFieldConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_source_field_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sourceId != null ">source_Id,</if>
+            <if test="isShow != null ">is_show,</if>
+            <if test="columnName != null  and columnName != ''">column_name,</if>
+            <if test="columnComment != null  and columnComment != ''">column_comment,</if>
+            <if test="columnType != null  and columnType != ''">column_type,</if>
+            <if test="javaType != null  and javaType != ''">java_type,</if>
+            <if test="isRequired != null  and isRequired != ''">is_required,</if>
+            <if test="sourceColumnName != null  and sourceColumnName != ''">source_column_name,</if>
+            <if test="sourceColumnComment != null  and sourceColumnComment != ''">source_column_comment,</if>
+            <if test="sourceColumnType != null ">source_column_type,</if>
+            <if test="sourceColumnJavaType != null  and sourceColumnJavaType != ''">source_column_java_type,</if>
+            <if test="defaultValue != null  and defaultValue != ''">default_value,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sourceId != null ">#{sourceId},</if>
+            <if test="isShow != null ">#{isShow},</if>
+            <if test="columnName != null  and columnName != ''">#{columnName},</if>
+            <if test="columnComment != null  and columnComment != ''">#{columnComment},</if>
+            <if test="columnType != null  and columnType != ''">#{columnType},</if>
+            <if test="javaType != null  and javaType != ''">#{javaType},</if>
+            <if test="isRequired != null  and isRequired != ''">#{isRequired},</if>
+            <if test="sourceColumnName != null  and sourceColumnName != ''">#{sourceColumnName},</if>
+            <if test="sourceColumnComment != null  and sourceColumnComment != ''">#{sourceColumnComment},</if>
+            <if test="sourceColumnType != null ">#{sourceColumnType},</if>
+            <if test="sourceColumnJavaType != null  and sourceColumnJavaType != ''">#{sourceColumnJavaType},</if>
+            <if test="defaultValue != null  and defaultValue != ''">#{defaultValue},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkSourceFieldConfig" parameterType="HkSourceFieldConfig">
+        update hk_source_field_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sourceId != null ">source_Id = #{sourceId},</if>
+            <if test="isShow != null ">is_show = #{isShow},</if>
+            <if test="columnName != null  and columnName != ''">column_name = #{columnName},</if>
+            <if test="columnComment != null  and columnComment != ''">column_comment = #{columnComment},</if>
+            <if test="columnType != null  and columnType != ''">column_type = #{columnType},</if>
+            <if test="javaType != null  and javaType != ''">java_type = #{javaType},</if>
+            <if test="isRequired != null  and isRequired != ''">is_required = #{isRequired},</if>
+            <if test="sourceColumnName != null  and sourceColumnName != ''">source_column_name = #{sourceColumnName},</if>
+            <if test="sourceColumnComment != null  and sourceColumnComment != ''">source_column_comment = #{sourceColumnComment},</if>
+            <if test="sourceColumnType != null ">source_column_type = #{sourceColumnType},</if>
+            <if test="sourceColumnJavaType != null  and sourceColumnJavaType != ''">source_column_java_type = #{sourceColumnJavaType},</if>
+            <if test="defaultValue != null  and defaultValue != ''">default_value = #{defaultValue},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkSourceFieldConfigById" parameterType="Long">
+        delete from hk_source_field_config where id = #{id}
+    </delete>
+
+    <delete id="deleteHkSourceFieldConfigByIds" parameterType="String">
+        delete from hk_source_field_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <resultMap type="HkSourceFieldConfig" id="HkSourceFieldConfigMYSQLResult">
+        <result property="columnName"    column="column_name"    />
+        <result property="columnComment"    column="column_comment"    />
+        <result property="columnType"    column="column_type"    />
+        <result property="javaType"    column="java_type"    />
+        <result property="isRequired"    column="is_required"    />
+    </resultMap>
+
+    <select id="getHkSourceFieldConfigByTable" parameterType="String" resultMap="HkSourceFieldConfigMYSQLResult">
+		select column_name, (case when (is_nullable = 'no' <![CDATA[ && ]]> column_key != 'PRI') then '1' else null end) as is_required, (case when column_key = 'PRI' then '1' else '0' end) as is_pk, ordinal_position as sort, column_comment, (case when extra = 'auto_increment' then '1' else '0' end) as is_increment, column_type
+		from information_schema.columns where table_schema = (select database()) and table_name = (#{tableName})
+		order by ordinal_position
+	</select>
+    
+</mapper>

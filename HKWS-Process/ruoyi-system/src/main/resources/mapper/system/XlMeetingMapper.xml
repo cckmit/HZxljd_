@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlMeetingMapper">
+
+    <resultMap type="XlMeeting" id="XlMeetingResult">
+        <result property="id"    column="id"    />
+        <result property="meetingTitle"    column="meeting_title"    />
+        <result property="meetingAddress"    column="meeting_address"    />
+        <result property="meetingContent"    column="meeting_content"    />
+        <result property="meetingRecordPerson"    column="meeting_record_person"    />
+        <result property="meetingDate"    column="meeting_date"    />
+        <result property="meetingUser"    column="meeting_user"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="meetingImage"    column="meeting_image"    />
+    </resultMap>
+
+    <sql id="selectXlMeetingVo">
+        select id, meeting_title, meeting_address, meeting_content, meeting_record_person, meeting_date, meeting_user, create_date, update_user, update_date, meeting_image from xl_meeting
+    </sql>
+
+    <select id="selectXlMeetingList" parameterType="XlMeeting" resultMap="XlMeetingResult">
+        <include refid="selectXlMeetingVo"/>
+        <where>
+            <if test="meetingTitle != null  and meetingTitle != ''"> and meeting_title like concat('%', #{meetingTitle}, '%')</if>
+            <if test="meetingAddress != null  and meetingAddress != ''"> and meeting_address = #{meetingAddress}</if>
+            <if test="meetingContent != null  and meetingContent != ''"> and meeting_content = #{meetingContent}</if>
+            <if test="meetingRecordPerson != null  and meetingRecordPerson != ''"> and meeting_record_person = #{meetingRecordPerson}</if>
+            <if test="meetingDate != null "> and meeting_date = #{meetingDate}</if>
+            <if test="meetingUser != null  and meetingUser != ''"> and meeting_user = #{meetingUser}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updateUser != null  and updateUser != ''"> and update_user = #{updateUser}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+            <if test="meetingImage != null  and meetingImage != ''"> and meeting_image = #{meetingImage}</if>
+        </where>
+    </select>
+
+    <select id="selectXlMeetingById" parameterType="Long" resultMap="XlMeetingResult">
+        <include refid="selectXlMeetingVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlMeeting" parameterType="XlMeeting" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_meeting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="meetingTitle != null  and meetingTitle != ''">meeting_title,</if>
+            <if test="meetingAddress != null  and meetingAddress != ''">meeting_address,</if>
+            <if test="meetingContent != null  and meetingContent != ''">meeting_content,</if>
+            <if test="meetingRecordPerson != null  and meetingRecordPerson != ''">meeting_record_person,</if>
+            <if test="meetingDate != null ">meeting_date,</if>
+            <if test="meetingUser != null  and meetingUser != ''">meeting_user,</if>
+            create_date,
+            <if test="meetingImage != null  and meetingImage != ''">meeting_image,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="meetingTitle != null  and meetingTitle != ''">#{meetingTitle},</if>
+            <if test="meetingAddress != null  and meetingAddress != ''">#{meetingAddress},</if>
+            <if test="meetingContent != null  and meetingContent != ''">#{meetingContent},</if>
+            <if test="meetingRecordPerson != null  and meetingRecordPerson != ''">#{meetingRecordPerson},</if>
+            <if test="meetingDate != null ">#{meetingDate},</if>
+            <if test="meetingUser != null  and meetingUser != ''">#{meetingUser},</if>
+            sysdate(),
+            <if test="meetingImage != null  and meetingImage != ''">#{meetingImage},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlMeeting" parameterType="XlMeeting">
+        update xl_meeting
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="meetingTitle != null  and meetingTitle != ''">meeting_title = #{meetingTitle},</if>
+            <if test="meetingAddress != null  and meetingAddress != ''">meeting_address = #{meetingAddress},</if>
+            <if test="meetingContent != null  and meetingContent != ''">meeting_content = #{meetingContent},</if>
+            <if test="meetingRecordPerson != null  and meetingRecordPerson != ''">meeting_record_person = #{meetingRecordPerson},</if>
+            <if test="meetingDate != null ">meeting_date = #{meetingDate},</if>
+            <if test="meetingUser != null  and meetingUser != ''">meeting_user = #{meetingUser},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+            update_date = sysdate(),
+            meeting_image = #{meetingImage},
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlMeetingById" parameterType="Long">
+        delete from xl_meeting where id = #{id}
+    </delete>
+
+    <delete id="deleteXlMeetingByIds" parameterType="String">
+        delete from xl_meeting where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

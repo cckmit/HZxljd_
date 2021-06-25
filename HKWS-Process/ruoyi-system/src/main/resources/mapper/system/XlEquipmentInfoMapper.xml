@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlEquipmentInfoMapper">
+
+    <resultMap type="XlEquipmentInfo" id="XlEquipmentInfoResult">
+        <result property="id"    column="id"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="equipmentType"    column="equipment_type"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="equipmentSerialNumber"    column="equipment_serial_number"    />
+        <result property="labelId"    column="label_id"    />
+        <result property="verificationCode"    column="verification_code"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="equipmentAdress"    column="equipment_adress"    />
+        <result property="equipmentOrganization"    column="equipment_organization"    />
+        <result property="equipmentStorage"    column="equipment_storage"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="equipmentStatus"    column="equipment_status"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectXlEquipmentInfoVo">
+        select id, equipment_name, equipment_type, device_type,equipment_serial_number, label_id, verification_code,
+        equipment_model, equipment_adress,equipment_organization,equipment_storage,   longitude, latitude, equipment_status, village_id,
+        create_time, create_by, update_time, update_by from xl_equipment_info
+    </sql>
+
+    <select id="selectXlEquipmentInfoList" parameterType="XlEquipmentInfo" resultMap="XlEquipmentInfoResult">
+        <include refid="selectXlEquipmentInfoVo"/>
+        <where>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentType != null  and equipmentType != ''"> and equipment_type = #{equipmentType}</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="equipmentSerialNumber != null  and equipmentSerialNumber != ''">and equipment_serial_number like concat('%', #{equipmentSerialNumber}, '%')</if>
+            <if test="labelId != null "> and label_id = #{labelId}</if>
+            <if test="verificationCode != null  and verificationCode != ''"> and verification_code = #{verificationCode}</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and equipment_model = #{equipmentModel}</if>
+            <if test="equipmentAdress != null  and equipmentAdress != ''"> and equipment_adress = #{equipmentAdress}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="equipmentStatus != null "> and equipment_status = #{equipmentStatus}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlEquipmentInfoById" parameterType="Long" resultMap="XlEquipmentInfoResult">
+        <include refid="selectXlEquipmentInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlEquipmentInfo" parameterType="XlEquipmentInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_equipment_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentName != null  and equipmentName != ''">equipment_name,</if>
+            <if test="equipmentType != null  and equipmentType != ''">equipment_type,</if>
+            <if test="deviceType != null  and deviceType != ''">device_type,</if>
+            <if test="equipmentSerialNumber != null  and equipmentSerialNumber != ''">equipment_serial_number,</if>
+            <if test="labelId != null ">label_id,</if>
+            <if test="verificationCode != null  and verificationCode != ''">verification_code,</if>
+            <if test="equipmentModel != null  and equipmentModel != ''">equipment_model,</if>
+            <if test="equipmentAdress != null  and equipmentAdress != ''">equipment_adress,</if>
+            <if test="equipmentOrganization != null  and equipmentOrganization != ''">equipment_organization,</if>
+            <if test="equipmentStorage != null  and equipmentStorage != ''">equipment_storage,</if>
+            <if test="longitude != null  and longitude != ''">longitude,</if>
+            <if test="latitude != null  and latitude != ''">latitude,</if>
+            <if test="equipmentStatus != null ">equipment_status,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentName != null  and equipmentName != ''">#{equipmentName},</if>
+            <if test="equipmentType != null  and equipmentType != ''">#{equipmentType},</if>
+            <if test="deviceType != null  and deviceType != ''">#{deviceType},</if>
+            <if test="equipmentSerialNumber != null  and equipmentSerialNumber != ''">#{equipmentSerialNumber},</if>
+            <if test="labelId != null ">#{labelId},</if>
+            <if test="verificationCode != null  and verificationCode != ''">#{verificationCode},</if>
+            <if test="equipmentModel != null  and equipmentModel != ''">#{equipmentModel},</if>
+            <if test="equipmentAdress != null  and equipmentAdress != ''">#{equipmentAdress},</if>
+            <if test="equipmentOrganization != null  and equipmentOrganization != ''">#{equipmentOrganization},</if>
+            <if test="equipmentStorage != null  and equipmentStorage != ''">#{equipmentStorage},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+            <if test="equipmentStatus != null ">#{equipmentStatus},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlEquipmentInfo" parameterType="XlEquipmentInfo">
+        update xl_equipment_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentName != null  and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="equipmentType != null  and equipmentType != ''">equipment_type = #{equipmentType},</if>
+            <if test="deviceType != null  and deviceType != ''">device_type = #{deviceType},</if>
+            <if test="equipmentSerialNumber != null  and equipmentSerialNumber != ''">equipment_serial_number = #{equipmentSerialNumber},</if>
+            <if test="labelId != null ">label_id = #{labelId},</if>
+            <if test="verificationCode != null  and verificationCode != ''">verification_code = #{verificationCode},</if>
+            <if test="equipmentModel != null  and equipmentModel != ''">equipment_model = #{equipmentModel},</if>
+            <if test="equipmentAdress != null  and equipmentAdress != ''">equipment_adress = #{equipmentAdress},</if>
+            <if test="longitude != null  and longitude != ''">longitude = #{longitude},</if>
+            <if test="latitude != null  and latitude != ''">latitude = #{latitude},</if>
+            <if test="equipmentStatus != null ">equipment_status = #{equipmentStatus},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlEquipmentInfoById" parameterType="Long">
+        delete from xl_equipment_info where id = #{id}
+    </delete>
+
+    <delete id="deleteXlEquipmentInfoByIds" parameterType="String">
+        delete from xl_equipment_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryEquipmentCount" resultType="java.lang.Integer">
+        select count(*) from xl_equipment_info
+    </select>
+
+    <!--    <select id="queryEquipmentList" resultMap="XlEquipmentInfoResult">
+            select * from xl_equipment_info
+        </select>-->
+
+    <select id="queryEquipmentPoliceList" resultMap="XlEquipmentInfoResult">
+        select * from xl_equipment_info where equipment_organization = '33011068'
+    </select>
+    <select id="queryEquipmentPoliceCount" resultType="java.lang.Integer">
+        select count(*) from xl_equipment_info
+        <where>
+            1 = 1
+            <if test="equipmentOrganization != null and equipmentOrganization !=''">
+                and equipment_organization =#{equipmentOrganization}
+            </if>
+            and equipment_status =#{equipmentStatus}
+        </where>
+    </select>
+
+    <select id="queryEquipmentLongitude" resultType="com.ruoyi.system.domain.vo.EventListCountVo" parameterType="java.util.Map">
+        select count(*) as count,longitude,latitude from xl_equipment_info
+        <where>
+            1 = 1
+            <if test="eventType != null and eventType !=''">
+                and device_type =#{eventType}
+            </if>
+            GROUP BY longitude,latitude
+        </where>
+    </select>
+
+    <select id="queryList" resultMap="XlEquipmentInfoResult" parameterType="java.util.Map">
+        select * from xl_equipment_info
+        <where>
+            1=1
+            <if test="deviceType != null and deviceType !=''">
+                and device_type =#{deviceType}
+            </if>
+            <if test="cameraIndexCode != null">
+                and equipment_serial_number in
+                <foreach collection="cameraIndexCode" item="eventType" open="(" separator="," close=")">
+                    #{eventType}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

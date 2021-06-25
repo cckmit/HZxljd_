@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRegionMapper">
+    
+    <resultMap type="SysRegion" id="SysRegionResult">
+        <result property="regionId"    column="region_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="level"    column="level"    />
+    </resultMap>
+
+    <sql id="selectSysRegionVo">
+        select region_id, parent_id, ancestors, region_name, order_num, status, del_flag, create_by, create_time, update_by, update_time, level from sys_region
+    </sql>
+
+    <select id="selectSysRegionList" parameterType="SysRegion" resultMap="SysRegionResult">
+        <include refid="selectSysRegionVo"/>
+        <where>  
+            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
+            <if test="regionName != null  and regionName != ''"> and region_name like concat('%', #{regionName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="level != null "> and level = #{level}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysRegionById" parameterType="Long" resultMap="SysRegionResult">
+        <include refid="selectSysRegionVo"/>
+        where region_id = #{regionId}
+    </select>
+        
+    <insert id="insertSysRegion" parameterType="SysRegion" useGeneratedKeys="true" keyProperty="regionId">
+        insert into sys_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+            <if test="ancestors != null  and ancestors != ''">ancestors,</if>
+            <if test="regionName != null  and regionName != ''">region_name,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="level != null ">level,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+            <if test="ancestors != null  and ancestors != ''">#{ancestors},</if>
+            <if test="regionName != null  and regionName != ''">#{regionName},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="level != null ">#{level},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysRegion" parameterType="SysRegion">
+        update sys_region
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+            <if test="ancestors != null  and ancestors != ''">ancestors = #{ancestors},</if>
+            <if test="regionName != null  and regionName != ''">region_name = #{regionName},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="level != null ">level = #{level},</if>
+        </trim>
+        where region_id = #{regionId}
+    </update>
+
+    <delete id="deleteSysRegionById" parameterType="Long">
+        delete from sys_region where region_id = #{regionId}
+    </delete>
+
+    <delete id="deleteSysRegionByIds" parameterType="String">
+        delete from sys_region where region_id in 
+        <foreach item="regionId" collection="array" open="(" separator="," close=")">
+            #{regionId}
+        </foreach>
+    </delete>
+
+    <select id="selectRegionCount" parameterType="SysRegion" resultType="int">
+        select count(1) from sys_region
+        where del_flag = '0'
+        <if test="regionId != null and regionId != 0"> and region_id = #{regionId} </if>
+        <if test="parentId != null and parentId != 0"> and parent_id = #{parentId} </if>
+    </select>
+
+    <select id="checkRegionNameUnique" resultMap="SysRegionResult">
+        <include refid="selectSysRegionVo"/>
+        where region_name=#{regionName} and parent_id = #{parentId}
+    </select>
+
+    <select id="findSysRegionList" parameterType="SysDept" resultMap="SysRegionResult">
+        <include refid="selectSysRegionVo"/>
+        where del_flag = '0' AND parent_id = 100
+    </select>
+
+    <!-- 获取上一级菜单 -->
+    <select id="queryParentRegionByRegionId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        select parent_id from sys_region
+        <where>
+            region_id = #{regionId}
+        </where>
+    </select>
+
+    <select id="queryRegionCountByParam" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select COUNT(region_id) from sys_region
+        <where>
+            1 = 1
+            <if test="level != null">
+                and level = #{level}
+            </if>
+            <if test="parentId != null and parentId != ''">
+                and parent_id = #{parentId}
+            </if>
+        </where>
+    </select>
+
+    <!--查询网格未绑定的用户-->
+    <select id="getRanksCountByRegion" resultType="java.util.Map">
+        select
+        sr.region_name as regionName,
+        count( distinct upr.user_id) as userCount
+        from sys_region sr
+        left join sys_user_post_region upr on upr.region_id = sr.region_id
+        where sr.level = 3
+        group by sr.region_id
+    </select>
+
+    <select id="queryRegionAncestorsByRegion" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select region_name as regionName from
+        (
+        select sr1.region_name,sr1.level from sys_region sr1
+        left join sys_region sr2 on sr2.region_id and sr2.region_id = #{regionId}
+        where
+        FIND_IN_SET(sr1.region_id,sr2.ancestors) &gt; 0
+        AND sr1.del_flag = 0
+        union
+        (
+        select region_name,level
+        from
+            sys_region WHERE region_id = #{regionId} )
+        ) tt order by tt.level asc
+    </select>
+
+
+
+
+    <!-- 一域一档 社区总数 -->
+    <select id="selectRegionCountByTime" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT count(0) FROM sys_region sd3 INNER JOIN
+        (SELECT sd1.region_id FROM sys_region sd1
+        INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id)sd2
+        ON sd3.parent_id = sd2.region_id
+        <where>
+            1 = 1
+            <if test="currentDate != null and currentDate !=''">
+                and date_format(sd3.create_time,'%Y-%m-%d') = #{currentDate}
+            </if>
+            <if test="trendWeekMonday !=null and trendWeekMonday !=''">
+                and date_format(sd3.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+            </if>
+            <if test="trendMonthMonday !=null and trendMonthMonday != ''">
+                and date_format(sd3.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+            </if>
+            <if test="thisWeekMonday !='' and thisWeekMonday !=null">
+                and  date_format(sd3.create_time,'%Y-%m-%d')  &lt; #{thisWeekMonday}
+            </if>
+            <if test="lastWeekDay !='' and lastWeekDay !=null">
+                and date_format(sd3.create_time,'%Y-%m-%d')  >= #{lastWeekDay}
+            </if>
+            <if test="thisMonthFirstDay !='' and thisMonthFirstDay !=null">
+                and  date_format(sd3.create_time,'%Y-%m-%d')  &lt; #{thisMonthFirstDay}
+            </if>
+            <if test="lastMonthFirstDay !='' and lastMonthFirstDay !=null">
+                and date_format(sd3.create_time,'%Y-%m-%d')  >= #{lastMonthFirstDay}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="queryRegionChange" resultType="com.ruoyi.system.domain.HkEarlyWarning.RegionChangeVO" parameterType="java.util.Map">
+        SELECT  sd4.region_name as `eventChangeName`,COUNT(he.event_id)  as `eventChangeCount` FROM(
+        SELECT sd1.region_id,sd1.region_name FROM sys_region sd1
+        INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id
+        )sd4
+        left JOIN (SELECT sd.parent_id,hei.event_id from hk_event_info hei
+        INNER JOIN sys_region sd ON hei.region_index_code = sd.region_id
+        <where>
+            1 = 1
+            <if test="currentDate != null and currentDate !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+            </if>
+            <if test="trendWeekMonday !=null and trendWeekMonday !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+            </if>
+            <if test="trendMonthMonday !=null and trendMonthMonday != ''">
+                and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+            </if>
+            <if test="eventType !=null and eventType !=''">
+                and hei.event_type = #{eventType}
+            </if>
+
+            <if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+                and hei.create_time &gt; #{nearlyADayBegin}
+            </if>
+            <if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+                and hei.create_time &lt; #{nearlyADayEnd}
+            </if>
+            <if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+                and hei.create_time &gt; #{nearlyAWeekBegin}
+            </if>
+            <if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+                and hei.create_time &lt; #{nearlyAWeekEnd}
+            </if>
+            <if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+                and hei.create_time &gt; #{nearlyAMonthBegin}
+            </if>
+            <if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+                and hei.create_time &lt; #{nearlyAMonthEnd}
+            </if>
+            <if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+                and hei.create_time &gt; #{nearlyAYearBegin}
+            </if>
+            <if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+                and hei.create_time &lt; #{nearlyAYearEnd}
+            </if>
+
+
+            <if test="statusArr != null">
+                and hei.event_alert_status in
+                <foreach collection="statusArr" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="startDate != null and startDate !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') >= #{startDate}
+            </if>
+            <if test="endDate != null and endDate !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') &lt;= #{endDate}
+            </if>
+        </where>
+        )he
+        ON sd4.region_id = he.parent_id
+        GROUP BY sd4.region_id
+    </select>
+
+    <!--查询各社区下发生的事件数-->
+    <select id="queryRegionLoad" resultType="com.ruoyi.system.domain.HkEarlyWarning.RegionLoadVO" parameterType="java.util.Map">
+        SELECT
+        ( CASE WHEN hhsr.eventCount IS NULL THEN 0 ELSE hhsr.eventCount END ) AS `eventCount`,
+        sd4.region_name AS `regionName`
+        FROM
+        (
+        SELECT
+        sd1.region_id,
+        sd1.region_name
+        FROM
+        sys_region sd1
+        INNER JOIN ( SELECT region_id FROM sys_region WHERE parent_id = 0 ) sd ON sd1.parent_id = sd.region_id
+        ) sd4
+        LEFT JOIN (
+        SELECT
+        COUNT( hhi.event_id ) AS `eventCount`,
+        hhi.parent_id
+        FROM
+        (
+        SELECT
+        hei.event_id,
+        sd.region_id,
+        sd.parent_id
+        FROM
+        hk_event_info hei
+        LEFT JOIN sys_region sd ON hei.region_index_code = sd.region_id
+        <where>
+            1 = 1
+            <if test="currentDate != null and currentDate !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') = #{currentDate}
+            </if>
+            <if test="trendWeekMonday != null and trendWeekMonday !=''">
+                and date_format(hei.create_time,'%Y-%m-%d') >= #{trendWeekMonday}
+            </if>
+            <if test="trendMonthMonday !=null and trendMonthMonday != ''">
+                and date_format(hei.create_time,'%Y-%m-%d') >= #{trendMonthMonday}
+            </if>
+
+            <if test="nearlyADayBegin != null and nearlyADayBegin != ''">
+                and hei.create_time &gt; #{nearlyADayBegin}
+            </if>
+            <if test="nearlyADayEnd != null and nearlyADayEnd != ''">
+                and hei.create_time &lt; #{nearlyADayEnd}
+            </if>
+            <if test="nearlyAWeekBegin != null and nearlyAWeekBegin != ''">
+                and hei.create_time &gt; #{nearlyAWeekBegin}
+            </if>
+            <if test="nearlyAWeekEnd != null and nearlyAWeekEnd != ''">
+                and hei.create_time &lt; #{nearlyAWeekEnd}
+            </if>
+            <if test="nearlyAMonthBegin != null and nearlyAMonthBegin != ''">
+                and hei.create_time &gt; #{nearlyAMonthBegin}
+            </if>
+            <if test="nearlyAMonthEnd != null and nearlyAMonthEnd != ''">
+                and hei.create_time &lt; #{nearlyAMonthEnd}
+            </if>
+            <if test="nearlyAYearBegin != null and nearlyAYearBegin != ''">
+                and hei.create_time &gt; #{nearlyAYearBegin}
+            </if>
+            <if test="nearlyAYearEnd != null and nearlyAYearEnd != ''">
+                and hei.create_time &lt; #{nearlyAYearEnd}
+            </if>
+
+            <if test="statusArr != null">
+                and hei.event_alert_status in
+                <foreach collection="statusArr" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+        </where>
+        ) hhi
+        GROUP BY
+        hhi.parent_id
+        ) hhsr ON sd4.region_id = hhsr.parent_id
+        ORDER BY
+        eventCount ${desc}
+        <if test="limit != null and limit != ''">
+            LIMIT 0,${limit}
+        </if>
+    </select>
+
+    <!--查询各社区下某职能的网格数量-->
+    <select id="queryUserCountByRegion" parameterType="java.util.Map" resultType="com.ruoyi.system.domain.HkEarlyWarning.RegionLoadVO">
+        SELECT
+        COUNT(DISTINCT upr.user_id) AS userCount,
+            sr2.region_name AS regionName
+        FROM
+            sys_region sr1
+            LEFT JOIN sys_region sr2 ON sr2.parent_id = sr1.region_id
+            LEFT JOIN sys_region sr3 on sr3.parent_id = sr2.region_id
+            LEFT JOIN sys_user_post_region upr ON upr.region_id = sr3.region_id
+            WHERE sr1.parent_id = 0
+            <if test="postIds != null and postIds != ''">
+                and upr.post_id in
+                <foreach collection="postIds" item="postId" open="(" separator="," close=")">
+                    #{postId}
+                </foreach>
+            </if>
+            AND sr2.level != 1
+        GROUP BY
+            sr2.region_name
+    </select>
+
+    <select id="queryRegionNames" resultMap="SysRegionResult" >
+		SELECT sd1.region_name,sd1.region_id FROM sys_region sd1
+		INNER JOIN (SELECT region_id FROM sys_region WHERE parent_id = 0) sd ON sd1.parent_id = sd.region_id
+	</select>
+
+    <select id="queryVillageCommunity" resultType="java.lang.Integer">
+        select count(*) from sys_region where parent_id = '100'
+    </select>
+
+    <select id="queryGridALl" resultType="java.lang.Integer">
+        select count(*) from sys_region where parent_id != '100' and  parent_id != '0'
+    </select>
+
+    <select id="selectRegionList" resultMap="SysRegionResult">
+        select region_id, region_name from sys_region where parent_id != '100' and  parent_id != '0'
+    </select>
+    <select id="queryCommunityName" resultType="java.lang.String">
+        SELECT region_name FROM sys_region WHERE region_id = (SELECT parent_id  FROM sys_region WHERE region_id = #{deptId});
+    </select>
+    <select id="queryCommunitList" resultMap="SysRegionResult" parameterType="SysRegion">
+        select * from sys_region
+        <where>
+            1 = 1
+            <if test="regionName != null and regionName !=''">
+                and region_name like concat('%', #{regionName}, '%')
+            </if>
+            and parent_id = '100'
+        </where>
+    </select>
+    <select id="queryCommunitWangList" resultMap="SysRegionResult" parameterType="SysRegion">
+        select * from sys_region
+        <where>
+            1 = 1
+            <if test="parentId != null and parentId !=''">
+                and parent_id = #{parentId}
+            </if>
+            <if test="regionName != null and regionName !=''">
+                and region_name like concat('%', #{regionName}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="queryGrilName" resultMap="SysRegionResult" parameterType="SysRegion">
+        select * from sys_region
+        <where>
+            1 = 1
+            <if test="parentId != null and parentId !=''">
+                and parent_id = #{parentId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryCommunitWangListAll" resultMap="SysRegionResult" parameterType="SysRegion">
+        select * from sys_region
+        <where>
+            1 = 1
+            <if test="regionName != null and regionName !=''">
+                and region_name like concat('%', #{regionName}, '%')
+            </if>
+            and parent_id != '100'
+            and parent_id != '0'
+        </where>
+    </select>
+
+</mapper>

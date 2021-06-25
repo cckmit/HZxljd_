@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkEClassificationMapper">
+
+    <insert id="insert" parameterType="com.ruoyi.system.domain.HkEClassification">
+        insert into hk_EClassification (ec_name, ec_admin, ec_type,
+        ec_created_time, ec_update_time,ec_ids,ec_bei,ec_category,ec_name_type)
+        values (#{ec_name}, #{ec_admin}, #{ec_type},
+        #{ec_created_time}, #{ec_update_time},#{ec_ids},#{ec_bei},#{ec_category},#{ec_name_type})
+    </insert>
+
+    <select id="selectByEClass" resultType="com.ruoyi.system.domain.HkEClassification" parameterType="map">
+        select * from hk_EClassification
+        <where>
+            <if test="ec_ids != null and ec_ids != ''">
+                AND ec_id like concat('%', #{ec_ids}, '%')
+            </if>
+            <if test="ec_type != null and ec_type != ''">
+                AND ec_type like concat('%', #{ec_type}, '%')
+            </if>
+            <if test="ec_name != null and ec_name != ''">
+                AND ec_name like concat('%', #{ec_name}, '%')
+            </if>
+            <if test="ec_category != null and ec_category != ''">
+                AND ec_category like concat('%', #{ec_category}, '%')
+            </if>
+                AND ec_type != 3
+        </where>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+            resultType="com.ruoyi.system.domain.HkEClassification">
+        select *
+        from EClassification
+        where ec_id = #{id,jdbcType=INTEGER} and  ec_type !=3
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from EClassification
+    where ec_id = #{ecid,jdbcType=INTEGER} and  ec_type !=3
+  </delete>
+
+    <update id="changeStatus" parameterType="com.ruoyi.system.domain.HkEClassification">
+        update hk_EClassification
+        <set>
+        <if test="ec_type != null">
+            ec_type = #{ec_type,jdbcType=VARCHAR},
+        </if>
+        </set>
+        where  ec_id=#{ec_id} and   ec_type !=3
+    </update>
+
+    <select id="checkRoleNameUnique"   resultType="java.lang.Integer" parameterType="com.ruoyi.system.domain.HkEClassification">
+        select count(*) from hk_EClassification where ec_ids=#{ec_ids} and  ec_type !=3
+    </select>
+
+    <select id="selectRoleById" parameterType="string" resultType="com.ruoyi.system.domain.HkEClassification">
+        select * from hk_EClassification where ec_id=#{ec_id} and  ec_type !=3
+    </select>
+    <update id="updateRole" parameterType="com.ruoyi.system.domain.HkEClassification" >
+        update hk_EClassification
+        <set>
+            <if test="ec_category != null">
+                ec_category = #{ec_category,jdbcType=VARCHAR},
+            </if>
+            <if test="ec_name_type != null">
+                ec_name_type = #{ec_name_type,jdbcType=VARCHAR},
+            </if>
+            <if test="ec_name != null">
+                ec_name = #{ec_name,jdbcType=VARCHAR},
+            </if>
+            <if test="ec_update_time != null">
+                ec_update_time = #{ec_update_time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ec_ids != null">
+                ec_ids = #{ec_ids},
+            </if>
+            <if test="ec_bei != null">
+                ec_bei = #{ec_bei},
+            </if>
+            <if test="ec_type != null">
+                ec_type = #{ec_type},
+            </if>
+        </set>
+        where ec_id = #{ec_id,jdbcType=INTEGER}
+    </update>
+
+    <update id="deleteRoleByIds">
+        update hk_EClassification
+        <set>
+           ec_type =3
+        </set>
+        where ec_id=#{ids}
+    </update>
+
+    <select id="finby" resultType="com.ruoyi.system.domain.HkEClassification">
+        select * from hk_EClassification
+    </select>
+
+    <delete id="deleteConfigByIds" parameterType="String">
+        delete from  hk_EClassification where ec_id in
+        <foreach item="configId" collection="array" open="(" separator="," close=")">
+            #{configId}
+        </foreach>
+    </delete>
+
+    <select id="eventType" resultType="com.ruoyi.system.domain.HkEClassification">
+        select * from hk_EClassification
+    </select>
+
+    <select id="findHkEClassification" resultType="com.ruoyi.system.domain.HkEClassification">
+        select * from hk_EClassification
+        where ec_name=#{actionType}
+    </select>
+
+    <select id="findEclass" resultType="com.ruoyi.system.domain.HkEClassification">
+        select * from hk_EClassification where ec_type = 1
+    </select>
+
+    <select id="queryEventEClassifications" resultType="com.ruoyi.system.domain.HkEClassification">
+        select  he.ec_name_type,he.ec_name from hk_EClassification he where he.ec_type = 1
+    </select>
+
+    <select id="selectHkEClassByEcCategory" resultType="com.ruoyi.system.domain.HkEClassification">
+        select * from hk_EClassification where ec_type = 1 and ec_category = #{ecCategory}
+    </select>
+
+</mapper>

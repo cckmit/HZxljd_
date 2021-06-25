@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+    <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <th:block th:include="include :: header('队伍列表')" />
+        <link th:href = "@{/layui/css/layui.css}" rel = "stylesheet" />
+        <link th:href = "@{/css/person.css}" rel = "stylesheet" />
+        <style type="text/css">
+            .contant {
+                /*position: fixed;
+                top: 55px;
+                left: 267px;*/
+                bottom: 0;
+                right: 0;
+                padding: 15px;
+                /*background-color: #dedede;*/
+                background-color: #F5F5F5;
+            }
+            /**社区选择颜色**/
+            .dept-list .layui-form-checked[lay-skin=primary] i {
+                border-color: #0070cc!important;
+                background-color: #0070cc;
+                color: #fff;
+            }
+            /**岗位选择颜色**/
+            .station .layui-form-checked[lay-skin=primary] i {
+                border-color: #0070cc!important;
+                background-color: #0070cc;
+                color: #fff;
+            }
+            /**分页点击按钮**/
+            #page .layui-laypage .layui-laypage-curr .layui-laypage-em{
+                background-color: #0070cc;
+                border-color: #0070cc;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="contant">
+            <h5 class="cont_title">队伍建设</h5>
+            <div class="cont_perpon">
+                <div class="person_title layui-row">
+                    <div class="layui-col-md9"></div>
+                    <div class="layui-col-md3">
+                        <div class="person_input">
+                            <input type="text" placeholder="请输入姓名" name="ranksName"/>
+                            <i class="Thiconfont">&#xe69e;</i>
+                        </div>
+                        <span class="person_serch" onclick="search()">搜索</span>
+                    </div>
+                </div>
+                <form class="layui-form person_form">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">社区：</label>
+                        <div class="layui-input-block dept-list">
+                            <!--<input type="checkbox" value="0" title="全部" lay-skin="primary" checked />
+                            <input type="checkbox" value="" lay-skin="primary" title="词林社区" />-->
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="border-radius: 0 0 5px 5px" >
+                        <label class="layui-form-label">岗位：</label>
+                        <div class="layui-input-block station">
+                            <input type="checkbox" value="1" title="网格长" lay-skin="primary" checked />
+                            <input type="checkbox" value="2" title="网格指导员" lay-skin="primary"  />
+                            <input type="checkbox" value="3" title="专职网格员" lay-skin="primary"  />
+                            <input type="checkbox" value="4" title="城管" lay-skin="primary"  />
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+<!--            <div class="col-sm-12 select-table table-striped">-->
+                <div class="persons">
+                    <div id = "page"></div>
+                </div>
+<!--            </div>-->
+        </div>
+        <!--<div id = "page"></div>-->
+    </body>
+    <script th:src = "@{/js/jquery.min.js}"></script>
+    <script th:src = "@{/layui/layui.js}"></script>
+    <script>
+        //rem布局动态更改html
+        (function (win) {
+            var tid;
+
+            function refreshRem() {
+                let designSize = 1920;
+                let html = document.documentElement;
+                let wW = html.clientWidth;
+                let rem = (wW * 100) / designSize;
+                document.documentElement.style.fontSize = rem + "px";
+            }
+
+            win.addEventListener(
+                "resize",
+                function () {
+                    clearTimeout(tid);
+                    tid = setTimeout(refreshRem, 100);
+                },
+                false
+            );
+            win.addEventListener(
+                "pageshow",
+                function (e) {
+                    if (e.persisted) {
+                        clearTimeout(tid);
+                        tid = setTimeout(refreshRem, 100);
+                    }
+                },
+                false
+            );
+
+            refreshRem();
+        })(window);
+
+        var ranksDataList = {};
+
+        var all = '0';
+        layui.use(["laydate", "element", "form","laypage",'layer'], function () {
+            var laypage = layui.laypage;
+            var laydate = layui.laydate;
+            var element = layui.element;
+            var layer = layui.layer;
+            var form = layui.form;
+
+            ranksDataList = {
+                totalPageAllAppoint:0,//总页数
+                limitAllAppoint:9,//一页多少条
+                currentPage:location.hash.replace('#!page=', '')||1,//当前页
+                ranksName:'',
+                run:function(){
+                    this.getDeptData();
+                    this.getPageData(this.ajaxData());
+                },
+                //整理参数
+                ajaxData:function(){
+                    var _ajaxData = {};
+                    var param = [];
+                    var child = $(".dept-list input[type='checkbox']");
+                    child.each(function (index, item) {
+                        if(item.checked){
+                            if(item.value == "0"){
+                                param = [];
+                                return false;
+                            }else{
+                                param.push(parseInt(item.value));
+                            }
+                        }
+                    });
+                    _ajaxData.ranksName = $("input[name='ranksName']").val();
+                    _ajaxData.deptIds = param.join(",");
+                    // _ajaxData.station = this.currentPage;
+                    _ajaxData.pageNum = this.currentPage;
+                    _ajaxData.pageSize = this.limitAllAppoint;
+                    return _ajaxData;
+                },
+
+                getDeptData:function(){
+                    var _that = this;
+                    $.ajax({
+                        type: "POST",
+                        url: "/system/region/list",
+                        data: {"level":2},
+                        success: function (result) {
+                            layer.close(index);
+                            if (result && result.length > 0) {
+                                var data = result;
+                                $(".dept-list").empty();
+                                _that.getDeptHtmlList(data);
+                            }else{
+                                layer.msg("请求社区出错，请联系客服！");
+                            };
+                        },
+                        error:function(){
+                            layer.msg("请求社区数据出错，请联系客服！");
+                        },
+                        beforeSend:function(){
+                            index = layer.load(2, {
+                                shade: [0.8,'#eee'] //0.1透明度的白色背景
+                            });
+                        }
+                    });
+                },
+                /**请求接口**/
+                getPageData:function(_DATA){
+                    var _that = this;
+                    layui.use(['layer'], function () {
+                        var layer = layui.layer;
+                        var index;
+                        $.ajax({
+                            type: "POST",
+                            url: "/system/ranks/list",
+                            data: _DATA,
+                            success: function (result) {
+                                layer.close(index);
+                                if (result.code == 0) {
+                                    var data = result.rows;
+                                    _that.totalPageAllAppoint = result.total;//获取总页数
+                                    $(".persons .personN").remove();
+                                    _that.getHtmlList(data);
+                                    _that.toPage();//分页调取
+                                }else{
+                                    $("#page").hide();
+                                    layer.msg(result.msg+"，请联系客服！");
+                                };
+                            },
+                            error:function(){
+                                layer.close(index);
+                                $("#page").hide();
+                                layer.msg("请求列表出错，请联系客服！");
+                            },
+                            beforeSend:function(){
+                                index = layer.load(2, {
+                                    shade: [0.8,'#eee'] //0.1透明度的白色背景
+                                });
+                            }
+                        });
+                    });
+                },
+
+                /**社区数据动态拼接**/
+                getDeptHtmlList:function(datas){
+                    var _html = [],
+                        _that = this;
+                    _html.push('<input type="checkbox" value="0" id="class_all" lay-filter="class_all" title="全部" lay-skin="primary" checked />')
+                    if (datas.length > 0) {
+                        for(var i in datas){
+                            _html.push('<input type="checkbox" calss="class_one" lay-filter="class_one" value="'+datas[i].regionId+'" lay-skin="primary" title="'+datas[i].regionName+'" />')
+                        }
+                    }
+                    $(".dept-list").append(_html.join(" "));
+                    form.render();
+                },
+
+                /**队伍数据动态拼接列表**/
+                getHtmlList:function(datas){
+                    var _html = [],
+                        _that = this;
+                    var count = datas.length;
+                    if (count == 0) {
+                        $("#page").hide();
+                    }else{
+                        $("#page").show();
+                        for(var i in datas){
+                            var station = "";
+                            var phone = datas[i].phone;
+                            var ranksId = datas[i].ranksId;
+                            var ranksName = datas[i].ranksName;
+                            var deptName = datas[i].deptName;
+                            if(!deptName || deptName.length < 1){
+                                deptName = "无";
+                            }
+                            var addr = datas[i].addr;
+                            if(!addr || addr.length < 1){
+                                addr = "";
+                            }
+                            switch (datas[i].station) {//判断列表还是图表
+                                case "1":
+                                    station = "网格长";
+                                    break;
+                                case "2":
+                                    station = "网格指导员";
+                                    break;
+                                case "3":
+                                    station = "专职网格员";
+                                    break;
+                                default:
+                                    station = "城管";
+                                    break;
+                            }
+                            _html.push('<div class="personN" >\n' +
+                                '                    <div class="persons_user">'+ranksId+'</div>\n' +
+                                '                    <div class="persons_text">\n' +
+                                '                        <h5 class="person_name">\n' +
+                                '                            <span>'+ranksName+'</span>\n' +
+                                '                        </h5>\n' +
+                                '                        <div class="layui-row persons_">\n' +
+                                '                            <i class="Thiconfont">&#xe607;</i>\n' +
+                                '                            <span>'+deptName+'</span>\n' +
+                                '                            <span>'+station+'</span>\n' +
+                                '                        </div>\n' +
+                                '                        <div class="layui-row persons_">\n' +
+                                '                            <i class="Thiconfont">&#xe605;</i>\n' +
+                                '                            <b>'+addr+'</b>\n' +
+                                '                        </div>\n' +
+                                '                        <div class="layui-row persons_">\n' +
+                                '                            <i class="Thiconfont">&#xe75b;</i>\n' +
+                                '                            <b>'+phone+'</b>\n' +
+                                '                        </div>\n' +
+                                '                    </div>\n' +
+                                '                </div>');
+                        }
+                        if(count < 9){
+                            count = 9-count;
+                            for(var i=0;i<count; i++){
+                                /**仅为固定分页行位置，不做其他用途**/
+                                _html.push('<div class="personN" ></div>');
+                            }
+                        }
+                        // $(".persons").append(_html.join(" "));
+                        $("#page").before(_html.join(" "));
+                    }
+                },
+
+                /**分页**/
+                toPage:function(){
+                    var _that = this;
+                    // layui.use(['laypage'], function () {
+                    //     var laypage = layui.laypage;
+                        laypage.render({
+                            elem:'page',
+                            count: _that.totalPageAllAppoint,//总页数
+                            layout: ['prev', 'page', 'next', 'skip'],
+                            curr: _that.currentPage,//当前页
+                            limit: _that.limitAllAppoint,//一页多少条
+                            hash: 'page', //自定义hash值
+                            jump: function(obj,first){
+                                if(!first){ //一定要加此判断，否则初始时会无限刷新
+                                    $('html, body').animate({scrollTop:"200px"}, 'fast');
+                                    _that.currentPage = obj.curr;
+                                    _that.getPageData(_that.ajaxData());//一定要把翻页的ajax请求放到这里，不然会请求两次。
+                                };
+                            }
+                        })
+                    // })
+                },
+
+
+            };
+
+
+
+            //服务列表启动
+            ranksDataList.run();
+
+            //点击全部选中全部社区
+            form.on('checkbox(class_all)', function(data){
+                var child = $(".dept-list input[type='checkbox']");
+                child.each(function (index, item) {
+                    if(item.id == "class_all"){
+                        item.checked = data.elem.checked;
+                    }else{
+                        item.checked = false
+                    }
+                    //item.checked = data.elem.checked;//选择全部后其他都默认选择
+                });
+                form.render('checkbox');
+            });
+            //有一个未选中取消全部
+            form.on('checkbox(class_one)', function(data){
+                var child = $(".dept-list input[type='checkbox']");
+                child.each(function (index, item) {
+                    if(!item.checked){
+                        if(item.id == "class_all"){
+                            return false;
+                        }else{
+                            $("#class_all").prop("checked", false);
+                            return false;
+                        }
+                    }
+                });
+                form.render('checkbox');
+            });
+
+        });
+
+        //服务列表启动
+        // ranksDataList.run();
+
+        /**搜索**/
+        function search(){
+            var data = ranksDataList.ajaxData();
+            ranksDataList.getPageData(data);
+        }
+    </script>
+</html>

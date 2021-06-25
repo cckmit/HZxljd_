@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>数智闲林·统一门户管理平台</title>
+        <!-- <link rel="stylesheet" href="./css/bootstrap.min.css" /> -->
+        <!--<link rel="stylesheet" href="./css/public.css" />-->
+        <!--<link rel="stylesheet" href="./css/door.css" />-->
+        <link href="../static/css/public.css" th:href="@{/css/public.css}" rel="stylesheet"/>
+        <link href="../static/css/door.css" th:href="@{/css/door.css}" rel="stylesheet"/>
+        <link th:href = "@{/icon/iconfont.css}" rel = "stylesheet" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="door_title">
+                <div class="title">您好，<span id="name" th:text = "${user}"></span>!</div>
+                <a class="door_close" th:href="@{logout}">退出</a>
+            </div>
+
+            <div class="door_wel">欢迎进入“数智闲林”统一门户管理平台</div>
+            <div class="door_center">
+                <div class="door_left" onclick = "turnPage(1)">
+                    <div class="door_pic">
+                        <div class="circle1"></div>
+
+                        <div class="circle2"></div>
+
+                        <div class="circle3"></div>
+
+                        <div class="circle4"></div>
+
+                        <div class="circle5">
+                                <img
+                                    src="../img/feng.png"
+                                    th:src="@{/img/feng.png}"
+                                    alt=""
+                                    class="door_feng"
+                                />
+                        </div>
+
+                        <p>事处风控中心</p>
+                    </div>
+                </div>
+                <div class="door_right">
+                    <ul class="door_circle">
+                        <li onclick = "location.href='#'">
+                            <i class="iconfont">&#xe66f;</i>
+                            <p>党建引领</p>
+                            <p class="door_text door_dj">党建引领</p>
+
+                            <div class="door_line">
+                                <div class="line-circle"></div>
+                            </div>
+                        </li>
+                        <li onclick = "location.href='#'">
+                            <i class="iconfont">&#xe62a;</i>
+                            <p>平安创建</p>
+                            <p class="door_text door_an">平安创建</p>
+                            <div class="door_line">
+                                <div class="line-circle"></div>
+                            </div>
+                        </li>
+                        <li onclick = "location.href='http://172.16.100.15:10086/quickLogin'">
+                            <i class="iconfont">&#xe626;</i>
+                            <p>综合治理</p>
+                                <p class="door_text door_zl">综合治理</p>
+                                <div class="door_line">
+                                    <div class="line-circle"></div>
+                                </div>
+                        </li>
+                        <li onclick = "location.href='http://172.16.100.14:9099'">
+                            <i class="iconfont">&#xe63b;</i>
+                            <p>智慧城管</p>
+                                <p class="door_text door_zh">智慧城管</p>
+                                <div class="door_line">
+                                    <div class="line-circle"></div>
+                                </div>
+                        </li>
+                        <li onclick = "location.href='#'">
+                            <i class="iconfont">&#xe696;</i>
+                            <p>产业发展</p>
+                            <p class="door_text door_cy">产业发展</p>
+                            <div class="door_line">
+                                <div class="line-circle"></div>
+                            </div>
+                        </li>
+                        <li onclick="location.href='#'">
+                            <i class="iconfont">&#xe6af;</i>
+                            <p>民生服务</p>
+                            <p class="door_text door_ms">民生服务</p>
+                            <div class="door_line">
+                                <div class="line-circle"></div>
+                            </div>
+                        </li>
+                        <li onclick='location.href="http://172.16.100.13/#/MainPage?phone=15888888888"'>
+                            <i class="iconfont">&#xe73e;</i>
+                            <p>应急管理</p>
+
+                                <p class="door_text door_yj">应急管理</p>
+                                <div class="door_line">
+                                    <div class="line-circle"></div>
+                                </div>
+                        </li>
+                        <li onclick = "location.href='#'">
+                            <i class = "iconfont">&#xe60a;</i>
+                            <p>助力青和</p>
+                            <p class = "door_text door_ms">助力青和</p>
+                            <div class = "door_line">
+                                <div class = "line-circle"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+    <script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+    <script src="../static/js/public.js" th:src="@{/js/public.js}"></script>
+    <script>
+        // 鼠标移入移除事件
+        $('.door_circle li').on('mouseover',function (){
+           $(this).find('p').css('color','#41AFFD')
+           $(this).find('.door_text').css('color','#fff')
+        })
+        $('.door_circle li').on('mouseout', function () {
+            $(this).find('p').css('color', '#777')
+            $(this).find('.door_text').css('color', '#fff')
+        })
+
+        function turnPage(type){
+            if(type == '1'){
+                location.href = ctx + 'system/work';
+            }
+
+        }
+    </script>
+
+</html>

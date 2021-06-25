@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlPatrolPlanMapper">
+    
+    <resultMap type="XlPatrolPlan" id="XlPatrolPlanResult">
+        <result property="id"    column="id"    />
+        <result property="ruleName"    column="rule_name"    />
+        <result property="period"    column="period"    />
+        <result property="number"    column="number"    />
+        <result property="describes"    column="describes"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectXlPatrolPlanVo">
+        select id, rule_name, period, number, describes,status from xl_patrol_plan
+    </sql>
+
+    <select id="selectXlPatrolPlanList" parameterType="XlPatrolPlan" resultMap="XlPatrolPlanResult">
+        <include refid="selectXlPatrolPlanVo"/>
+        <where>  
+            <if test="ruleName != null  and ruleName != ''"> and rule_name like concat('%', #{ruleName}, '%')</if>
+            <if test="period != null  and period != ''"> and period = #{period}</if>
+            <if test="number != null  and number != ''"> and number = #{number}</if>
+            <if test="describes != null  and describes != ''"> and describes = #{describes}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlPatrolPlanById" parameterType="Long" resultMap="XlPatrolPlanResult">
+        <include refid="selectXlPatrolPlanVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertXlPatrolPlan" parameterType="XlPatrolPlan">
+        insert into xl_patrol_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="ruleName != null  and ruleName != ''">rule_name,</if>
+            <if test="period != null  and period != ''">period,</if>
+            <if test="number != null  and number != ''">number,</if>
+            <if test="describes != null  and describes != ''">describes,</if>
+            <if test="status != null  and status != ''">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="ruleName != null  and ruleName != ''">#{ruleName},</if>
+            <if test="period != null  and period != ''">#{period},</if>
+            <if test="number != null  and number != ''">#{number},</if>
+            <if test="describes != null  and describes != ''">#{describes},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlPatrolPlan" parameterType="XlPatrolPlan">
+        update xl_patrol_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ruleName != null  and ruleName != ''">rule_name = #{ruleName},</if>
+            <if test="period != null  and period != ''">period = #{period},</if>
+            <if test="number != null  and number != ''">number = #{number},</if>
+            <if test="describes != null  and describes != ''">describes = #{describes},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlPatrolPlanById" parameterType="Long">
+        delete from xl_patrol_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteXlPatrolPlanByIds" parameterType="String">
+        delete from xl_patrol_plan where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

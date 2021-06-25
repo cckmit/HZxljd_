@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyPatrolPlanMapper">
+
+    <resultMap type="XlPropertyPatrolPlan" id="XlPropertyPatrolPlanResult">
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+        <result property="pathId"    column="path_id"    />
+        <result property="planStartTime"    column="plan_start_time"    />
+        <result property="planEndTime"    column="plan_end_time"    />
+        <result property="planCycle"    column="plan_cycle"    />
+        <result property="planCycleTiming"    column="plan_cycle_timing"    />
+        <result property="planRemark"    column="plan_remark"    />
+        <result property="planStatus"    column="plan_status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="path"     column="path_id" javaType="XlPropertyPatrolPath" resultMap="XlPropertyPatrolPathResult" />
+        <collection  property="users"   javaType="java.util.List"        resultMap="SysUserResult" />
+    </resultMap>
+
+    <resultMap type="SysUser" id="SysUserResult">
+        <id     property="userId"        column="user_id"         />
+        <result property="deptId"        column="dept_id"         />
+        <result property="loginName"     column="login_name"      />
+        <result property="userName"      column="user_name"       />
+        <result property="phonenumber"   column="phonenumber"     />
+    </resultMap>
+
+    <resultMap type="XlPropertyPatrolPath" id="XlPropertyPatrolPathResult">
+        <result property="pathId"    column="path_id"    />
+        <result property="pathName"    column="path_name"    />
+        <result property="patrolDuration"    column="patrol_duration"    />
+        <result property="pathRemark"    column="path_remark"    />
+        <result property="delFlag"    column="path_del"    />
+        <result property="pathStatus" column="path_status"/>
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <!--连表字段-->
+    <sql id="selectXlPropertyPatrolPlanVo">
+        select l.plan_id, l.plan_name, l.path_id, l.plan_start_time, l.plan_end_time, l.plan_cycle_timing, l.plan_cycle, l.plan_remark, l.plan_status, l.del_flag, l.village_id, l.create_by, l.create_time, l.update_by, l.update_time,
+        u.user_id, u.dept_id, u.login_name, u.user_name, u.phonenumber,
+        a.path_id, a.path_name, a.patrol_duration, a.path_remark, a.del_flag as path_del, a.path_status, a.village_id, a.create_by, a.create_time, a.update_by, a.update_time
+        from xl_property_patrol_plan l
+        left join xl_user_plan_rel ul on ul.plan_id = l.plan_id
+        left join sys_user u on u.user_id = ul.user_id
+        left join xl_property_patrol_path a on a.path_id = l.path_id
+    </sql>
+
+    <!--连表查询-->
+    <select id="selectXlPropertyPatrolPlanVoList" parameterType="XlPropertyPatrolPlan" resultMap="XlPropertyPatrolPlanResult">
+        <include refid="selectXlPropertyPatrolPlanVo"/>
+        <where>
+            <if test="planName != null  and planName != ''"> and l.plan_name like concat('%', #{planName}, '%')</if>
+            <if test="pathId != null "> and l.path_id = #{pathId}</if>
+            <if test="planStartTime != null "> and l.plan_start_time = #{planStartTime}</if>
+            <if test="planEndTime != null "> and l.plan_end_time = #{planEndTime}</if>
+            <if test="planCycle != null "> and l.plan_cycle = #{planCycle}</if>
+            <if test="planCycleTiming != null  and planCycleTiming != ''"> and l.plan_cycle_timing = #{planCycleTiming}</if>
+            <if test="planRemark != null  and planRemark != ''"> and l.plan_remark = #{planRemark}</if>
+            <if test="planStatus != null "> and l.plan_status = #{planStatus}</if>
+            <if test="delFlag != null "> and l.del_flag = #{delFlag}</if>
+            <if test="villageId != null "> and l.village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <!--连表主键查询-->
+    <select id="selectXlPropertyPatrolPlanVoById" parameterType="Long" resultMap="XlPropertyPatrolPlanResult">
+        <include refid="selectXlPropertyPatrolPlanVo"/>
+        where l.plan_id = #{planId}
+    </select>
+
+    <!--单表-->
+    <sql id="selectXlPropertyPatrolPlan">
+        select plan_id, plan_name, path_id, plan_start_time, plan_end_time, plan_cycle, plan_cycle_timing, plan_remark, plan_status, del_flag, village_id, create_by, create_time, update_by, update_time from xl_property_patrol_plan
+    </sql>
+
+    <select id="selectXlPropertyPatrolPlanList" parameterType="XlPropertyPatrolPlan" resultMap="XlPropertyPatrolPlanResult">
+        <include refid="selectXlPropertyPatrolPlan"/>
+        <where>
+            <if test="planName != null  and planName != ''"> and plan_name like concat('%', #{planName}, '%')</if>
+            <if test="pathId != null "> and path_id = #{pathId}</if>
+            <if test="planStartTime != null "> and plan_start_time = #{planStartTime}</if>
+            <if test="planEndTime != null "> and plan_end_time = #{planEndTime}</if>
+            <if test="planCycle != null  and planCycle != ''"> and plan_cycle = #{planCycle}</if>
+            <if test="planCycleTiming != null  and planCycleTiming != ''"> and plan_cycle_timing = #{planCycleTiming}</if>
+            <if test="planRemark != null  and planRemark != ''"> and plan_remark like concat('%', #{planRemark}, '%')</if>
+            <if test="delFlag != null "> and del_flag = #{delFlag}</if>
+            <if test="planStatus != null "> and plan_status = #{planStatus}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyPatrolPlanById" parameterType="Long" resultMap="XlPropertyPatrolPlanResult">
+        <include refid="selectXlPropertyPatrolPlan"/>
+        where plan_id = #{planId}
+    </select>
+
+    <insert id="insertXlPropertyPatrolPlan" parameterType="XlPropertyPatrolPlan" useGeneratedKeys="true" keyProperty="planId">
+        insert into xl_property_patrol_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="planName != null  and planName != ''">plan_name,</if>
+            <if test="pathId != null ">path_id,</if>
+            <if test="planStartTime != null ">plan_start_time,</if>
+            <if test="planEndTime != null ">plan_end_time,</if>
+            <if test="planCycle != null  and planCycle != ''">plan_cycle,</if>
+            <if test="planCycleTiming != null  and planCycleTiming != ''">plan_cycle_timing,</if>
+            <if test="planRemark != null  and planRemark != ''">plan_remark,</if>
+            <if test="planStatus != null ">plan_status,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="planName != null  and planName != ''">#{planName},</if>
+            <if test="pathId != null ">#{pathId},</if>
+            <if test="planStartTime != null ">#{planStartTime},</if>
+            <if test="planEndTime != null ">#{planEndTime},</if>
+            <if test="planCycle != null  and planCycle != ''">#{planCycle},</if>
+            <if test="planCycleTiming != null  and planCycleTiming != ''">#{planCycleTiming},</if>
+            <if test="planRemark != null  and planRemark != ''">#{planRemark},</if>
+            <if test="planStatus != null ">#{planStatus},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyPatrolPlan" parameterType="XlPropertyPatrolPlan">
+        update xl_property_patrol_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="planName != null  and planName != ''">plan_name = #{planName},</if>
+            <if test="pathId != null ">path_id = #{pathId},</if>
+            <if test="planStartTime != null ">plan_start_time = #{planStartTime},</if>
+            <if test="planEndTime != null ">plan_end_time = #{planEndTime},</if>
+            <if test="planCycle != null  and planCycle != ''">plan_cycle = #{planCycle},</if>
+            <if test="planCycleTiming != null  and planCycleTiming != ''">plan_cycle_timing = #{planCycleTiming},</if>
+            <if test="planRemark != null  and planRemark != ''">plan_remark = #{planRemark},</if>
+            <if test="planStatus != null ">plan_status = #{planStatus},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where plan_id = #{planId}
+    </update>
+
+    <delete id="deleteXlPropertyPatrolPlanById" parameterType="Long">
+        delete from xl_property_patrol_plan where plan_id = #{planId}
+    </delete>
+
+    <delete id="deleteXlPropertyPatrolPlanByIds" parameterType="String">
+        delete from xl_property_patrol_plan where plan_id in
+        <foreach item="planId" collection="array" open="(" separator="," close=")">
+            #{planId}
+        </foreach>
+    </delete>
+
+    <!--通过巡更路线id,修改巡更计划的执行状态-->
+    <update id="updatePlanStatusByPathId" parameterType="XlPropertyPatrolPlan">
+        update xl_property_patrol_plan set plan_status = #{planStatus}
+        where path_id = #{pathId}
+    </update>
+
+    <!--删除巡更计划 仅修改巡更计划的删除标识，保留数据 单删-->
+    <delete id="deletePlanById" parameterType="Long">
+        update xl_property_patrol_plan set del_flag = 1 where plan_id = #{planId}
+    </delete>
+
+    <!--删除巡更计划 仅修改巡更计划的删除标识，保留数据 批删-->
+    <delete id="deletePlanByIds" parameterType="String">
+        update xl_property_patrol_plan set del_flag = 1 where plan_id in
+        <foreach item="planId" collection="array" open="(" separator="," close=")">
+            #{planId}
+        </foreach>
+    </delete>
+
+    <select id="selectXlPropertyPatrolPlanListByproperty" resultMap="XlPropertyPatrolPlanResult"
+    parameterType="hashmap">
+        select plan_id, plan_name, path_id, plan_start_time, plan_end_time, plan_cycle, plan_cycle_timing, plan_remark,
+         plan_status, del_flag, village_id, create_by, create_time, update_by, update_time from xl_property_patrol_plan
+        <where>
+        1=1
+            <if test="XlPropertyPatrolPlan.delFlag != null "> and del_flag = #{XlPropertyPatrolPlan.delFlag}</if>
+        </where>
+     <choose>
+            <when test="villageId != null and villageId!= '' and villageId.length!=0">
+              and village_id  in <foreach item="villageId" collection="villageId" open="(" separator="," close=")">#{villageId} </foreach>
+            </when>
+            <otherwise>
+                and village_id  in (null)
+            </otherwise>
+        </choose>
+</select>
+</mapper>

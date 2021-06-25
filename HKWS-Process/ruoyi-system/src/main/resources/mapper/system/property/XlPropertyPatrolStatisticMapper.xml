@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyPatrolStatisticMapper">
+
+    <resultMap type="XlPropertyPatrolStatistic" id="XlPropertyPatrolStatisticResult">
+        <result property="statisticId"    column="statistic_id"    />
+        <result property="patrolCount"    column="patrol_count"    />
+        <result property="finishCount"    column="finish_count"    />
+        <result property="unfinishCount"    column="unfinish_count"    />
+        <result property="finishRate"    column="finish_rate"    />
+        <result property="statisticDate"    column="statistic_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+         <result property="patrolPropertyId"    column="patrol_property_id"    />
+        <result property="patrolProperty"    column="patrol_property"    />
+    </resultMap>
+
+    <sql id="selectXlPropertyPatrolStatisticVo">
+        select statistic_id, patrol_count, finish_count, unfinish_count, finish_rate, statistic_date, create_by, create_time, update_by, update_time, patrol_property_id, patrol_property from xl_property_patrol_statistic
+    </sql>
+
+    <select id="selectXlPropertyPatrolStatisticList" parameterType="XlPropertyPatrolStatistic" resultMap="XlPropertyPatrolStatisticResult">
+        <include refid="selectXlPropertyPatrolStatisticVo"/>
+        <where>
+            <if test="patrolCount != null "> and patrol_count = #{patrolCount}</if>
+            <if test="finishCount != null "> and finish_count = #{finishCount}</if>
+            <if test="unfinishCount != null "> and unfinish_count = #{unfinishCount}</if>
+            <if test="finishRate != null  and finishRate != ''"> and finish_rate = #{finishRate}</if>
+            <if test="params.beginStatisticDate != null and params.beginStatisticDate != ''"><!-- 开始时间检索 -->
+                AND date_format(statistic_date,'%y%m%d') &gt;= date_format(#{params.beginStatisticDate},'%y%m%d')
+            </if>
+            <if test="params.endStatisticDate != null and params.endStatisticDate != ''"><!-- 结束时间检索 -->
+                AND date_format(statistic_date,'%y%m%d') &lt;= date_format(#{params.endStatisticDate},'%y%m%d')
+            </if>
+            <if test="patrolPropertyId != null "> and patrol_property_id = #{patrolPropertyId}</if>
+            <if test="patrolProperty != null  and patrolProperty != ''"> and patrol_property = #{patrolProperty}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyPatrolStatisticById" parameterType="Long" resultMap="XlPropertyPatrolStatisticResult">
+        <include refid="selectXlPropertyPatrolStatisticVo"/>
+        where statistic_id = #{statisticId}
+    </select>
+
+    <insert id="insertXlPropertyPatrolStatistic" parameterType="XlPropertyPatrolStatistic" useGeneratedKeys="true" keyProperty="statisticId">
+        insert into xl_property_patrol_statistic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patrolCount != null ">patrol_count,</if>
+            <if test="finishCount != null ">finish_count,</if>
+            <if test="unfinishCount != null ">unfinish_count,</if>
+            <if test="finishRate != null  and finishRate != ''">finish_rate,</if>
+            <if test="statisticDate != null ">statistic_date,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patrolCount != null ">#{patrolCount},</if>
+            <if test="finishCount != null ">#{finishCount},</if>
+            <if test="unfinishCount != null ">#{unfinishCount},</if>
+            <if test="finishRate != null  and finishRate != ''">#{finishRate},</if>
+            <if test="statisticDate != null ">#{statisticDate},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyPatrolStatistic" parameterType="XlPropertyPatrolStatistic">
+        update xl_property_patrol_statistic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patrolCount != null ">patrol_count = #{patrolCount},</if>
+            <if test="finishCount != null ">finish_count = #{finishCount},</if>
+            <if test="unfinishCount != null ">unfinish_count = #{unfinishCount},</if>
+            <if test="finishRate != null  and finishRate != ''">finish_rate = #{finishRate},</if>
+            <if test="statisticDate != null ">statistic_date = #{statisticDate},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where statistic_id = #{statisticId}
+    </update>
+
+    <delete id="deleteXlPropertyPatrolStatisticById" parameterType="Long">
+        delete from xl_property_patrol_statistic where statistic_id = #{statisticId}
+    </delete>
+
+    <delete id="deleteXlPropertyPatrolStatisticByIds" parameterType="String">
+        delete from xl_property_patrol_statistic where statistic_id in
+        <foreach item="statisticId" collection="array" open="(" separator="," close=")">
+            #{statisticId}
+        </foreach>
+    </delete>
+
+</mapper>

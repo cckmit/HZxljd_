@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlUnifyAddressInfoMapper">
+    
+    <resultMap type="XlUnifyAddressInfo" id="XlUnifyAddressInfoResult">
+        <result property="unifyId"    column="unify_id"    />
+        <result property="unifyCode"    column="unify_code"    />
+        <result property="unifyAddr"    column="unify_addr"    />
+        <result property="unifyLv"    column="unify_lv"    />
+        <result property="unifyScore"    column="unify_score"    />
+        <result property="unifyLon"    column="unify_lon"    />
+        <result property="unifyLat"    column="unify_lat"    />
+        <result property="unifyLoc"    column="unify_Loc"    />
+        <result property="unifyShape"    column="unify_shape"    />
+        <result property="unifyCity"    column="unify_city"    />
+        <result property="unifyCounty"    column="unify_county"    />
+        <result property="unifyTown"    column="unify_town"    />
+        <result property="unifyCommunity"    column="unify_community"    />
+        <result property="unifySquad"    column="unify_squad"    />
+        <result property="unifyVillage"    column="unify_village"    />
+        <result property="unifySzone"    column="unify_szone"    />
+        <result property="unifyStreet"    column="unify_street"    />
+        <result property="unifyDoor"    column="unify_door"    />
+        <result property="unifyResregion"    column="unify_resregion"    />
+        <result property="unifyBuilding"    column="unify_building"    />
+        <result property="unifyBuildingNum"    column="unify_building_num"    />
+        <result property="unifyUnit"    column="unify_unit"    />
+        <result property="unifyFloor"    column="unify_floor"    />
+        <result property="unifyRoom"    column="unify_room"    />
+        <result property="roomFloor"    column="room_floor"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateUser"    column="update_user"    />
+    </resultMap>
+
+    <sql id="selectXlUnifyAddressInfoVo">
+        select unify_id, unify_code, unify_addr, unify_lv, unify_score, unify_lon, unify_lat, unify_Loc, unify_shape, unify_city, unify_county, unify_town, unify_community, unify_squad, unify_village, unify_szone, unify_street, unify_door, unify_resregion, unify_building, unify_building_num, unify_unit, unify_floor, unify_room, room_floor, create_time, create_user, update_time, update_user from xl_unify_address_info
+    </sql>
+
+    <select id="selectXlUnifyAddressInfoList" parameterType="XlUnifyAddressInfo" resultMap="XlUnifyAddressInfoResult">
+        <include refid="selectXlUnifyAddressInfoVo"/>
+        <where>  
+            <if test="unifyCode != null  and unifyCode != ''"> and unify_code = #{unifyCode}</if>
+            <if test="unifyAddr != null  and unifyAddr != ''"> and unify_addr = #{unifyAddr}</if>
+            <if test="unifyLv != null "> and unify_lv = #{unifyLv}</if>
+            <if test="unifyScore != null "> and unify_score = #{unifyScore}</if>
+            <if test="unifyLon != null  and unifyLon != ''"> and unify_lon = #{unifyLon}</if>
+            <if test="unifyLat != null  and unifyLat != ''"> and unify_lat = #{unifyLat}</if>
+            <if test="unifyLoc != null  and unifyLoc != ''"> and unify_Loc = #{unifyLoc}</if>
+            <if test="unifyShape != null  and unifyShape != ''"> and unify_shape = #{unifyShape}</if>
+            <if test="unifyCity != null  and unifyCity != ''"> and unify_city = #{unifyCity}</if>
+            <if test="unifyCounty != null  and unifyCounty != ''"> and unify_county = #{unifyCounty}</if>
+            <if test="unifyTown != null  and unifyTown != ''"> and unify_town = #{unifyTown}</if>
+            <if test="unifyCommunity != null  and unifyCommunity != ''"> and unify_community = #{unifyCommunity}</if>
+            <if test="unifySquad != null  and unifySquad != ''"> and unify_squad = #{unifySquad}</if>
+            <if test="unifyVillage != null  and unifyVillage != ''"> and unify_village = #{unifyVillage}</if>
+            <if test="unifySzone != null  and unifySzone != ''"> and unify_szone = #{unifySzone}</if>
+            <if test="unifyStreet != null  and unifyStreet != ''"> and unify_street = #{unifyStreet}</if>
+            <if test="unifyDoor != null  and unifyDoor != ''"> and unify_door = #{unifyDoor}</if>
+            <if test="unifyResregion != null  and unifyResregion != ''"> and unify_resregion = #{unifyResregion}</if>
+            <if test="unifyBuilding != null  and unifyBuilding != ''"> and unify_building = #{unifyBuilding}</if>
+            <if test="unifyBuildingNum != null  and unifyBuildingNum != ''"> and unify_building_num = #{unifyBuildingNum}</if>
+            <if test="unifyUnit != null  and unifyUnit != ''"> and unify_unit = #{unifyUnit}</if>
+            <if test="unifyFloor != null  and unifyFloor != ''"> and unify_floor = #{unifyFloor}</if>
+            <if test="unifyRoom != null  and unifyRoom != ''"> and unify_room = #{unifyRoom}</if>
+            <if test="roomFloor != null "> and room_floor = #{roomFloor}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+            <if test="updateUser != null  and updateUser != ''"> and update_user = #{updateUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlUnifyAddressInfoById" parameterType="Long" resultMap="XlUnifyAddressInfoResult">
+        <include refid="selectXlUnifyAddressInfoVo"/>
+        where unify_id = #{unifyId}
+    </select>
+        
+    <insert id="insertXlUnifyAddressInfo" parameterType="XlUnifyAddressInfo" useGeneratedKeys="true" keyProperty="unifyId">
+        insert into xl_unify_address_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unifyCode != null  and unifyCode != ''">unify_code,</if>
+            <if test="unifyAddr != null  and unifyAddr != ''">unify_addr,</if>
+            <if test="unifyLv != null ">unify_lv,</if>
+            <if test="unifyScore != null ">unify_score,</if>
+            <if test="unifyLon != null  and unifyLon != ''">unify_lon,</if>
+            <if test="unifyLat != null  and unifyLat != ''">unify_lat,</if>
+            <if test="unifyLoc != null  and unifyLoc != ''">unify_Loc,</if>
+            <if test="unifyShape != null  and unifyShape != ''">unify_shape,</if>
+            <if test="unifyCity != null  and unifyCity != ''">unify_city,</if>
+            <if test="unifyCounty != null  and unifyCounty != ''">unify_county,</if>
+            <if test="unifyTown != null  and unifyTown != ''">unify_town,</if>
+            <if test="unifyCommunity != null  and unifyCommunity != ''">unify_community,</if>
+            <if test="unifySquad != null  and unifySquad != ''">unify_squad,</if>
+            <if test="unifyVillage != null  and unifyVillage != ''">unify_village,</if>
+            <if test="unifySzone != null  and unifySzone != ''">unify_szone,</if>
+            <if test="unifyStreet != null  and unifyStreet != ''">unify_street,</if>
+            <if test="unifyDoor != null  and unifyDoor != ''">unify_door,</if>
+            <if test="unifyResregion != null  and unifyResregion != ''">unify_resregion,</if>
+            <if test="unifyBuilding != null  and unifyBuilding != ''">unify_building,</if>
+            <if test="unifyBuildingNum != null  and unifyBuildingNum != ''">unify_building_num,</if>
+            <if test="unifyUnit != null  and unifyUnit != ''">unify_unit,</if>
+            <if test="unifyFloor != null  and unifyFloor != ''">unify_floor,</if>
+            <if test="unifyRoom != null  and unifyRoom != ''">unify_room,</if>
+            <if test="roomFloor != null ">room_floor,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateUser != null  and updateUser != ''">update_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unifyCode != null  and unifyCode != ''">#{unifyCode},</if>
+            <if test="unifyAddr != null  and unifyAddr != ''">#{unifyAddr},</if>
+            <if test="unifyLv != null ">#{unifyLv},</if>
+            <if test="unifyScore != null ">#{unifyScore},</if>
+            <if test="unifyLon != null  and unifyLon != ''">#{unifyLon},</if>
+            <if test="unifyLat != null  and unifyLat != ''">#{unifyLat},</if>
+            <if test="unifyLoc != null  and unifyLoc != ''">#{unifyLoc},</if>
+            <if test="unifyShape != null  and unifyShape != ''">#{unifyShape},</if>
+            <if test="unifyCity != null  and unifyCity != ''">#{unifyCity},</if>
+            <if test="unifyCounty != null  and unifyCounty != ''">#{unifyCounty},</if>
+            <if test="unifyTown != null  and unifyTown != ''">#{unifyTown},</if>
+            <if test="unifyCommunity != null  and unifyCommunity != ''">#{unifyCommunity},</if>
+            <if test="unifySquad != null  and unifySquad != ''">#{unifySquad},</if>
+            <if test="unifyVillage != null  and unifyVillage != ''">#{unifyVillage},</if>
+            <if test="unifySzone != null  and unifySzone != ''">#{unifySzone},</if>
+            <if test="unifyStreet != null  and unifyStreet != ''">#{unifyStreet},</if>
+            <if test="unifyDoor != null  and unifyDoor != ''">#{unifyDoor},</if>
+            <if test="unifyResregion != null  and unifyResregion != ''">#{unifyResregion},</if>
+            <if test="unifyBuilding != null  and unifyBuilding != ''">#{unifyBuilding},</if>
+            <if test="unifyBuildingNum != null  and unifyBuildingNum != ''">#{unifyBuildingNum},</if>
+            <if test="unifyUnit != null  and unifyUnit != ''">#{unifyUnit},</if>
+            <if test="unifyFloor != null  and unifyFloor != ''">#{unifyFloor},</if>
+            <if test="unifyRoom != null  and unifyRoom != ''">#{unifyRoom},</if>
+            <if test="roomFloor != null ">#{roomFloor},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateUser != null  and updateUser != ''">#{updateUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlUnifyAddressInfo" parameterType="XlUnifyAddressInfo">
+        update xl_unify_address_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unifyCode != null  and unifyCode != ''">unify_code = #{unifyCode},</if>
+            <if test="unifyAddr != null  and unifyAddr != ''">unify_addr = #{unifyAddr},</if>
+            <if test="unifyLv != null ">unify_lv = #{unifyLv},</if>
+            <if test="unifyScore != null ">unify_score = #{unifyScore},</if>
+            <if test="unifyLon != null  and unifyLon != ''">unify_lon = #{unifyLon},</if>
+            <if test="unifyLat != null  and unifyLat != ''">unify_lat = #{unifyLat},</if>
+            <if test="unifyLoc != null  and unifyLoc != ''">unify_Loc = #{unifyLoc},</if>
+            <if test="unifyShape != null  and unifyShape != ''">unify_shape = #{unifyShape},</if>
+            <if test="unifyCity != null  and unifyCity != ''">unify_city = #{unifyCity},</if>
+            <if test="unifyCounty != null  and unifyCounty != ''">unify_county = #{unifyCounty},</if>
+            <if test="unifyTown != null  and unifyTown != ''">unify_town = #{unifyTown},</if>
+            <if test="unifyCommunity != null  and unifyCommunity != ''">unify_community = #{unifyCommunity},</if>
+            <if test="unifySquad != null  and unifySquad != ''">unify_squad = #{unifySquad},</if>
+            <if test="unifyVillage != null  and unifyVillage != ''">unify_village = #{unifyVillage},</if>
+            <if test="unifySzone != null  and unifySzone != ''">unify_szone = #{unifySzone},</if>
+            <if test="unifyStreet != null  and unifyStreet != ''">unify_street = #{unifyStreet},</if>
+            <if test="unifyDoor != null  and unifyDoor != ''">unify_door = #{unifyDoor},</if>
+            <if test="unifyResregion != null  and unifyResregion != ''">unify_resregion = #{unifyResregion},</if>
+            <if test="unifyBuilding != null  and unifyBuilding != ''">unify_building = #{unifyBuilding},</if>
+            <if test="unifyBuildingNum != null  and unifyBuildingNum != ''">unify_building_num = #{unifyBuildingNum},</if>
+            <if test="unifyUnit != null  and unifyUnit != ''">unify_unit = #{unifyUnit},</if>
+            <if test="unifyFloor != null  and unifyFloor != ''">unify_floor = #{unifyFloor},</if>
+            <if test="unifyRoom != null  and unifyRoom != ''">unify_room = #{unifyRoom},</if>
+            <if test="roomFloor != null ">room_floor = #{roomFloor},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+        </trim>
+        where unify_id = #{unifyId}
+    </update>
+
+    <delete id="deleteXlUnifyAddressInfoById" parameterType="Long">
+        delete from xl_unify_address_info where unify_id = #{unifyId}
+    </delete>
+
+    <delete id="deleteXlUnifyAddressInfoByIds" parameterType="String">
+        delete from xl_unify_address_info where unify_id in 
+        <foreach item="unifyId" collection="array" open="(" separator="," close=")">
+            #{unifyId}
+        </foreach>
+    </delete>
+    
+</mapper>

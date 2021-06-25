@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('角色列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            事件类型名称：<input type="text" maxlength="40" name="ec_name"/>
+                        </li>
+                        <li>
+                            事件分组：<input type="text "  maxlength="40" name="ec_category"/>
+                        </li>
+                        <li style="display:flex;align-items: center">
+                            状态：
+
+                            <select name="ec_type">
+                            <option value="">所有</option>
+                            <option value="0">停用</option>
+                            <option value="1">启用</option>
+                        </select>
+                        </li>
+                        <li>
+                            <a class = "btn btn-success btn-sm" onclick = "$.table.search()"><i class = "fa fa-search"></i>&nbsp;搜索</a>
+                            <a class = "btn btn-default btn-sm" onclick = "$.form.reset()"><i class = "fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:role:add">
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:role:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:role:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+<!--            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:role:export">-->
+<!--                <i class="fa fa-download"></i> 导出-->
+<!--            </a>-->
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:role:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:role:remove')}]];
+
+    var prefix = ctx + "system/eclass";
+
+
+    $(function() {
+        var options = {
+            url: prefix + "/manage",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            sortName: "ec_id",
+            modalName: "事件",
+            showPageGo: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'ec_id',
+                    title: '事件编号',
+                    visible: false
+                },
+                {
+                    field: 'ec_category',
+                    title: '事件分组'
+                },
+                {
+                    field: 'ec_name_type',
+                    title: '事件类别码',
+                    sortable: true
+                },
+                {
+                    field: 'ec_name',
+                    title: '事件类型名称',
+                    sortable: true
+                },
+                {
+                    field: 'ec_admin',
+                    title: '创建者',
+                    sortable: true
+                },
+                {
+                    field: 'ec_created_time',
+                    title: '创建时间',
+                    sortable: true
+                },
+                // {
+                //     visible: editFlag == 'hidden' ? false : true,
+                //     title: '状态',
+                //     align: 'center',
+                //     formatter: function (value, row, index) {
+                //         return statusTools(row);
+                //     }
+                // },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.ec_id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.ec_id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        var more = [];
+                        // more.push("<a class='btn btn-default btn-xs " + editFlag + "' href='javascript:void(0)' onclick='authDataScope(" + row.ec_id + ")'><i class='fa fa-check-square-o'></i>数据权限</a> ");
+                        // more.push("<a class='btn btn-default btn-xs " + editFlag + "' href='javascript:void(0)' onclick='authUser(" + row.ec_id + ")'><i class='fa fa-user'></i>分配用户</a>");
+                        // actions.push('<a tabindex="0" class="btn btn-info btn-xs" role="button" data-container="body" data-placement="left" data-toggle="popover" data-html="true" data-trigger="hover" data-content="' + more.join('') + '"><i class="fa fa-chevron-circle-right"></i>更多操作</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    /* 角色管理-分配数据权限 */
+    function authDataScope(ec_id) {
+        var url = prefix + '/authDataScope/' + ec_id;
+        $.modal.open("分配数据权限", url);
+    }
+
+    /* 角色管理-分配用户 */
+    function authUser(ec_id) {
+        var url = prefix + '/authUser/' + ec_id;
+        $.modal.openTab("分配用户", url);
+    }
+
+
+    /* 是否启用或停用 */
+    function statusTools(row) {
+        if (row.ec_type == 0) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.ec_id + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.ec_id + '\')"></i> ';
+        }
+    }
+
+    /* 停用 */
+    function disable(ec_id) {
+        $.modal.confirm("确认要停用事件吗？", function() {
+            $.operate.post(prefix + "/changeStatus", { "ec_id": ec_id, "ec_type": 0 });
+        })
+    }
+
+    /* 启用 */
+    function enable(ec_id) {
+        $.modal.confirm("确认要启用事件吗？", function() {
+            $.operate.post(prefix + "/changeStatus", { "ec_id": ec_id, "ec_type": 1 });
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改标签')" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-role-edit" th:object="${role}">
+        <input id="lm_id" name="lm_id" type="hidden" th:field="*{lm_id}"/>
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label is-required">标签编号：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input class="form-control" type="text" maxlength="32"  name="ec_name" id="lm_ids" th:field="*{lm_ids}" required>-->
+
+<!--            </div>-->
+<!--        </div>-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">标签名称：</label>
+            <div class="col-sm-8">
+                <input class="form-control" maxlength="50" type="text" name="lm_name" id="lm_name" th:field="*{lm_name}" required>
+            </div>
+        </div>
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">标签状态：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <label class="toggle-switch switch-solid">-->
+<!--                    <input type="checkbox" id="lm_type" th:checked="${role.lm_type == '0' ? true : false}">-->
+<!--                    <span></span>-->
+<!--                </label>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <input id="lm_bei" name="lm_bei" maxlength="100" class="form-control" type="text" th:field="*{lm_bei}">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/biaoqian";
+    // $(function() {
+    //     var url = ctx + "system/menu/roleMenuTreeData?ec_id=" + $("#ec_id").val();
+    //     var options = {
+    //         id: "menuTrees",
+    //         url: url,
+    //         check: { enable: true },
+    //         expandLevel: 0
+    //     };
+    //     $.tree.init(options);
+    // });
+
+    $("#form-role-edit").validate({
+        onkeyup: false,
+        rules:{
+            roleName:{
+                remote: {
+                    url: ctx + "system/biaoqian/checkRoleNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "lm_id": function() {
+                            return $("#lm_id").val();
+                        },
+                        "lm_name": function() {
+                            return $.common.trim($("#lm_name").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            roleKey:{
+                remote: {
+                    url: ctx + "system/biaoqian/checkRoleKeyUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "lm_id": function() {
+                            return $("#lm_id").val();
+                        },
+                        "roleKey": function() {
+                            return $.common.trim($("#roleKey").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            roleSort:{
+                digits:true
+            },
+        },
+        messages: {
+            "lm_name": {
+                remote: "角色名称已经存在"
+            },
+            "roleKey": {
+                remote: "角色权限已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    function edit() {
+        var lm_id = $("input[name='lm_id']").val();
+        var lm_ids = $("input[name='lm_ids']").val();
+        var lm_name = $("input[name='lm_name']").val();
+        var lm_bei = $("input[name='lm_bei']").val();
+        var lm_type = $("input[id='lm_type']").is(':checked') == true ? 0 : 1;
+        $.ajax({
+            cache : true,
+            type : "POST",
+            url : prefix + "/edit",
+            data : {
+                "lm_ids": lm_ids,
+                "lm_id": lm_id,
+                "lm_name": lm_name,
+                "lm_bei": lm_bei,
+                "lm_type": lm_type
+            },
+            async : false,
+            error : function(request) {
+                $.modal.alertError("系统错误");
+            },
+            success : function(data) {
+                $.operate.successCallback(data);
+            }
+        });
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            edit();
+        }
+    }
+</script>
+</body>
+</html>

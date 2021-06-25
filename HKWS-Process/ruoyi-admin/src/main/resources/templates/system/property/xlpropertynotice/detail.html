@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('公告详情')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m-t" id="signupForm">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">物业：</label>
+            <div class="form-control-static" th:text="${xlVillage.propertyName}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">小区：</label>
+            <div class="form-control-static" th:text="${xlVillage.name}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">标题：</label>
+            <div class="form-control-static" th:text="${xlPropertyNotice.title}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">类型：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('notic_type',xlPropertyNotice.noticType)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">内容：</label>
+            <div class="form-control-static" th:text="${xlPropertyNotice.noticContent}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">图片：</label>
+            <div class="form-control-static">
+                <label id="noticImg"></label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">发布人：</label>
+            <div class="form-control-static" th:text="${xlPropertyNotice.createBy}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">发布时间：</label>
+            <div class="form-control-static" th:text="${#dates.format(xlPropertyNotice.createTime, 'yyyy-MM-dd HH:mm:ss')}">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:src="@{/upload/upload.js}"></script>
+<script th:inline="javascript">
+    //图片回显
+    $(document).ready(function(){
+        let attachments = [[${attachments}]];
+        let option = [];
+        for(let i = 0; i < attachments.length; i++){
+            //判断文件类型，只展示图片类型
+            let fileName = attachments[i].attachmentName; //获取附件名称
+            if(checkImageType(fileName)){
+                let str =
+                    '<img src="'+attachments[i].attachmentUrl+'" style="width: 106px; height: 160px"/>';
+                option.push(str);
+            }
+        }
+        $('#noticImg').html(option);
+    });
+</script>
+</body>
+</html>

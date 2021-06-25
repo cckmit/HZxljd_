@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlInspectionTeamMapper">
+    
+    <resultMap type="XlInspectionTeam" id="XlInspectionTeamResult">
+        <result property="teamId"    column="team_id"    />
+        <result property="teamName"    column="team_name"    />
+        <result property="patrolplanId"   column="patrolplan_id"   />
+        <result property="createDate"    column="create_date"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectXlInspectionTeamVo">
+        select team_id, team_name, patrolplan_id, create_date, create_user, update_date, update_user, status from xl_inspection_team
+    </sql>
+
+    <select id="selectXlInspectionTeamList" parameterType="XlInspectionTeam" resultMap="XlInspectionTeamResult">
+        SELECT a.`team_name`, a.`team_id`, a.patrolplan_id, a.`create_user`, a.`create_date`,a.`status`, b.`team_id` AS bid,b.`id`,b.`check_id` ,
+        COUNT(b.`check_id`) AS counts FROM `xl_inspection_team` a
+        LEFT JOIN `xl_team_check` b ON a.`team_id`=b.`team_id`
+        <where>
+            <if test="teamName != null  and teamName != ''"> and a.team_name like concat('%', #{teamName}, '%')</if>
+            <if test="params.beginCreateDate != null and params.beginCreateDate != ''">
+                and a.create_date &gt;= #{params.beginCreateDate}</if>
+            <if test="params.endCreateDate != null and params.endCreateDate != ''">
+                and a.create_date &lt;= #{params.endCreateDate}</if>
+            <if test="createUser != null  and createUser != ''"> and a.create_user = #{createUser}</if>
+            <if test="updateDate != null "> and a.update_date = #{updateDate}</if>
+            <if test="updateUser != null  and updateUser != ''"> and a.update_user = #{updateUser}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+        </where>
+        GROUP BY a.team_id
+    </select>
+    
+    <select id="selectXlInspectionTeamById" parameterType="Long" resultMap="XlInspectionTeamResult">
+        <include refid="selectXlInspectionTeamVo"/>
+        where team_id = #{teamId}
+    </select>
+
+    <update id="updateXlInspectionTeam" parameterType="XlInspectionTeam">
+        update xl_inspection_team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamName != null  and teamName != ''">team_name = #{teamName},</if>
+            <if test="patrolplanId != null  and patrolplanId != ''">patrolplan_id = #{patrolplanId},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="updateDate != null ">update_date = #{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+        </trim>
+        where team_id = #{teamId}
+    </update>
+
+    <delete id="deleteXlInspectionTeamById" parameterType="Long">
+        delete from xl_inspection_team where team_id = #{teamId}
+    </delete>
+
+    <delete id="deleteXlInspectionTeamByIds" parameterType="String">
+        delete from xl_inspection_team where team_id in 
+        <foreach item="teamId" collection="array" open="(" separator="," close=")">
+            #{teamId}
+        </foreach>
+    </delete>
+
+    <!-- 插入并返回id -->
+    <insert id="insertXlInspectionTeam" useGeneratedKeys="true" parameterType="XlInspectionTeam" keyProperty="teamId">
+        insert into xl_inspection_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamName != null  and teamName != ''">team_name,</if>
+            <if test="patrolplanId != null  and patrolplanId != ''">patrolplan_id,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="updateDate != null ">update_date,</if>
+            <if test="updateUser != null  and updateUser != ''">update_user,</if>
+            <if test="status != null  and status != ''">status,</if>
+            create_date
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamName != null  and teamName != ''">#{teamName},</if>
+            <if test="patrolplanId != null  and patrolplanId != ''">#{patrolplanId},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="updateDate != null ">#{updateDate},</if>
+            <if test="updateUser != null  and updateUser != ''">#{updateUser},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <insert id="insertTeamAndCheck" parameterType="map">
+          insert into xl_team_check (team_id, check_id) values (#{teamId},#{id});
+    </insert>
+    
+    <select id="selectChecksByTeamId" parameterType="long" resultType="java.lang.Integer">
+        SELECT check_id  FROM xl_team_check  WHERE team_id=#{teamId};
+    </select>
+
+    <delete id="deleteTeamAndChecksByTeamId" parameterType="long">
+        DELETE FROM xl_team_check WHERE team_id = #{teamId};
+    </delete>
+    
+</mapper>

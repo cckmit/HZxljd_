@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlEstateManagementMapper">
+
+    <resultMap type="XlEstateManagement" id="XlEstateManagementResult">
+        <result property="id"    column="id"    />
+        <result property="estateName"    column="estate_name"    />
+        <result property="estateStar"    column="estate_star"    />
+        <result property="quartersId"    column="quarters_id"    />
+        <result property="quartersName"    column="quarters_name"    />
+        <result property="estateManager"    column="estate_manager"    />
+        <result property="estatePhone"    column="estate_phone"    />
+    </resultMap>
+    <resultMap id="XlEstateResult" type="com.ruoyi.system.domain.dto.EstateDto">
+        <result property="estateName"    column="estate_name"    />
+        <result property="eventStatusOne"    column="eventStatusOne"    />
+        <result property="eventStatusTwo"    column="eventStatusTwo"    />
+        <result property="eventStatusThree"    column="eventStatusThree"    />
+        <result property="eventSourceOne"    column="eventSourceOne"    />
+        <result property="eventSourceTwo"    column="eventSourceTwo"    />
+        <result property="eventSourceThree"    column="eventSourceThree"    />
+        <result property="eventSourceFour"    column="eventSourceFour"    />
+        <result property="eventSourceFive"    column="eventSourceFive"    />
+        <result property="buildingNumber"    column="buildingNumber"    />
+        <result property="roomNumber"    column="roomNumber"    />
+        <result property="rightNumber"    column="rightNumber"    />
+        <result property="carNumber"    column="carNumber"    />
+        <result property="equipmentNumber"    column="equipmentNumber"    />
+    </resultMap>
+
+    <sql id="selectXlEstateManagementVo">
+        select id, estate_name, estate_star, quarters_id, quarters_name, estate_manager, estate_phone from xl_estate_management
+    </sql>
+
+    <select id="selectXlEstateManagementList" parameterType="XlEstateManagement" resultMap="XlEstateManagementResult">
+        <include refid="selectXlEstateManagementVo"/>
+        <where>
+            <if test="estateName != null  and estateName != ''"> and estate_name like concat('%', #{estateName}, '%')</if>
+            <if test="estateStar != null  and estateStar != ''"> and estate_star = #{estateStar}</if>
+            <if test="quartersId != null  and quartersId != ''"> and quarters_id = #{quartersId}</if>
+            <if test="quartersName != null  and quartersName != ''"> and quarters_name like concat('%', #{quartersName}, '%')</if>
+            <if test="estateManager != null  and estateManager != ''"> and estate_manager = #{estateManager}</if>
+            <if test="estatePhone != null  and estatePhone != ''"> and estate_phone = #{estatePhone}</if>
+        </where>
+    </select>
+
+    <select id="selectXlEstateManagementById" parameterType="Long" resultMap="XlEstateManagementResult">
+        <include refid="selectXlEstateManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlEstateManagement" parameterType="XlEstateManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_estate_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="estateName != null  and estateName != ''">estate_name,</if>
+            <if test="estateStar != null  and estateStar != ''">estate_star,</if>
+            <if test="quartersId != null  and quartersId != ''">quarters_id,</if>
+            <if test="quartersName != null  and quartersName != ''">quarters_name,</if>
+            <if test="estateManager != null  and estateManager != ''">estate_manager,</if>
+            <if test="estatePhone != null  and estatePhone != ''">estate_phone,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="estateName != null  and estateName != ''">#{estateName},</if>
+            <if test="estateStar != null  and estateStar != ''">#{estateStar},</if>
+            <if test="quartersId != null  and quartersId != ''">#{quartersId},</if>
+            <if test="quartersName != null  and quartersName != ''">#{quartersName},</if>
+            <if test="estateManager != null  and estateManager != ''">#{estateManager},</if>
+            <if test="estatePhone != null  and estatePhone != ''">#{estatePhone},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlEstateManagement" parameterType="XlEstateManagement">
+        update xl_estate_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="estateName != null  and estateName != ''">estate_name = #{estateName},</if>
+            <if test="estateStar != null  and estateStar != ''">estate_star = #{estateStar},</if>
+            <if test="quartersId != null  and quartersId != ''">quarters_id = #{quartersId},</if>
+            <if test="quartersName != null  and quartersName != ''">quarters_name = #{quartersName},</if>
+            <if test="estateManager != null  and estateManager != ''">estate_manager = #{estateManager},</if>
+            <if test="estatePhone != null  and estatePhone != ''">estate_phone = #{estatePhone},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlEstateManagementById" parameterType="Long">
+        delete from xl_estate_management where id = #{id}
+    </delete>
+
+    <delete id="deleteXlEstateManagementByIds" parameterType="String">
+        delete from xl_estate_management where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectXlEstateManagementByquartersName" resultType="com.ruoyi.system.domain.XlEstateManagement" parameterType="String">
+            <include refid="selectXlEstateManagementVo"/>
+        where quarters_name = #{quartersName}
+</select>
+
+    <select id="queryPropert" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select count(*) from xl_estate_management hei
+        <where>
+            1 = 1
+            <if test="statusArr !=null and statusArr !=''">
+                and hei.estate_star = #{statusArr}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectXlEstateManagementCountById" resultMap="XlEstateResult" parameterType="int">
+    SELECT
+	xem.estate_name,
+	( SELECT COUNT( xpe.event_status ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_status = '1' AND xem.id=#{id}) AS eventStatusOne,
+	( SELECT COUNT( xpe.event_status ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE  xpe.event_status = '2' AND xem.id=#{id}) AS eventStatusTwo,
+	( SELECT COUNT( xpe.event_status ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_status = '3' AND xem.id=#{id}) AS eventStatusThree,
+	( SELECT COUNT( xpe.event_source ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_source = '1' AND xem.id=#{id}) AS eventSourceOne,
+	( SELECT COUNT( xpe.event_source ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_source = '2' AND xem.id=#{id}) AS eventSourceTwo,
+	( SELECT COUNT( xpe.event_source ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_source = '3' AND xem.id=#{id}) AS eventSourceThree,
+	( SELECT COUNT( xpe.event_source ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_source = '4' AND xem.id=#{id}) AS eventSourceFour,
+	( SELECT COUNT( xpe.event_source ) FROM xl_property_event xpe LEFT JOIN xl_estate_management xem ON xem.quarters_id = xpe.village_id  WHERE xpe.event_source = '5' AND xem.id=#{id}) AS eventSourceFive,
+	(SELECT COUNT(1) FROM( SELECT  COUNT( xp.building ) FROM xl_personnel xp LEFT JOIN xl_estate_management xem ON xem.quarters_id = xp.village_id WHERE xem.id=#{id} GROUP BY xp.building )  xl_personnel)
+	 AS buildingNumber,
+	(SELECT COUNT( xp.room ) FROM xl_personnel xp LEFT JOIN xl_estate_management xem ON xem.quarters_id = xp.village_id
+	WHERE xem.id = #{id}) AS roomNumber,
+	(SELECT COUNT( xp.property_right ) FROM xl_personnel xp LEFT JOIN xl_estate_management xem ON xem.quarters_id = xp.village_id
+	WHERE xp.property_right = '0' AND xem.id = #{id}) AS rightNumber,
+	(SELECT COUNT( xai.car_number ) FROM xl_car_info xai LEFT JOIN xl_estate_management xem ON xem.quarters_id = xai.village_id
+	WHERE xem.id = #{id}) AS carNumber,
+	(SELECT COUNT( xei.equipment_serial_number ) FROM xl_equipment_info xei LEFT JOIN xl_estate_management xem ON xem.quarters_id = xei.village_id
+	WHERE xem.id = #{id}) AS equipmentNumber
+FROM
+	xl_estate_management xem
+WHERE
+	xem.id=#{id}
+    </select>
+	  <select id="selectXlEstateManagementInIds" resultMap="XlEstateManagementResult"  parameterType="string">
+	  	 <include refid="selectXlEstateManagementVo"></include>
+	     WHERE id  in
+	     <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+</select>
+
+    <select id="queryPropertEfficiency" resultMap="XlEstateManagementResult">
+        select * from xl_estate_management
+    </select>
+
+    <select id="queryPropertyDownName" resultMap="XlEstateManagementResult" parameterType="XlEstateManagement">
+        select * from xl_estate_management
+        <where>
+            1 = 1
+            <if test="estateName !=null and estateName !=''">
+                and estate_name like concat('%', #{estateName}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

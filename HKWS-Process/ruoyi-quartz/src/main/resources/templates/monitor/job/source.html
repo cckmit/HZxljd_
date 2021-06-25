@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <th:block th:include="include :: header('数据源列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+  <div class="row">
+    <div class="col-sm-12 search-collapse">
+      <form id="product-form">
+        <input type="hidden" id="jobId" name="jobId"/>
+        <input type="hidden" id="jobGroup" name="jobGroup"/>
+        <input type="hidden" id="status" name="status"/>
+        <div class="select-list">
+          <ul>
+            <li style = "display: flex;align-items: center">
+              全部状态：
+              <select name="sourceStatus">
+              <option value="">全部状态</option>
+              <option value="0">正常</option>
+              <option value="2">禁用</option>
+            </select>
+            </li>
+            <li style="display: flex;align-items: center">
+              全部接入方式：
+              <select name="sourceAccess">
+              <option value="">全部接入方式</option>
+              <option value="API">API</option>
+              <option value="DB">DB</option>
+            </select>
+            </li>
+<!--            <li>-->
+<!--              数据源编号：<input type="text" id="uuid" name="id"/>-->
+<!--            </li>-->
+            <li>
+              数据源名称：<input type="text" id="sourceName" name="sourceName"/>
+            </li>
+            <li>
+              创建者：<input type="text" id="createUser" name="createUser"/>
+            </li>
+            <li>
+              <a class="btn btn-success btn-sm" onclick="$.table.search()" ><i class="fa fa-search"></i>&nbsp;搜索</a>
+              <a class="btn btn-default btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+    <div class="btn-group-sm" id="toolbar" role="group">
+      <a class = "btn btn-success" onclick = "$.operate.add()" shiro:hasPermission = "monitor/source:add">
+        <i class = "fa fa-plus"></i> 新增
+      </a>
+<!--      <a class="btn btn-primary single disabled" onclick="$.operate.editFull()" shiro:hasPermission="monitor/source:edit">-->
+<!--        <i class="fa fa-edit"></i> 修改-->
+<!--      </a>-->
+<!--      <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="monitor/source:remove">-->
+<!--        <i class="fa fa-remove"></i> 删除-->
+<!--      </a>-->
+      <a class="btn btn-default" onclick="javascript:jobLog()" shiro:hasPermission="monitor:job:detail">
+        <i class="fa fa-list"></i> 日志
+      </a>
+    </div>
+
+    <div class="col-sm-12 select-table table-striped">
+      <table id="bootstrap-table"></table>
+    </div>
+  </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+  var detailFlag = [[${@permission.hasPermi('monitor:job:detail')}]];
+  var editFlag = [[${@permission.hasPermi('monitor/source:edit')}]];
+  var removeFlag = [[${@permission.hasPermi('monitor/source:remove')}]];
+  var statusFlag = [[${@permission.hasPermi('monitor:job:changeStatus')}]];
+  var datas = [[${@dict.getType('sys_normal_disable')}]];
+  var prefix = ctx + "monitor/source";
+  var brefix = ctx + "monitor/job";
+
+  $(function() {
+    var options = {
+      url: prefix + "/list",
+      createUrl: prefix + "/add",
+      updateUrl: prefix + "/edit/{id}",
+      removeUrl: prefix + "/remove",
+      modalName: "数据源接入",
+      showPageGo: true,
+      columns: [{
+        checkbox: true
+      },
+
+        {
+          field: 'id',
+          title: '数据源编号',
+        },
+        {
+          field: 'sourceName',
+          title: '数据源名称',
+          sortable: true
+        },
+        {
+          field: 'sourceAccess',
+          title: '接入方式',
+          sortable: true
+        },
+        {
+          field: '',
+          title: '同步频率',
+          sortable: true,
+          formatter:  function(value, row, index, field){
+            return '<lable>'+row.sourceSynchronize+'/'+row.sourceSynRateVal+'</lable>';
+          }
+        },
+        {
+          field: 'createUser',
+          title: '创建人' ,
+          sortable: true
+        },
+
+        {
+          visible: statusFlag == 'hidden' ? false : true,
+          title: '任务状态',
+          align: 'center',
+          formatter: function (value, row, index) {
+            return statusTools(row);
+          }
+        },
+        {
+          title: '操作',
+          align: 'center',
+          formatter: function(value, row, index) {
+            var actions = [];
+            actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+            actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="fieldConfig(\'' + row.id + '\')"><i class="fa fa-edit"></i>字段配置</a> ');
+
+            // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+            var more = [];
+            more.push("<a class='exdeft " + statusFlag + "' href='javascript:void(0)' onclick='run(" + row.jobId + ")'><i class='fa fa-play-circle-o'></i> 执行一次</a> ");
+            more.push("<a class='exdeft " + detailFlag + "' href='javascript:void(0)' onclick='jobLog(" + row.jobId + ")'><i class='fa fa-list'></i>调度日志</a>");
+            actions.push('<a class="exdeft" role="button" data-container="body" data-placement="left" data-toggle="popover" data-html="true" data-trigger="hover" data-content="' + more.join('') + '"><i class="fa fa-chevron-circle-right"></i>更多操作</a>');
+            return actions.join('');
+          }
+        }]
+    };
+    $.table.init(options);
+
+
+
+
+
+    // //点击行勾选
+    // $("#bootstrap-table").on("click", "tr", function () {
+    //   var input = $(this).find("input");
+    //   if (!$(input).prop("checked")) {
+    //     $(input).prop("checked",true);
+    //   }else{
+    //     $(input).prop("checked",false);
+    //   }
+    // });
+   });
+
+
+  /* 调度任务状态显示 */
+  function statusTools(row) {
+    if (row.status == 1) {
+      return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="start(\'' + row.jobId + '\', \'' + row.jobGroup + '\')"></i> ';
+    } else if(row.status == 0) {
+      return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="stop(\'' + row.jobId + '\', \'' + row.jobGroup + '\')"></i> ';
+    }
+  }
+  /* 调度任务-停用 */
+  function stop(jobId, jobGroup) {
+    $.modal.confirm("确认要停用任务吗？", function() {
+      $.operate.post(brefix + "/changeStatus", { "jobId": jobId, "jobGroup": jobGroup, "status": 1 });
+    })
+  }
+
+  /* 调度任务-启用 */
+  function start(jobId, jobGroup) {
+    $.modal.confirm("确认要启用任务吗？", function() {
+      $.operate.post(brefix + "/changeStatus", { "jobId": jobId, "jobGroup": jobGroup, "status": 0 });
+    })
+  }
+  /* 立即执行一次 */
+  function run(jobId) {
+    $.modal.confirm("确认要立即执行一次任务吗？", function() {
+      $.operate.post(brefix + "/run", { "jobId": jobId});
+    })
+  }
+
+  /* 调度日志查询 */
+  function jobLog(jobId) {
+    var url = ctx + 'monitor/jobLog';
+    if ($.common.isNotEmpty(jobId)) {
+      url += '?jobId=' + jobId;
+    }
+    $.modal.openTab("调度日志", url);
+  }
+
+  /* 数据源接入字段配置*/
+  function fieldConfig(jobId) {
+    var url = prefix + '/fieldconfig/';
+    if ($.common.isNotEmpty(jobId)) {
+      url += jobId;
+    }
+    $.modal.openTab("数据源接入字段配置", url);
+  }
+</script>
+
+
+</body>
+</html>

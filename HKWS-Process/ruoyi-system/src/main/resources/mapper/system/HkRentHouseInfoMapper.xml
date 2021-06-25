@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkRentHouseInfoMapper">
+    
+    <resultMap type="HkRentHouseInfo" id="HkRentHouseInfoResult">
+        <result property="id"    column="id"    />
+        <result property="houseCode"    column="house_code"    />
+        <result property="houseOwnerName"    column="house_owner_name"    />
+        <result property="houseOwnerPhone"    column="house_owner_phone"    />
+        <result property="houseOwnerSex"    column="house_owner_sex"    />
+        <result property="houseAddress"    column="house_address"    />
+        <result property="houseOwnerIdType"    column="house_owner_id_type"    />
+        <result property="houseOwnerId"    column="house_owner_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="communityName"    column="community_name"    />
+        <result property="houseStatus"    column="house_status"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectHkRentHouseInfoVo">
+        select id, house_code, house_owner_name, house_owner_phone, house_owner_sex, house_address, house_owner_id_type, house_owner_id, region_name, create_time, create_by, update_time, update_by from hk_rent_house_info
+    </sql>
+
+    <select id="selectHkRentHouseInfoList" parameterType="HkRentHouseInfo" resultMap="HkRentHouseInfoResult">
+        <include refid="selectHkRentHouseInfoVo"/>
+        <where>  
+            <if test="houseCode != null  and houseCode != ''"> and house_code = #{houseCode}</if>
+            <if test="houseOwnerName != null  and houseOwnerName != ''"> and house_owner_name like concat('%', #{houseOwnerName}, '%')</if>
+            <if test="houseOwnerPhone != null  and houseOwnerPhone != ''"> and house_owner_phone = #{houseOwnerPhone}</if>
+            <if test="houseOwnerSex != null "> and house_owner_sex = #{houseOwnerSex}</if>
+            <if test="houseAddress != null  and houseAddress != ''"> and house_address = #{houseAddress}</if>
+            <if test="houseOwnerIdType != null "> and house_owner_id_type = #{houseOwnerIdType}</if>
+            <if test="houseOwnerId != null  and houseOwnerId != ''"> and house_owner_id = #{houseOwnerId}</if>
+            <if test="regionName != null  and regionName != ''"> and region_name like concat('%', #{regionName}, '%')</if>
+
+
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="createBy != null  and createBy != ''"> and create_user = #{createBy}</if>
+            <if test="updateTime != null  and updateTime != ''"> and update_time = #{updateTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkRentHouseInfoById" parameterType="Long" resultMap="HkRentHouseInfoResult">
+        <include refid="selectHkRentHouseInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectHkRentHouseInfoByCode" parameterType="String" resultMap="HkRentHouseInfoResult">
+        <include refid="selectHkRentHouseInfoVo"/>
+        where house_code = #{houseCode}
+    </select>
+        
+    <insert id="insertHkRentHouseInfo" parameterType="HkRentHouseInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_rent_house_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="houseCode != null  and houseCode != ''">house_code,</if>
+            <if test="houseOwnerName != null  and houseOwnerName != ''">house_owner_name,</if>
+            <if test="houseOwnerPhone != null  and houseOwnerPhone != ''">house_owner_phone,</if>
+            <if test="houseOwnerSex != null ">house_owner_sex,</if>
+            <if test="houseAddress != null  and houseAddress != ''">house_address,</if>
+            <if test="houseOwnerIdType != null ">house_owner_id_type,</if>
+            <if test="houseOwnerId != null  and houseOwnerId != ''">house_owner_id,</if>
+            <if test="regionName != null  and regionName != ''">region_name,</if>
+            <if test="cityName != null  and cityName != ''">city_name,</if>
+            <if test="communityName != null  and communityName != ''">community_name,</if>
+            <if test="houseStatus != null  and houseStatus != ''">house_status,</if>
+            <if test="longitude != null  and longitude != ''">longitude,</if>
+            <if test="latitude != null  and latitude != ''">latitude,</if>
+
+            <if test="createBy != null  and createBy != ''">create_user,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="houseCode != null  and houseCode != ''">#{houseCode},</if>
+            <if test="houseOwnerName != null  and houseOwnerName != ''">#{houseOwnerName},</if>
+            <if test="houseOwnerPhone != null  and houseOwnerPhone != ''">#{houseOwnerPhone},</if>
+            <if test="houseOwnerSex != null ">#{houseOwnerSex},</if>
+            <if test="houseAddress != null  and houseAddress != ''">#{houseAddress},</if>
+            <if test="houseOwnerIdType != null ">#{houseOwnerIdType},</if>
+            <if test="houseOwnerId != null  and houseOwnerId != ''">#{houseOwnerId},</if>
+            <if test="regionName != null  and regionName != ''">#{regionName},</if>
+            <if test="cityName != null  and cityName != ''">#{cityName},</if>
+            <if test="communityName != null  and communityName != ''">#{communityName},</if>
+            <if test="houseStatus != null  and houseStatus != ''">#{houseStatus},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkRentHouseInfo" parameterType="HkRentHouseInfo">
+        update hk_rent_house_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="houseOwnerName != null  and houseOwnerName != ''">house_owner_name = #{houseOwnerName},</if>
+            <if test="houseOwnerPhone != null  and houseOwnerPhone != ''">house_owner_phone = #{houseOwnerPhone},</if>
+            <if test="houseOwnerSex != null ">house_owner_sex = #{houseOwnerSex},</if>
+            <if test="houseAddress != null  and houseAddress != ''">house_address = #{houseAddress},</if>
+            <if test="houseOwnerIdType != null ">house_owner_id_type = #{houseOwnerIdType},</if>
+            <if test="houseOwnerId != null  and houseOwnerId != ''">house_owner_id = #{houseOwnerId},</if>
+            <if test="regionName != null  and regionName != ''">region_name = #{regionName},</if>
+            <if test="cityName != null  and cityName != ''">city_name = #{cityName},</if>
+            <if test="houseStatus != null  and houseStatus != ''">house_status = #{houseStatus},</if>
+
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where house_code = #{houseCode}
+    </update>
+
+    <delete id="deleteHkRentHouseInfoById" parameterType="Long">
+        delete from hk_rent_house_info where id = #{id}
+    </delete>
+
+    <delete id="deleteHkRentHouseInfoByIds" parameterType="String">
+        delete from hk_rent_house_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="allCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select Count(1) from hk_rent_house_info
+        <where>
+            1 = 1
+            <if test="houseOwnerName != null  and houseOwnerName != ''">
+                and house_owner_name = #{houseOwnerName}
+            </if>
+            <if test="houseOwnerPhone != null  and houseOwnerPhone != ''">
+                and house_owner_phone = #{houseOwnerPhone}
+            </if>
+            <if test="houseStatus != null  and houseStatus != ''">
+                and house_status = #{houseStatus}
+            </if>
+            <if test="communityName != null  and communityName != ''">
+                and community_name = #{communityName}
+            </if>
+        </where>
+    </select>
+    
+</mapper>

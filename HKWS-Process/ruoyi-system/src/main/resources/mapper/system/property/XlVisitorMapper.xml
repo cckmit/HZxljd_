@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlVisitorMapper">
+
+    <resultMap type="XlVisitor" id="XlVisitorResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="identityNumber"    column="identity_number"    />
+        <result property="sex"    column="sex"    />
+        <result property="interviewee"    column="Interviewee"    />
+        <result property="reasonsInterviewed"    column="reasons_interviewed"    />
+        <result property="reasonsDateAppoint"    column="reasons_date_appoint"    />
+        <result property="reasonsDate"    column="reasons_date"    />
+        <result property="visitorImg"    column="visitor_img"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlVisitorVo">
+        select id, name, phone, identity_number, sex, Interviewee, reasons_interviewed, reasons_date, visitor_img, village_id, create_by, create_time, update_by, update_time,visitor_status,reasons_date_appoint from xl_visitor
+    </sql>
+
+    <select id="selectXlVisitorList" parameterType="XlVisitor" resultMap="XlVisitorResult">
+        <include refid="selectXlVisitorVo"/>
+        <where>
+        <if test="visitorStatus != null  and visitorStatus != ''"> and visitor_status = #{visitorStatus}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="identityNumber != null  and identityNumber != ''"> and identity_number like concat('%', #{identityNumber}, '%')</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="interviewee != null  and interviewee != ''"> and Interviewee like concat('%', #{interviewee}, '%')</if>
+            <if test="reasonsInterviewed != null  and reasonsInterviewed != ''"> and reasons_interviewed = #{reasonsInterviewed}</if>
+            <if test="reasonsDate != null "> and reasons_date = #{reasonsDate}</if>
+            <if test="visitorImg != null  and visitorImg != ''"> and visitor_img = #{visitorImg}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlVisitorById" parameterType="Long" resultMap="XlVisitorResult">
+        <include refid="selectXlVisitorVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlVisitor" parameterType="XlVisitor" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_visitor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="identityNumber != null  and identityNumber != ''">identity_number,</if>
+            <if test="sex != null ">sex,</if>
+            <if test="interviewee != null  and interviewee != ''">Interviewee,</if>
+            <if test="reasonsInterviewed != null  and reasonsInterviewed != ''">reasons_interviewed,</if>
+            <if test="reasonsDate != null ">reasons_date,</if>
+            <if test="visitorImg != null  and visitorImg != ''">visitor_img,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="reasonsDateAppoint != null ">reasons_date_appoint,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="identityNumber != null  and identityNumber != ''">#{identityNumber},</if>
+            <if test="sex != null ">#{sex},</if>
+            <if test="interviewee != null  and interviewee != ''">#{interviewee},</if>
+            <if test="reasonsInterviewed != null  and reasonsInterviewed != ''">#{reasonsInterviewed},</if>
+            <if test="reasonsDate != null ">#{reasonsDate},</if>
+            <if test="visitorImg != null  and visitorImg != ''">#{visitorImg},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="reasonsDateAppoint != null ">#{reasonsDateAppoint},</if>
+
+        </trim>
+    </insert>
+
+    <update id="updateXlVisitor" parameterType="XlVisitor">
+        update xl_visitor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="identityNumber != null  and identityNumber != ''">identity_number = #{identityNumber},</if>
+            <if test="sex != null ">sex = #{sex},</if>
+            <if test="interviewee != null  and interviewee != ''">Interviewee = #{interviewee},</if>
+            <if test="reasonsInterviewed != null  and reasonsInterviewed != ''">reasons_interviewed = #{reasonsInterviewed},</if>
+            <if test="reasonsDate != null ">reasons_date = #{reasonsDate},</if>
+            <if test="visitorImg != null  and visitorImg != ''">visitor_img = #{visitorImg},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="reasonsDateAppoint != null ">reasons_date_appoint =#{reasonsDateAppoint},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlVisitorById" parameterType="Long">
+        delete from xl_visitor where id = #{id}
+    </delete>
+
+    <delete id="deleteXlVisitorByIds" parameterType="String">
+        delete from xl_visitor where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectXlVisitorListById" resultMap="XlVisitorResult" parameterType="XlVisitor">
+        SELECT
+	    xv.id,
+	    xv.NAME,
+	    xv.phone,
+	    xv.identity_number,
+	    xv.sex,
+        xv.Interviewee,
+        xv.reasons_interviewed,
+        xv.reasons_date,
+        xv.visitor_img,
+        xv.village_id,
+        xv.create_by,
+        xv.create_time,
+        xv.update_by,
+        xv.update_time
+    FROM
+	    xl_visitor xv INNER JOIN xl_estate_management xem ON xv.village_id=xem.quarters_id
+	    <where>
+            <if test="id!=null and id!=''">
+                AND  xem.id=#{id}
+            </if>
+            <if test="params.visitTime!=null and params.visitTime!=''">
+                AND date_format(reasons_date,'%Y%m%d') &lt;= date_format(#{params.visitTime},'%Y%m%d')
+            </if>
+        </where>
+    </select>
+    <select id="selectXlVisitorPropertyList" resultMap="XlVisitorResult" parameterType="hashmap">
+               <include refid="selectXlVisitorVo"/>
+        <where>
+        1=1
+        <if test="xlVisitor.id != null  and xlVisitor.id != ''"> and id = #{xlVisitor.id}</if>
+        <if test="xlVisitor.visitorStatus != null  and xlVisitor.visitorStatus != ''"> and visitor_status = #{xlVisitor.visitorStatus}</if>
+            <if test="xlVisitor.name != null  and xlVisitor.name != ''"> and name like concat('%', #{xlVisitor.name}, '%')</if>
+            <if test="xlVisitor.phone != null  and xlVisitor.phone != ''"> and phone = #{xlVisitor.phone}</if>
+            <if test="xlVisitor.identityNumber != null  and xlVisitor.identityNumber != ''"> and identity_number = #{xlVisitor.identityNumber}</if>
+            <if test="xlVisitor.sex != null "> and sex = #{xlVisitor.sex}</if>
+            <if test="xlVisitor.interviewee != null  and xlVisitor.interviewee != ''"> and Interviewee = #{xlVisitor.interviewee}</if>
+            <if test="xlVisitor.reasonsInterviewed != null  and xlVisitor.reasonsInterviewed != ''"> and reasons_interviewed = #{xlVisitor.reasonsInterviewed}</if>
+            <if test="xlVisitor.reasonsDate != null "> and reasons_date = #{xlVisitor.reasonsDate}</if>
+            <if test="xlVisitor.visitorImg != null  and xlVisitor.visitorImg != ''"> and visitor_img = #{xlVisitor.visitorImg}</if>
+            <if test="xlVisitor.villageId != null "> and village_id = #{xlVisitor.villageId}</if>
+        </where>
+          <choose>
+            <when test="villageId != null and villageId!= '' and villageId.length!=0">
+              and village_id  in <foreach item="villageId" collection="villageId" open="(" separator="," close=")">#{villageId} </foreach>
+            </when>
+<!--            <otherwise>-->
+<!--                and village_id  in (null)-->
+<!--            </otherwise>-->
+        </choose>
+</select>
+</mapper>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('网格员--申诉列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>考核部门：</label>
+                            <input type="text" name="assessmentDepartment"/>
+                        </li>
+                        <li>
+                            <label>申诉状态：</label>
+                            <select name="appealStatus" th:with="type=${@dict.getType('appeal_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+                    <div class="modal inmodal" id="myModal"  tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content animated bounceInRight">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>确认要驳回该条申诉吗?</strong></p>
+                            <div class="form-group">
+                                <label>驳回理由：</label>
+                                <textarea  name="appealDescribe" id="appealDescribe" class="form-control"  style="height: 100px" required ></textarea>
+                                <input type="" name="dateId" id="dateId" value="" hidden />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal"  onclick="openTwo()" >保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:appeal:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:appeal:remove')}]];
+    var appealStatusDatas = [[${@dict.getType('appeal_status')}]];
+    var prefix = ctx + "system/appeal";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            detailUrl: prefix + "/detail/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "网格员--申诉",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'deductionContent',
+                    title: '扣分内容'
+                },
+                {
+                    field: 'deductionNumber',
+                    title: '扣分值'
+                },
+                {
+                    field: 'appealPerson',
+                    title: '申诉人'
+                },
+                {
+                    field: 'assessmentDepartment',
+                    title: '考核部门'
+                },
+                {
+                    field: 'assessmentDate',
+                    title: '考核时间'
+                },
+                {
+                    field: 'appealStatus',
+                    title: '申诉状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(appealStatusDatas, value);
+                    }
+                },
+                // {
+                //     field: 'createDate',
+                //     title: '创建时间'
+                // },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        if (row.appealStatus==1) {
+                            actions.push('<a class="exdeft "  onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详情</a> ');
+                            actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="openOne('+ row.id + ')"><i class="fa fa-edit"></i>同意</a> ');
+                            actions.push('<a class="exdeft " data-toggle="modal" data-target="#myModal"  data-id="'+row.id+'"><i class="fa fa-remove"></i>驳回</a> ');
+                            return actions.join('');
+                        }else {
+                            actions.push('<a class="exdeft "  onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-search"></i>详情</a> ');
+                            return actions.join('');
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+    function openTwo() {
+        var user_id = $.trim($('#appealDescribe').val());
+        var dateId=$.trim($('#dateId').val());
+            $.ajax({
+                url: "/system/appeal/edit",    //后台数据请求地址
+                type: "post",
+                async: false,
+                data: {"appealStatus": 3, "id": dateId,"appealDescribe":user_id},
+                success: function (result) {
+                   // $.modal.msg("操作成功", modal_status.SUCCESS);
+                  //  layer.msg("操作成功", { icon: $.modal.icon("success"), time: 2000, shift: 10 });
+                  $.operate.ajaxSuccess(result);
+                }
+            });
+    }
+    // function openTwo() {
+    //     if ($.validate.form()) {
+    //         $.operate.save("/system/appeal/edit", $('#form-a1-add').serialize());
+    //     }
+    // }
+    /* 用户管理启用 */
+    function openOne(id) {
+        $.modal.confirm("确认要同意该条申诉吗？", function () {
+            $.operate.post("/system/appeal/edit", {"appealStatus": 2, "id": id});
+        })
+    }
+    var modal = $("#myModal");
+    modal.on("show.bs.modal", function(e) {
+        // 这里的btn就是触发元素，即你点击的按钮
+        var btn = $(e.relatedTarget),
+                id = btn.data("id");
+        var modal = $(this)
+        modal.find('#dateId').val(id);
+    })
+    // $('#myModal').on('hide.bs.modal', function () {
+    //     alert('模态框关闭了');
+    // });
+</script>
+</body>
+</html>

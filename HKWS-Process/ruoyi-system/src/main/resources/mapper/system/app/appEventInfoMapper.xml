@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.appEventInfoMapper">
+
+	<!-- 查询事件概要查询 -->
+	<select id="selectOneHkevent" parameterType="map" resultType="com.ruoyi.system.domain.app.appHkevent">
+		SELECT
+		DISTINCT
+		e.event_id AS eventId,
+		e.component_id as componentId,
+		e.event_type_name AS eventTypeName,
+		e.event_alert_status AS eventAlertStatus,
+		e.event_title AS eventTitle,
+		e.event_type AS eventType,
+		e.event_index_code AS eventIndexCode,
+		e.grid_community AS gridCommunity,
+		e.place_type AS placeType,
+		e.place_type_name AS placeTypeName,
+		e.event_image AS eventImage,
+		e.report_time AS reportTime,
+		e.region_index_code AS regionCode,
+		e.region_name AS regionName,
+		e.time_out AS timeOut,
+		e.create_time AS createTime,
+		e.storage_id AS storageId,
+		e.update_time AS updateTime
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		<where>
+			<if test="componentId!= null and componentId!=''">
+				AND e.component_id = #{componentId}
+			</if>
+			<if test="eventTitle!= null and eventTitle!=''">
+				AND e.event_title LIKE CONCAT('%',#{eventTitle},'%')
+			</if>
+			AND NOW() &lt; e.time_out
+			AND hap.handler_user_id = #{userId}
+			AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		</where>
+		)
+		ORDER BY
+		e.update_time desc
+
+	</select>
+
+
+	<!-- 查询已逾期事件概要查询 -->
+	<select id="selectOverduEvent" parameterType="map" resultType="com.ruoyi.system.domain.app.appHkevent">
+		SELECT
+		DISTINCT
+		e.event_id AS eventId,
+		e.component_id as componentId,
+		e.event_type_name AS eventTypeName,
+		e.event_alert_status AS eventAlertStatus,
+		e.event_title AS eventTitle,
+		e.event_type AS eventType,
+		e.event_index_code AS eventIndexCode,
+		e.grid_community AS gridCommunity,
+		e.place_type AS placeType,
+		e.place_type_name AS placeTypeName,
+		e.event_image AS eventImage,
+		e.report_time AS reportTime,
+		e.region_name AS regionName,
+		e.time_out AS timeOut,
+		e.create_time AS createTime,
+		e.storage_id AS storageId,
+		e.update_time AS updateTime
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		<where>
+			<if test="componentId!= null and componentId!=''">
+				AND e.component_id = #{componentId}
+			</if>
+			<if test="eventTitle!= null and eventTitle!=''">
+				AND e.event_title LIKE CONCAT('%',#{eventTitle},'%')
+			</if>
+			AND NOW() > e.time_out
+			AND hap.handler_user_id = #{userId}
+			AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		</where>
+		)
+		ORDER BY
+		e.update_time desc
+
+	</select>
+
+
+	<!-- 查询未处理事件概要查询 -->
+	<select id="selectTwoHkEvent" parameterType="com.ruoyi.system.domain.app.WxHkEventVo" resultType="com.ruoyi.system.domain.app.appHkevent">
+		SELECT
+		e.event_id AS eventId,
+		e.component_id ,
+		e.event_type_name AS eventTypeName,
+		e.event_alert_status AS eventAlertStatus,
+		e.event_title AS eventTitle,
+		e.event_type AS eventType,
+		e.event_index_code AS eventIndexCode,
+		e.grid_community AS gridCommunity,
+		e.place_type AS placeType,
+		e.place_type_name AS placeTypeName,
+		e.event_image AS eventImage,
+		e.report_time AS reportTime,
+		e.region_name AS regionName,
+		e.event_id AS eventId,
+		e.time_out AS timeOut,
+		e.storage_id AS storageId,
+		e.event_address AS eventAddress
+		FROM
+		hk_event_info AS e
+		WHERE
+		e.event_id IN (
+		SELECT
+		hap.event_id
+		FROM
+		(
+		SELECT
+		b.event_id,
+		MIN(b.handler_order) AS ho
+		FROM
+		hk_action_process AS b
+		WHERE
+		b.is_complete = 0
+		GROUP BY
+		b.event_id
+		) AS d
+		LEFT JOIN hk_action_process AS hap ON d.event_id = hap.event_id
+		AND d.ho = hap.handler_order
+		<where>
+			<if test="eventTitle!= null and eventTitle!=''">
+				AND concat(e.event_title,e.event_type_name) LIKE CONCAT('%',#{eventTitle},'%')
+			</if>
+			<if test="componentId!= null and componentId!=''">
+				AND e.component_id = #{componentId}
+			</if>
+			AND hap.handler_user_id = #{userId}
+			AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		</where>
+		)
+		ORDER BY
+		e.time_out ASC
+
+	</select>
+
+	<!-- 查询已完成事件概要查询 -->
+	<select id="selectCompletedEvent" parameterType="map" resultType="com.ruoyi.system.domain.app.appHkevent">
+		select
+		DISTINCT
+		e.event_id AS eventId,
+		e.component_id as componentId,
+		e.event_type_name AS eventTypeName,
+		e.event_alert_status AS eventAlertStatus,
+		e.event_title AS eventTitle,
+		e.event_type AS eventType,
+		e.event_index_code AS eventIndexCode,
+		e.grid_community AS gridCommunity,
+		e.place_type AS placeType,
+		e.place_type_name AS placeTypeName,
+		e.event_image AS eventImage,
+		e.report_time AS reportTime,
+		e.region_name AS regionName,
+		e.time_out AS timeOut,
+		e.update_time AS updateTime,
+		e.storage_id as storageId
+		from hk_event_info as e where e.event_id in
+		(
+		SELECT
+		DISTINCT
+		a.event_id AS eventId
+		FROM
+		hk_event_info AS a
+		LEFT JOIN hk_action_process AS b ON a.event_id = b.event_id
+		LEFT JOIN hk_event_process_record pr ON pr.event_id = a.event_id
+		and b.handler_user_id = pr.handler_index_code
+		WHERE
+		b.handler_user_id = #{userId}
+		and b.return_flag = 0
+		and (a.event_alert_status = 6 or pr.process_status = '4')
+		<if test="componentId!= null and componentId!=''">
+			AND a.component_id = #{componentId}
+		</if>
+		<if test="eventTitle!= null and eventTitle!=''">
+			AND a.event_title LIKE CONCAT('%',#{eventTitle},'%')
+		</if>
+		)
+		ORDER BY
+		e.update_time desc
+	</select>
+
+
+	<select id="findHkActionProcess" parameterType="map" resultType="com.ruoyi.system.domain.Action.HkActionProcess">
+	  SELECT
+			is_complete as isComplete
+	  FROM
+			hk_action_process
+		WHERE
+			event_id = #{eventId}
+		AND handler_user_id = #{userId}
+		and return_flag = 0
+		GROUP BY is_complete
+	</select>
+
+
+	<select id="findHkActionEvent" parameterType="String" resultType="String">
+	  SELECT procdef_type FROM hk_event_info WHERE event_id = #{eventId}
+	</select>
+	<!--流程转换修改事件状态
+	1.事件处理人
+	3.事件状态
+	4.状态中文名称
+	5.事件id       eventId
+	-->
+	<update id="updateHkActionState" parameterType="map">
+		update hk_event_info
+		<set>
+			update_time=NOW(),
+			<if test="currentUser != null">current_processor_id=#{currentUser},</if>
+			<if test="statusCode != null">event_alert_status=#{statusCode},</if>
+			<if test="statusName != null">event_alert_status_name=#{statusName}</if>
+		</set>
+		where event_id = #{eventId}
+	</update>
+
+	<select id="findHkActionProcessNow" parameterType="map" resultType="com.ruoyi.system.domain.Action.HkActionProcess">
+	  SELECT
+			is_complete as isComplete,
+			event_id as eventId,
+			handler_user_id as handlerUserId,
+			action_standard_id as actionStandardId,
+			handler_order as handlerOrder,
+			create_user as createUser,
+			create_time as createTime,
+			update_user as updateUser,
+			update_time as updateTime,
+			return_flag as returnFlag,
+			is_governance as isGovernance
+	  FROM
+			hk_action_process
+		WHERE
+		event_id = #{eventId}
+		AND handler_user_id = #{userId}
+		<if test="isComplete != null and isComplete != ''">
+			and is_complete = #{isComplete}
+		</if>
+		<if test="handlerOrder != null and handlerOrder != ''">
+			and handler_order = #{handlerOrder}
+		</if>
+		<if test="returnFlag != null and returnFlag !=''">
+			and return_flag = #{returnFlag}
+		</if>
+		order by create_time desc
+	</select>
+</mapper> 

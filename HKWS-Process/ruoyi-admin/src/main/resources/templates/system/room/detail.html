@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('房屋信息详情')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-room-detail" th:object="${xlRoom}">
+        <!--<input name="id" th:field="*{id}" type="hidden">-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属社区：</label>
+            <div class="form-control-static" th:text="*{communityName}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属网格：</label>
+                <div class="form-control-static" th:text="*{deptName}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属小区：</label>
+            <div class="form-control-static" th:text="*{villageName}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属楼幢：</label>
+            <div class="form-control-static" th:text="*{building}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属单元：</label>
+            <div class="form-control-static" th:text="*{unit}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属房屋：</label>
+            <div class="form-control-static" th:text="*{room}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">详细地址：</label>
+            <div class="form-control-static" th:text="*{address}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">房屋类型：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('room_type',xlRoom.roomType)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">房屋编码：</label>
+            <div class="form-control-static" th:text="*{roomCode}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属村镇：</label>
+            <div class="form-control-static" th:text="*{town}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">户主姓名：</label>
+            <div class="form-control-static" th:text="*{householder}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">经济类型：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('economic_type',xlRoom.economicType)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">建造时间：</label>
+            <div class="form-control-static" th:text="*{buildTime}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">建筑层数：</label>
+            <div class="form-control-static" th:text="*{floors}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">建筑面积：</label>
+            <div class="form-control-static" th:text="*{areas}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">占地面积：</label>
+            <div class="form-control-static" th:text="*{floorSpace}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">房屋使用情况：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('use_type',xlRoom.useType)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">房屋周边情况：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('around',xlRoom.around)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">砌筑方式：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('build_type',xlRoom.buildType)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">构筑类型：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('structure_type',xlRoom.structureType)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">私自加层：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('adding',xlRoom.adding)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">地下室：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('cellar',xlRoom.cellar)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">三无：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('three_no',xlRoom.threeNo)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">预制多孔板：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('board',xlRoom.board)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">用地手续：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('procedures',xlRoom.procedures)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">建设规划手册：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('plan_note',xlRoom.planNote)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">产权证：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('certificate',xlRoom.certificate)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">享受补助：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('assistance',xlRoom.assistance)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">鉴定等级：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('appraisal',xlRoom.appraisal)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">坐标经度：</label>
+            <div class="form-control-static" th:text="*{gisx}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">坐标维度：</label>
+            <div class="form-control-static" th:text="*{gisy}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">电话：</label>
+            <div class="form-control-static" th:text="*{phone}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">身份证号：</label>
+            <div class="form-control-static" th:text="*{idcard}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">家庭人数：</label>
+            <div class="form-control-static" th:text="*{peoples}" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否改造：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('remould',xlRoom.remould)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">安全隐患初判：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('danger',xlRoom.danger)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否抗震加固：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('reinforce',xlRoom.reinforce)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">整治计划情况：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('renovate',xlRoom.renovate)}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否为山洪灾害隐患点：</label>
+            <div class="form-control-static" th:text="${@dict.getLabel('waterflood',xlRoom.waterflood)}">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+</body>
+</html>

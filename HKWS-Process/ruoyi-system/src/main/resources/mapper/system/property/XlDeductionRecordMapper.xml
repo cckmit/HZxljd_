@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlDeductionRecordMapper">
+
+    <resultMap type="XlDeductionRecord" id="XlDeductionRecordResult">
+        <result property="id"    column="id"    />
+        <result property="eventId"    column="event_id"    />
+        <result property="deductionNumber"    column="deduction_number"    />
+        <result property="assessmentResults"    column="assessment_results"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="xlPropertyEvent"     column="event_id" javaType="XlPropertyEvent" resultMap="XlPropertyEventResult" />
+    </resultMap>
+
+    <resultMap type="XlPropertyEvent" id="XlPropertyEventResult">
+        <result property="eventId" column="event_id"/>
+        <result property="villageId" column="village_id"/>
+        <result property="propertyId" column="property_id"/>
+        <result property="eventTitle" column="event_title"/>
+        <result property="eventSource" column="event_source"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventStatus" column="event_status"/>
+        <result property="eventAddress" column="event_address"/>
+        <result property="reporter" column="reporter"/>
+        <result property="reporterPhone" column="reporter_phone"/>
+        <result property="reportTime" column="report_time"/>
+        <result property="reportContent" column="report_content"/>
+        <result property="reportImage" column="report_image"/>
+        <result property="handler" column="handler"/>
+        <result property="handlerPhone" column="handler_phone"/>
+        <result property="handlerId" column="handler_id"/>
+        <result property="handleTime" column="handle_time"/>
+        <result property="handleContent" column="handle_content"/>
+        <result property="handleImage" column="handle_image"/>
+        <result property="finishTime" column="finish_time"/>
+        <result property="finishContent" column="finish_content"/>
+        <result property="finishImage" column="finish_image"/>
+        <result property="expectedFinishTime" column="expected_finish_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectXlDeductionRecord">
+        select id, event_id, village_id, property_id,deduction_number, assessment_results, create_by, create_time, update_by, update_time from xl_deduction_record
+    </sql>
+
+    <select id="selectXlDeductionRecordList" parameterType="XlDeductionRecord" resultMap="XlDeductionRecordResult">
+        <include refid="selectXlDeductionRecord"/>
+        <where>
+            <if test="eventId != null "> and event_id = #{eventId}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+            <if test="propertyId != null "> and property_id = #{propertyId}</if>
+            <if test="deductionNumber != null  and deductionNumber != ''"> and deduction_number = #{deductionNumber}</if>
+            <if test="assessmentResults != null  and assessmentResults != ''"> and assessment_results = #{assessmentResults}</if>
+        </where>
+    </select>
+
+    <select id="selectXlDeductionRecordById" parameterType="Long" resultMap="XlDeductionRecordResult">
+        <include refid="selectXlDeductionRecord"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertXlDeductionRecord" parameterType="XlDeductionRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_deduction_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null ">event_id,</if>
+            <if test="villageId != null "> village_id,</if>
+            <if test="propertyId != null ">property_id,</if>
+            <if test="deductionNumber != null  and deductionNumber != ''">deduction_number,</if>
+            <if test="assessmentResults != null  and assessmentResults != ''">assessment_results,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventId != null ">#{eventId},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="propertyId != null ">#{propertyId},</if>
+            <if test="deductionNumber != null  and deductionNumber != ''">#{deductionNumber},</if>
+            <if test="assessmentResults != null  and assessmentResults != ''">#{assessmentResults},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlDeductionRecord" parameterType="XlDeductionRecord">
+        update xl_deduction_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventId != null ">event_id = #{eventId},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="propertyId != null ">property_id = #{propertyId},</if>
+            <if test="deductionNumber != null  and deductionNumber != ''">deduction_number = #{deductionNumber},</if>
+            <if test="assessmentResults != null  and assessmentResults != ''">assessment_results = #{assessmentResults},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlDeductionRecordById" parameterType="Long">
+        delete from xl_deduction_record where id = #{id}
+    </delete>
+
+    <delete id="deleteXlDeductionRecordByIds" parameterType="String">
+        delete from xl_deduction_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--通过事件id查询扣分记录-->
+    <select id="selectDeductionRecordByEventId" parameterType="Long" resultMap="XlDeductionRecordResult">
+        <include refid="selectXlDeductionRecord"/>
+        where event_id = #{eventId}
+    </select>
+
+    <!--通过事件id修改扣分记录-->
+    <update id="updateDeductionRecordByEventId" parameterType="XlDeductionRecord">
+        update xl_deduction_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deductionNumber != null  and deductionNumber != ''">deduction_number = #{deductionNumber},</if>
+            <if test="assessmentResults != null  and assessmentResults != ''">assessment_results = #{assessmentResults},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where event_id = #{eventId}
+    </update>
+
+    <!--关联查询-->
+    <sql id="selectXlDeductionRecordVo">
+        select r.id, r.event_id, r.village_id, r.property_id,r.deduction_number, r.assessment_results, r.create_by, r.create_time, r.update_by, r.update_time,
+        e.event_id, e.village_id, e.property_id,e.event_title, e.event_source, e.event_type, e.event_status, e.event_address, e.reporter, e.reporter_phone,
+        e.report_time, e.report_content, e.report_image, e.handler, e.handler_id, e.handle_time, e.handle_content, e.handle_image, e.finish_time,
+        e.finish_content, e.finish_image, e.expected_finish_time, e.create_by, e.create_time, e.update_by, e.update_time
+        from xl_deduction_record r
+        left join xl_property_event e on e.event_id = r.event_id
+    </sql>
+
+    <!--关联查询-->
+    <select id="selectXlDeductionRecordVoList" parameterType="XlDeductionRecord" resultMap="XlDeductionRecordResult">
+        <include refid="selectXlDeductionRecordVo"/>
+        <where>
+            <if test="eventId != null "> and r.event_id = #{eventId}</if>
+            <if test="villageId != null "> and r.village_id = #{villageId}</if>
+            <if test="propertyId != null "> and r.property_id = #{propertyId}</if>
+            <if test="deductionNumber != null  and deductionNumber != ''"> and r.deduction_number = #{deductionNumber}</if>
+            <if test="assessmentResults != null  and assessmentResults != ''"> and r.assessment_results = #{assessmentResults}</if>
+            <!--事件来源-->
+            <if test="eventSource != null "> and e.event_source = #{eventSource}</if>
+            <!--事件发生（上报）时间-->
+            <if test="params.beginReportTime != null and params.beginReportTime != ''"><!-- 开始时间检索 -->
+                AND date_format(e.report_time,'%y%m%d') &gt;= date_format(#{params.beginReportTime},'%y%m%d')
+            </if>
+            <if test="params.endReportTime != null and params.endReportTime != ''"><!-- 结束时间检索 -->
+                AND date_format(e.report_time,'%y%m%d') &lt;= date_format(#{params.endReportTime},'%y%m%d')
+            </if>
+            <!--事件处理人-->
+            <if test="handler != null  and handler != ''"> and e.handler like concat('%', #{handler}, '%')</if>
+            <!--事件处理时间-->
+            <if test="params.beginHandleTime != null and params.beginHandleTime != ''"><!-- 开始时间检索 -->
+                AND date_format(e.handle_time,'%y%m%d') &gt;= date_format(#{params.beginHandleTime},'%y%m%d')
+            </if>
+            <if test="params.endHandleTime != null and params.endHandleTime != ''"><!-- 结束时间检索 -->
+                AND date_format(e.handle_time,'%y%m%d') &lt;= date_format(#{params.endHandleTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <!--关联主键查询-->
+    <select id="selectXlDeductionRecordVoById" parameterType="Long" resultMap="XlDeductionRecordResult">
+        <include refid="selectXlDeductionRecordVo"/>
+        where r.id = #{id}
+    </select>
+</mapper>

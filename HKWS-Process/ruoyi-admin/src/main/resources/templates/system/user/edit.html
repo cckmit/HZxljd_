@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改用户')" />
+	<th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form class="form-horizontal" id="form-user-edit" th:object="${user}">
+            <input name="userId"  type="hidden" th:value = "${user.userId}" id="userId"/>
+			<input name="deptId"  type="hidden" th:value = "${user.deptId}" id="deptId"/>
+            <h4 class="form-header h4">基本信息</h4>
+            <div class="row">
+            	<div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">用户姓名：</label>
+                        <div class="col-sm-8">
+                            <input name="userName" placeholder="请输入用户姓名" class="form-control" type="text" maxlength="30" th:field="*{userName}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">归属部门：</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input name="deptName" onclick="selectDeptTree()" id="deptName" type="text" placeholder="请选择归属部门" th:field="*{dept.deptName}" class="form-control" required>
+                                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">手机号码：</label>
+                        <div class="col-sm-8">
+                            <input name="phonenumber" placeholder="请输入手机号码" class="form-control" type="text" maxlength="11" th:field="*{phonenumber}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">邮箱：</label>
+                        <div class="col-sm-8">
+                            <input name="email" class="form-control email" type="text" maxlength="20" placeholder="请输入邮箱" th:field="*{email}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">登录账号：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" readonly="true" th:field="*{loginName}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">用户状态：</label>
+                        <div class="col-sm-8">
+                            <label class="toggle-switch switch-solid">
+	                            <input type="checkbox" id="status" th:checked="${user.status == '0' ? true : false}">
+	                            <span></span>
+	                        </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!--<div class="col-sm-6">-->
+                    <!--<div class="form-group">-->
+                        <!--<label class="col-sm-4 control-label">岗位：</label>-->
+                        <!--<div class="col-sm-8">-->
+                            <!--<select id="post" class="form-control select2-multiple" multiple>-->
+								<!--<option th:each="post:${posts}" th:value="${post.postId}" th:text="${post.postName}" th:selected="${post.flag}" th:disabled="${post.status == '1'}"></option>-->
+							<!--</select>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">用户性别：</label>
+                        <div class="col-sm-8">
+                            <select name="sex" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
+				                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{sex}"></option>
+				            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">用户地址：</label>
+                        <div class="col-sm-8">
+                            <input name="address" id="address" type="text" placeholder="请输入用户地址" class="form-control" th:field="*{address}" maxlength="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">角色：</label>
+                        <div class="col-xs-8">
+                            <label th:each="role:${roles}" class="check-box">
+								<input name="role" type="checkbox" th:value="${role.roleId}" th:text="${role.roleName}" th:checked="${role.flag}" th:disabled="${role.status == '1'}">
+							</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">是否团员：</label>
+                        <div class="col-sm-8">
+                            <select name="isLeagueMember" class="form-control m-b">
+                                <option value="0" th:selected="${user.isLeagueMember}==0">否</option>
+                                <option value="1" th:selected="${user.isLeagueMember}==1">是</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">是否党员：</label>
+                        <div class="col-sm-8">
+                            <select name="isPartyMember" class="form-control m-b">
+                                <option value="0" th:selected="${user.isPartyMember}==0">否</option>
+                                <option value="1" th:selected="${user.isPartyMember}==1">是</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">备注：</label>
+                        <div class="col-xs-10">
+                            <textarea name="remark" maxlength="500" class="form-control" rows="3">[[*{remark}]]</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">
+                            <button type="button" class="btn btn-w-m btn-success" onclick="addZnAndQy()">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加职能/区域
+                            </button>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row " id="znAndQyDiv">
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: ztree-js" />
+	<script th:inline="javascript">
+
+        var posts = JSON.parse([[${posts}]]);//职能
+        var userPostRegion = JSON.parse([[${userPostRegionStr}]]);//用户职能区域--map对象
+
+        var index = 0;//id拼接标识
+        var indexArr = [];//拼接id标识数组
+        $(function () {
+            $.each(userPostRegion,function (key,value) {
+                index++;
+                indexArr.push(index);
+                var htmltPosts = ""; //拼接职能下拉框
+                for (var i = 0;i < posts.length;i++){
+                    var selected = ""; //是否选中
+                    if (key == posts[i].postId){
+                        selected = "selected";
+                    }
+                    htmltPosts += '<option value="'+posts[i].postId+'" '+selected+'>'+posts[i].postName+'</option>';
+                }
+                var deleteHtml = '<label class="col-xs-1 control-label">\n' +
+                    '                            <button type="button" class="btn btn-w-m btn-danger" onclick="deleteBtn(this,'+index+')">\n' +
+                    '                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除\n' +
+                    '                            </button>\n' +
+                    '               </label>';
+                var html = '<div class="col-sm-12">\n' +
+                    '                    <div class="form-group">\n' +
+                    '                        <label class="col-xs-2 control-label">职能/区域：</label>\n' +
+                    '                        <div class="col-xs-2">\n' +
+                    '                            <select class="form-control znSelect" id="znSelect'+index+'">' +htmltPosts+
+                    '                            </select>\n' +
+                    '                        </div>\n' +
+                    '                        <div class="col-xs-2">\n' +
+                    '                            <div id="regionTrees'+index+'" class="ztree"></div>\n' +
+                    '                        </div>'+deleteHtml+
+                    '                    </div>\n' +
+                    '                </div>';
+                $("#znAndQyDiv").append(html);
+                var url = ctx + "system/region/treeData";
+                var options = {
+                    id: "regionTrees"+index,
+                    url: url,
+                    check: { enable: true },
+                    expandLevel: 0,
+                    checkedTreeValue:value,
+                    isCustom:'1'
+                };
+                $.tree.init(options);
+            });
+        });
+        //新增职能/区域
+        function addZnAndQy() {
+            /**折叠树结构**/
+            /*if(!$.isEmptyObject(userPostRegion) || index > 0){//用户职能区域关系表不为空
+                $.tree.collapse();
+            }*/
+            index++;
+            indexArr.push(index);
+            var htmltPosts = "";
+            for (var i = 0;i < posts.length;i++){
+                htmltPosts += '<option value="'+posts[i].postId+'">'+posts[i].postName+'</option>';
+            }
+            var deleteHtml = '<label class="col-xs-1 control-label">\n' +
+                '                            <button type="button" class="btn btn-w-m btn-danger" onclick="deleteBtn(this,'+index+')">\n' +
+                '                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除\n' +
+                '                            </button>\n' +
+                '               </label>'
+            var html = '<div class="col-sm-12">\n' +
+                '                    <div class="form-group">\n' +
+                '                        <label class="col-xs-2 control-label">职能/区域：</label>\n' +
+                '                        <div class="col-xs-2">\n' +
+                '                            <select class="form-control znSelect" id="znSelect'+index+'">' +htmltPosts+
+                '                            </select>\n' +
+                '                        </div>\n' +
+                '                        <div class="col-xs-2">\n' +
+                '                            <div id="regionTrees'+index+'" class="ztree"></div>\n' +
+                '                        </div>'+deleteHtml+
+                '                    </div>\n' +
+                '                </div>'
+            $("#znAndQyDiv").append(html);
+            var url = ctx + "system/region/treeData";
+            var options = {
+                id: "regionTrees"+index,
+                url: url,
+                check: { enable: true },
+                expandLevel: 0
+            };
+            $.tree.init(options);
+            $.tree.collapse();
+        }
+
+        //删除职能/区域
+        function deleteBtn(obj,i) {
+            $(obj).parent().parent().parent().remove();
+            indexArr.splice($.inArray(i,indexArr),1);//根据指定的值删除数组
+        }
+
+
+        var prefix = ctx + "system/user";
+        
+        $("#form-user-edit").validate({
+        	onkeyup: false,
+        	rules:{
+        		phonenumber:{
+        			isPhone:true,
+                    remote: {
+                        url: prefix + "/checkPhoneUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                        	"userId": function() {
+                        		return $("#userId").val();
+                            },
+                			"phonenumber": function() {
+                                return $.common.trim($("#phonenumber").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+        		},
+        	},
+        	messages: {
+        		/*"email": {
+                    remote: "Email已经存在"
+                },*/
+        		"phonenumber":{
+                	remote: "手机号码已经存在"
+        		}
+            },
+            focusCleanup: true
+        });
+        
+        function submitHandler() {
+	        if ($.validate.form()) {
+                /*if (indexArr.length == 0){
+                    $.modal.alertError('请添加职能和区域。');
+                    return;
+                }*/
+                var znArray = [];
+                for (var i = 0;i < indexArr.length;i++){
+                    var treeObj=$.fn.zTree.getZTreeObj("regionTrees"+indexArr[i]+"");//获取树对象
+                    var nodes = treeObj.getCheckedNodes();//获取选中的值
+                    if (nodes.length == 0 || nodes == 'undefined'){
+                        $.modal.alertError('有未选择的区域，请仔细检查后再次保存。');
+                        return;
+                    }
+                    var checkedNodes = screenTreeNodes(nodes);
+                    var obj = {};
+                    obj.postId = $("#znSelect"+indexArr[i]+"").val();
+                    obj.regionList = checkedNodes;
+                    znArray.push(obj);
+                }
+	        	var data = $("#form-user-edit").serializeArray();
+	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
+                var roleIds = $.form.selectCheckeds("role");
+                data.push({"name": "status", "value": status});
+                data.push({"name": "roleIds", "value": roleIds});
+                data.push({"name":"mxListStr","value":JSON.stringify(znArray)});
+	        	$.operate.saveTab(prefix + "/edit", data);
+	        }
+	    }
+
+        //重新组装选中的树集合
+        function screenTreeNodes(nodes) {
+            var checkedNodes = [];
+            $.each(nodes,function (index,item) {
+                if (item.level != 0){ //排除第一级父节点
+                    var obj = {
+                        "id":item.id,
+                        "pId":item.pId,
+                        "name":item.name,
+                        "title":item.title,
+                        "level":item.level
+                    }
+                    checkedNodes.push(obj)
+                }
+            });
+            return checkedNodes;
+        }
+
+        /*用户管理-新增-选择部门树*/
+        function selectDeptTree() {
+            var deptId = $("#deptId").val();
+            deptId = $.common.isEmpty(deptId) ? "100" : $("#deptId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                check: { enable: true },
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("#deptId").val(body.find('#treeId').val());
+                $("#deptName").val(body.find('#treeName').val());
+                layer.close(index);
+            }
+        }
+    </script>
+</body>
+</html>

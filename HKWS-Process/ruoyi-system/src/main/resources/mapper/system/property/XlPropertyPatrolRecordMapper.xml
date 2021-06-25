@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyPatrolRecordMapper">
+
+    <resultMap type="XlPropertyPatrolRecord" id="XlPropertyPatrolRecordResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="pathId"    column="path_id"    />
+        <result property="pathName"    column="path_name"    />
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+        <result property="patrolTime"    column="patrol_time"    />
+        <result property="patrolDuration"    column="patrol_duration"    />
+        <result property="handleStatus"    column="handle_status"    />
+        <result property="villageId"    column="village_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectXlPropertyPatrolRecordVo">
+        select record_id, user_id, user_name, path_id, path_name, plan_id, plan_name, patrol_time, patrol_duration, handle_status, village_id, create_by, create_time, update_by, update_time from xl_property_patrol_record
+    </sql>
+
+    <select id="selectXlPropertyPatrolRecordList" parameterType="XlPropertyPatrolRecord" resultMap="XlPropertyPatrolRecordResult">
+        <include refid="selectXlPropertyPatrolRecordVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="pathId != null "> and path_id = #{pathId}</if>
+            <if test="pathName != null  and pathName != ''"> and path_name like concat('%', #{pathName}, '%')</if>
+            <if test="planId != null "> and plan_id = #{planId}</if>
+            <if test="planName != null  and planName != ''"> and plan_name like concat('%', #{planName}, '%')</if>
+            <if test="patrolTime != null "> and patrol_time = #{patrolTime}</if>
+            <if test="patrolDuration != null"> and patrol_duration = #{patrolDuration}</if>
+            <if test="handleStatus != null "> and handle_status = #{handleStatus}</if>
+            <if test="villageId != null "> and village_id = #{villageId}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyPatrolRecordById" parameterType="Long" resultMap="XlPropertyPatrolRecordResult">
+        <include refid="selectXlPropertyPatrolRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertXlPropertyPatrolRecord" parameterType="XlPropertyPatrolRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into xl_property_patrol_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">user_id,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="pathId != null ">path_id,</if>
+            <if test="pathName != null  and pathName != ''">path_name,</if>
+            <if test="planId != null ">plan_id,</if>
+            <if test="planName != null  and planName != ''">plan_name,</if>
+            <if test="patrolTime != null ">patrol_time,</if>
+            <if test="patrolDuration != null">patrol_duration,</if>
+            <if test="handleStatus != null ">handle_status,</if>
+            <if test="villageId != null ">village_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null ">#{userId},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="pathId != null ">#{pathId},</if>
+            <if test="pathName != null  and pathName != ''">#{pathName},</if>
+            <if test="planId != null ">#{planId},</if>
+            <if test="planName != null  and planName != ''">#{planName},</if>
+            <if test="patrolTime != null ">#{patrolTime},</if>
+            <if test="patrolDuration != null">#{patrolDuration},</if>
+            <if test="handleStatus != null ">#{handleStatus},</if>
+            <if test="villageId != null ">#{villageId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyPatrolRecord" parameterType="XlPropertyPatrolRecord">
+        update xl_property_patrol_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="pathId != null ">path_id = #{pathId},</if>
+            <if test="pathName != null  and pathName != ''">path_name = #{pathName},</if>
+            <if test="planId != null ">plan_id = #{planId},</if>
+            <if test="planName != null  and planName != ''">plan_name = #{planName},</if>
+            <if test="patrolTime != null ">patrol_time = #{patrolTime},</if>
+            <if test="patrolDuration != null">patrol_duration = #{patrolDuration},</if>
+            <if test="handleStatus != null ">handle_status = #{handleStatus},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteXlPropertyPatrolRecordById" parameterType="Long">
+        delete from xl_property_patrol_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteXlPropertyPatrolRecordByIds" parameterType="String">
+        delete from xl_property_patrol_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+    <!--通过巡更计划id修改记录 只能修改待处理的任务-->
+    <update id="updateRecordByPlanId" parameterType="XlPropertyPatrolRecord">
+        update xl_property_patrol_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null ">user_id = #{userId},</if>
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="pathId != null ">path_id = #{pathId},</if>
+            <if test="pathName != null  and pathName != ''">path_name = #{pathName},</if>
+            <if test="planName != null  and planName != ''">plan_name = #{planName},</if>
+            <if test="patrolTime != null ">patrol_time = #{patrolTime},</if>
+            <if test="patrolDuration != null">patrol_duration = #{patrolDuration},</if>
+            <if test="villageId != null ">village_id = #{villageId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where plan_id = #{planId}
+        and handle_status  = 1
+    </update>
+
+    <!--通过巡更计划id删除记录，只删除待处理的任务-->
+    <delete id="deleteRecordByPlanId" parameterType="Long">
+        delete from xl_property_patrol_record
+        where plan_id = #{planId} and handle_status = 1
+    </delete>
+
+    <!--查询前一天完成的巡更记录数-->
+    <select id="selectYesterdayFinishCount" resultType="java.lang.Long">
+        select count(1) from xl_property_patrol_record where handle_status = 3
+        and date(patrol_start_time) = date_sub(curdate(),interval 1 day);
+    </select>
+
+    <!--查询前一天未完成的巡更记录数-->
+    <select id="selectYesterdayUnFinishCount" resultType="java.lang.Long">
+        select count(1) from xl_property_patrol_record where handle_status in (1, 2, 4, 5)
+        and date(patrol_start_time) = date_sub(curdate(),interval 1 day);
+    </select>
+
+    <!--查询前一天巡更记录总数-->
+    <select id="selectYesterdayCount" resultType="java.lang.Long">
+        select count(1) from xl_property_patrol_record
+        where date(patrol_start_time) = date_sub(curdate(),interval 1 day);
+    </select>
+</mapper>

@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.appEventDetalisMapper">
+	<resultMap type="com.ruoyi.system.domain.app.appActionNow" id="SysUserResult">
+		<result property="actionName"       column="action_name"      />
+		<result property="commonlyId"    column="commonly_id"   />
+		<result property="handlerName"     column="handler_name"    />
+		<result property="handlerUserId"     column="handler_user_id"    />
+		<result property="isGovernance"     column="is_governance"    />
+		<collection  property="appField"   javaType="java.util.List"        resultMap="RoleResult" />
+	</resultMap>
+	<resultMap id="RoleResult" type="com.ruoyi.system.domain.app.appField">
+		<result  property="fieldEnglishName"       column="field_english_name"        />
+		<result property="fieldName"     column="field_name"      />
+		<result property="fieldType"      column="field_type"       />
+		<result property="fieldContent"     column="field_content"      />
+		<result property="fieldSort"    column="field_sort"     />
+	</resultMap>
+	<resultMap id="hKrecord" type="com.ruoyi.system.domain.HKrecord">
+		<result property="handlerContent" column="handler_content"></result>
+		<result property="createTime" column="create_time"></result>
+		<result property="recordId" column="record_id"></result>
+		<result property="eventId" column="event_id"></result>
+		<result property="regionIndexCode" column="region_index_code"></result>
+		<result property="handlerRecordIndexCode" column="handler_record_index_code"></result>
+		<result property="handlerIndexCode" column="handler_index_code"></result>
+		<result property="handlerName" column="handler_name"></result>
+		<result property="handlerPhone" column="handler_phone"></result>
+		<result property="handlerContent" column="handler_content"></result>
+		<result property="processStatus" column="process_status"></result>
+		<result property="processStatusName" column="process_status_name"></result>
+		<result property="processTime" column="process_time"></result>
+		<result property="extendInt1" column="extend_int1"></result>
+		<result property="extendInt2" column="extend_int2"></result>
+		<result property="extendInt3" column="extend_int3"></result>
+		<result property="extendStr1" column="extend_str1"></result>
+		<result property="extendStr2" column="extend_str2"></result>
+		<result property="extendStr3" column="extend_str3"></result>
+		<result property="extendjson" column="extendjson"></result>
+	</resultMap>
+	<!-- 查询事件概要查询 -->
+	<select id="appNowEventDetali" parameterType="map" resultMap="SysUserResult">
+		SELECT
+		DISTINCT
+			c.action_name ,
+			f.commonly_id ,
+			f.field_english_name ,
+			f.field_name ,
+			f.field_content ,
+			f.field_type ,
+			f.field_sort
+		FROM
+			hk_field f
+		LEFT JOIN hk_Action_Configuration c ON c.uuid = f.commonly_id
+		WHERE
+			f.commonly_id = (
+				SELECT
+					a.action_standard_id
+				FROM
+					hk_action_process AS a
+				WHERE
+					a.is_complete = 0
+				AND a.event_id = #{eventId}
+				<if test="handlerUserId != null and handlerUserId != ''">
+					and a.handler_user_id = #{handlerUserId}
+				</if>
+				<if test="handlerOrder != null and handlerOrder != ''">
+					and a.handler_order = #{handlerOrder}
+				</if>
+				<if test="returnFlag != null and returnFlag != ''">
+					and a.return_flag = #{returnFlag}
+				</if>
+				ORDER BY
+					handler_order
+				LIMIT 0,
+				1
+			)
+			ORDER BY
+			f.field_sort
+	</select>
+
+	<select id="selectOneHkevent" parameterType="map" resultType="com.ruoyi.system.domain.app.appHkevent">
+	SELECT
+			a.event_type_name AS eventTypeName,
+			a.event_alert_status AS eventAlertStatus,
+			a.event_title AS eventTitle,
+			a.event_id AS eventId,
+			a.event_type AS eventType,
+		    a.event_index_code AS eventIndexCode,
+			a.grid_community AS gridCommunity,
+			a.place_type AS placeType,
+			a.place_type_name AS placeTypeName,
+			a.event_image AS eventImage,
+			a.report_time AS reportTime,
+			a.region_name AS regionName,
+			a.event_id AS eventId,
+			a.time_out AS timeOut,
+			a.storage_id as storageId,
+			a.camera_name as cameraName,
+			a.event_address as eventAddress
+			FROM
+			hk_event_info AS a
+		WHERE
+		    a.event_id=#{eventId}
+	</select>
+
+	<insert id="addHkrecond" parameterType="com.ruoyi.system.domain.HKrecord">
+        INSERT INTO hk_event_process_record (
+        `record_id`,
+        `event_id`,
+        `handler_index_code`,
+        `handler_name`,
+        `handler_content`,
+        `process_status`,
+        `extend_int3`,
+        `extend_str3`,
+        `create_time`
+        )
+        VALUES
+        (
+        #{recordId},
+        #{eventId},
+        #{handlerIndexCode},
+        #{handlerName},
+        #{handlerContent},
+        #{processStatus},
+        #{extendInt3},
+        #{extendStr3},
+        NOW()
+        );
+    </insert>
+
+	<select id="appAfterEventDetali" parameterType="String" resultType="com.ruoyi.system.domain.app.appAction">
+	  SELECT
+			handler_content as handlerContent
+		FROM
+			 hk_event_process_record
+		WHERE
+		     event_id=#{eventId}
+		     and process_status = 4
+		     order by create_time asc
+	</select>
+
+
+	<select id="selcterCompleteSize" parameterType="String" resultType="com.ruoyi.system.domain.Action.HkActionProcess">
+	  SELECT
+			handler_order as handlerOrder
+	  FROM
+			hk_action_process
+		WHERE
+			event_id = #{eventId}
+		AND is_complete = '0'
+		GROUP BY
+			handler_order
+		ORDER BY
+			handler_order;
+	</select>
+	<!--修改当前人状态 -->
+	<update id="updateHkAction" parameterType="com.ruoyi.system.domain.Action.HkActionProcess">
+		UPDATE hk_action_process
+		SET
+		is_complete='1',
+		update_time =NOw()
+		WHERE
+		event_id = #{eventId}
+		and handler_order=#{handlerOrder}
+    </update>
+
+
+	<!--修改当前人状态  已完成-->
+	<update id="updateEventInfo" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		UPDATE hk_event_info
+		SET
+		event_alert_status=6,
+		event_alert_status_name='已完结',
+		update_time =NOW()
+		WHERE
+		event_id = #{eventId}
+    </update>
+	<!--修改当前人状态  处置中-->
+	<update id="updateManagementEvent" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		UPDATE hk_event_info
+		SET
+		event_alert_status=5,
+		current_processor_id=#{userId},
+		event_alert_status_name='处置中',
+		update_time =NOW()
+		WHERE
+		event_id = #{eventId}
+    </update>
+
+	<!--修改当前人状态 已退回 -->
+	<update id="updateReturEvent" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		UPDATE hk_event_info
+		SET
+		event_alert_status=4,
+		event_alert_status_name='已退回',
+		update_time =NOW()
+		WHERE
+		event_id = #{eventId}
+    </update>
+
+	<!-- 修改当前事件状态为调度中 -->
+	<update id="updateEventDispatch" parameterType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+		UPDATE hk_event_info
+		SET
+		event_alert_status=3,
+		event_alert_status_name='调度中',
+		update_time =NOW()
+		WHERE
+		event_id = #{eventId}
+    </update>
+
+	<select id="selectOneEventInfo" parameterType="String" resultType="com.ruoyi.system.domain.HkEarlyWarning.HkEventInfo">
+	  SELECT
+			current_processor_id as currentProcessorId
+	  FROM
+			hk_event_info
+		WHERE
+			event_id = #{eventId}
+
+	</select>
+
+	<select id="selectProcess" resultType="java.lang.String" parameterType="com.ruoyi.system.domain.HKrecord">
+		select handler_content from hk_event_process_record where  event_id = #{eventId} ORDER BY create_time DESC LIMIT 2
+	</select>
+
+	<select id="selectPro" resultMap="hKrecord" parameterType="com.ruoyi.system.domain.HKrecord">
+			select * from hk_event_process_record where  event_id = #{eventId} ORDER BY create_time DESC LIMIT 1
+	</select>
+	<!--	查询最近签收、退回时间-->
+	<select id="getEventRecordTime" resultType="java.util.Date" parameterType="java.lang.String">
+		select create_time from hk_event_process_record where event_id = #{eventId} and process_status = #{processStatus} ORDER BY create_time desc LIMIT 1
+	</select>
+
+	<!--	查询最近处置时间-->
+	<select id="getEventRecordHandleTime" resultType="java.util.Date" parameterType="java.lang.String">
+		select create_time from hk_event_process_record where event_id = #{eventId} and process_status in ('4','6') ORDER BY create_time desc LIMIT 1
+	</select>
+
+	<!--	查询最近调度时间-->
+	<select id="getEventRecordDispatchTime" resultType="java.util.Date" parameterType="java.lang.String">
+		select create_time from hk_event_process_record where event_id = #{eventId} and process_status in ('1','2') ORDER BY create_time desc LIMIT 1
+	</select>
+
+	<!--	查询处理时间-->
+	<select id="findEventEnd" resultType="java.util.Date" parameterType="java.lang.String">
+		select create_time from hk_event_process_record where event_id = #{eventId} ORDER BY create_time DESC LIMIT 1
+	</select>
+
+	<select id="result" resultType="com.ruoyi.system.domain.HkEntity.EventProcessResultDTO" >
+		select * from hk_event_process_result where record_id=#{resultid}
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!--距离有毒的代码远点-->
+	<select id="selectProcessByParams" parameterType="java.util.Map" resultMap="hKrecord">
+		select * from hk_event_process_record
+		<where>
+			1=1
+			<if test="eventId != null and eventId != ''">
+				and event_id = #{eventId}
+			</if>
+			<if test="handlerIndexCode != null and handlerIndexCode != ''">
+				and handler_index_code = #{handlerIndexCode}
+			</if>
+			<if test="processStatus != null and processStatus != ''">
+				and process_status = #{processStatus}
+			</if>
+			<if test="statusArr != null">
+				and process_status in
+				<foreach collection="statusArr" item="status" open="(" separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+
+
+	<!--查询已签收的事件处理-->
+	<select id="findProcessRecordSign" resultType="com.ruoyi.system.domain.HkEntity.EventProcessRecordDTO" parameterType="java.util.Map">
+		select
+		create_time as createTime,
+		region_index_code as regionIndecCode,
+		region_name as regionName,
+		handler_index_code as handlerIndexCode,
+		handler_name as handlerName,
+		handler_phone as handlerPhone,
+		handler_content as handlerContent
+		from hk_event_process_record
+		where process_status = 3
+		<if test="eventId != null and eventId != ''">
+			and event_id = #{eventId}
+		</if>
+		<if test="handlerIndexCode != null and handlerIndexCode != ''">
+			and handler_index_code = #{handlerIndexCode}
+		</if>
+		order by create_time desc
+	</select>
+
+	<!--查询用户当前行动链-->
+	<select id="queryActionProcessInfo" parameterType="java.lang.String" resultType="com.ruoyi.system.domain.Action.HkActionProcess">
+		select
+		action_chain_id as  actionChainId,
+		handler_user_id as handlerUserId,
+		action_standard_id as actionStandardId,
+		handler_order as handlerOrder,
+		is_complete as isComplete,
+		update_user as updateUser
+		from hk_action_process
+		where event_id = #{eventId}
+		and is_complete = 0
+		and return_flag = 0
+		<if test="handlerOrder != null and handlerOrder !=''">
+			and handler_order = #{handlerOrder}
+		</if>
+		<if test="userId != null and userId !=''">
+			and handler_user_id = #{userId}
+		</if>
+		order by create_time asc
+		limit 1
+	</select>
+</mapper> 

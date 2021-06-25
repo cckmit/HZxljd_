@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkActionChainMapper">
+
+	<resultMap type="HkActionChain" id="HkActionChainResult">
+		<id     property="id"     column="id"     />
+		<result property="actionName"     column="action_name"     />
+		<result property="actionChainId"   column="action_chain_id"   />
+		<result property="actionStandard"   column="action_standard"   />
+		<result property="expectedEvents"     column="expected_events"     />
+		<result property="actionRegionCode"     column="action_region_code"      />
+		<result property="actionRegion"     column="action_region"      />
+		<result property="createUser"     column="create_user"      />
+		<result property="createTime"      column="create_time"       />
+		<result property="updateUser"      column="update_user"       />
+		<result property="updateTime"      column="update_time"       />
+		<result property="actionRemark"      column="action_remark"       />
+		<result property="isGovernance"      column="is_governance"       />
+	</resultMap>
+
+	<select id="findActionChain" resultMap="HkActionChainResult" parameterType="HkActionChain">
+		select * from hk_action_chain where action_standard = #{actionStandard} AND action_region_code =#{actionRegionCode}
+	</select>
+
+	<select id="findHkActionChain" resultMap="HkActionChainResult" parameterType="HkActionChain">
+		select * from hk_action_chain
+		<where>
+			<if test="actionName != null and actionName != ''">
+				AND action_name like concat('%', #{actionName}, '%')
+			</if>
+		</where>
+		ORDER BY create_time DESC
+	</select>
+
+	<insert id="insertActionChain" parameterType="HkActionChain" >
+		insert into hk_action_chain(
+			action_name,
+			action_chain_id,
+			expected_events,
+			action_region,
+			create_user,
+			create_time
+		)values(
+			#{actionName},
+			#{actionChainId},
+			#{expectedEvents},
+			#{actionRegion},
+			#{createUser},
+			#{createTime}
+		)
+	</insert>
+
+	<select id="findActionChainByRegionEventType" resultMap="HkActionChainResult">
+		select * from hk_action_chain where action_standard = #{eventType} AND action_region_code = #{regionCode}
+	</select>
+
+	<select id="queryHkActionChain" resultMap="HkActionChainResult" parameterType="HkActionChain">
+		select * from hk_action_chain where action_standard = #{actionStandard} AND action_region = #{actionRegion}
+	</select>
+
+	<insert id="insertHkActionChain" parameterType="HkActionChain">
+		insert into hk_action_chain(
+			action_name,
+			action_chain_id,
+			expected_events,
+			action_region_code,
+			action_region,
+			action_remark,
+			create_user,
+			create_time,
+			action_standard
+		)values(
+			#{actionName},
+			#{actionChainId},
+			#{expectedEvents},
+			#{actionRegionCode},
+			#{actionRegion},
+			#{actionRemark},
+			#{createUser},
+			#{createTime},
+			#{actionStandard}
+		)
+	</insert>
+
+	<delete id="deleteHKAconfiguration" >
+		delete from hk_action_chain where action_chain_id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<delete id="deleteActionChains" parameterType="HkActionChain">
+		delete from hk_action_chain where action_standard = #{actionStandard} AND action_region_code = #{actionRegionCode}
+	</delete>
+
+	<select id="selectChainId" resultType="java.lang.String" parameterType="HkActionChain">
+		select action_chain_id from hk_action_chain where action_standard = #{actionStandard} AND action_region_code = #{actionRegionCode}
+	</select>
+
+	<select id="findChain" resultMap="HkActionChainResult" parameterType="java.lang.Integer">
+		select * from hk_action_chain where id=#{id}
+	</select>
+
+	<select id="findChainOnly" resultType="java.lang.Integer" parameterType="HkActionChain">
+		select count(*) from hk_action_chain where action_standard=#{actionStandard} AND action_region_code=#{actionRegionCode} AND id !=#{id}
+	</select>
+	<!--	修改行动链-->
+	<update id="updateChain" parameterType="HkActionChain">
+		update hk_action_chain set
+		action_name=#{actionName},
+		action_standard=#{actionStandard},
+		expected_events=#{expectedEvents},
+		action_region_code=#{actionRegionCode},
+		action_region=#{actionRegion},
+		action_remark=#{actionRemark},
+		is_governance=#{isGovernance},
+		update_user=#{updateUser},
+		update_time=#{updateTime}
+		where id=#{id}
+	</update>
+
+	<select id="selectActionChainByName" resultMap="HkActionChainResult">
+		select * from hk_action_chain where action_name = #{actionName}
+	</select>
+
+	<select id="selectHKActionChain" resultMap="HkActionChainResult">
+		select * from hk_action_chain where action_chain_id = #{actionChainId}
+	</select>
+
+	<update id="updateHkActionChain" parameterType="HkActionChain">
+		update hk_action_chain
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="actionName != null  and actionName != ''">action_name = #{actionName},</if>
+			<if test="actionStandard != null  and actionStandard != ''">action_standard = #{actionStandard},</if>
+			<if test="expectedEvents != null  and expectedEvents != ''">expected_events = #{expectedEvents},</if>
+			<if test="actionRegionCode != null  and actionRegionCode != ''">action_region_code = #{actionRegionCode},</if>
+			<if test="actionRegion != null  and actionRegion != ''">action_region = #{actionRegion},</if>
+			<if test="actionRemark != null  and actionRemark != ''">action_remark = #{actionRemark},</if>
+			<if test="isGovernance != null ">is_governance = #{isGovernance},</if>
+			<if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+			<if test="createTime != null ">create_time = #{createTime},</if>
+			<if test="updateUser != null  and updateUser != ''">update_user = #{updateUser},</if>
+			<if test="updateTime != null ">update_time = #{updateTime},</if>
+		</trim>
+		where action_chain_id = #{actionChainId}
+	</update>
+</mapper>

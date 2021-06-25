@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkAManagementMapper">
+
+    <resultMap type="com.ruoyi.system.domain.HkAManagement" id="HkAManagementResult">
+        <id     property="amid"      column="am_id"      />
+        <result property="amcode"    column="am_code"    />
+        <result property="amname"     column="am_name"     />
+        <result property="amtype"   column="am_type"   />
+        <result property="amadmin"    column="am_admin"    />
+        <result property="amsecrettype"      column="am_secret_type"      />
+        <result property="amsecretkey"      column="am_secre_tkey"      />
+        <result property="amsecreprivate"    column="am_secre_private"    />
+        <result property="ameffectivedate"      column="am_effective_date"      />
+        <result property="amexpirationdate"    column="am_expiration_date"    />
+        <result property="amcreatedate"    column="am_create_date"    />
+        <result property="months"       column="months"/>
+    </resultMap>
+    <select id="selectRoleList" parameterType="com.ruoyi.system.domain.HkAManagement" resultMap="HkAManagementResult">
+        SELECT * FROM  hk_authorization_management
+       <where>
+            <if test="amtype!= null and amtype!=''">
+                AND am_type = #{amtype}
+            </if>
+            <if test="amcode!= null and amcode!=''">
+                AND am_code = #{amcode}
+            </if>
+            <if test="amid!= null and amid!=''">
+                AND am_id = #{amid}
+            </if>
+            <if test="amname!= null and amname!=''">
+                AND am_name LIKE CONCAT('%',#{amname},'%')
+            </if>
+            and am_type !=2
+        </where>
+    </select>
+
+    <insert id="addHkAManagement" parameterType="com.ruoyi.system.domain.HkAManagement">
+        INSERT INTO hk_Authorization_Management (
+        `am_code`,
+        `am_name`,
+        `am_admin`,
+        `am_type`,
+        `am_secre_tkey`,
+        `am_secret_type`,
+        `am_effective_date`,
+        `am_expiration_date`,
+        `am_create_date`,
+        `am_secre_private`,
+        `months`
+        )
+        VALUES
+        (
+        #{amcode},
+        #{amname},
+        #{amadmin},
+        0,
+        #{amsecretkey},
+        #{amsecrettype},
+        #{ameffectivedate},
+        #{amexpirationdate},
+          NOW(),
+        #{amsecreprivate},
+         #{months}
+        );
+    </insert>
+    <delete id="deleteConfigByIds" parameterType="String">
+        delete from  hk_Authorization_Management where am_code in
+        <foreach item="configId" collection="array" open="(" separator="," close=")">
+            #{configId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('网格员--工作检查记录列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>社区名称：</label>
+                                <select name="communityName" th:with="type=${@dict.getType('	villageQ')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>网格名称：</label>
+                                <select name="gridName" th:with="type=${@dict.getType('	griddingQ')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>检查人：</label>
+                                <input type="text" name="inspectUser"/>
+                            </li>
+                            <li class="select-time">
+                                <label>检查时间：</label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginInspectDate]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endInspectDate]"/>
+                            </li>
+                            <li>
+                                <label>检查结果：</label>
+                                <select name="inspectResult" th:with="type=${@dict.getType('checkResultQ')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>整改结果：</label>
+                                <input type="text" name="rectificationResult"/>
+                            </li>
+                            <li>
+                                <label>巡查类型：</label>
+                                <select name="inspectionType" th:with="type=${@dict.getType('')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>检查定位：</label>
+                                <input type="text" name="inspectLoction"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <!--<div class="btn-group-sm" id="toolbar" role="group">-->
+                <!--<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:workRecord:add">-->
+                    <!--<i class="fa fa-plus"></i> 添加-->
+                <!--</a>-->
+                <!--<a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:workRecord:edit">-->
+                    <!--<i class="fa fa-edit"></i> 修改-->
+                <!--</a>-->
+                <!--<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:workRecord:remove">-->
+                    <!--<i class="fa fa-remove"></i> 删除-->
+                <!--</a>-->
+                <!--<a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:workRecord:export">-->
+                    <!--<i class="fa fa-download"></i> 导出-->
+                <!--</a>-->
+            <!--</div>-->
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        // var editFlag = [[${@permission.hasPermi('system:workRecord:edit')}]];
+        // var removeFlag = [[${@permission.hasPermi('system:workRecord:remove')}]];
+        var infoFlag = [[${@permission.hasPermi('system:workRecord:info')}]];
+        // var communityIdDatas = [[${@dict.getType('villageQ')}]];
+        // var gridIdDatas = [[${@dict.getType('griddingQ')}]];
+        var inspectResultDatas = [[${@dict.getType('checkResultQ')}]];
+        var prefix = ctx + "system/workRecord";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                // createUrl: prefix + "/add",
+                // updateUrl: prefix + "/edit/{id}",
+                // removeUrl: prefix + "/remove",
+                // infoUrl: prefix + "/info/{id}",
+                exportUrl: prefix + "/export",
+                modalName: "网格员--工作检查记录",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'workId',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'inspectDate',
+                    title: '检查时间'
+                },
+                {
+                    field: 'inspectUser',
+                    title: '检查人'
+                },
+                // {
+                //     field: 'communityId',
+                //     title: '所属社区id',
+                //     formatter: function(value, row, index) {
+                //        return $.table.selectDictLabel(communityIdDatas, value);
+                //     }
+                // },
+                {
+                    field: 'communityName',
+                    title: '社区名称'
+                },
+                // {
+                //     field: 'gridId',
+                //     title: '所属网格id',
+                //     formatter: function(value, row, index) {
+                //        return $.table.selectDictLabel(gridIdDatas, value);
+                //     }
+                // },
+                {
+                    field: 'gridName',
+                    title: '网格名称'
+                },
+                {
+                    field: 'inspectResult',
+                    title: '检查结果',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(inspectResultDatas, value);
+                    }
+                },
+                {
+                    field: 'rectificationResult',
+                    title: '整改结果'
+                },
+                {
+                    field: 'inspectionType',
+                    title: '巡查类型'
+                },
+                {
+                    field: 'createDate',
+                    title: '创建时间'
+                },
+                {
+                    field: 'inspectLoction',
+                    title: '检查定位'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        // actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.workId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.workId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        actions.push('<a class="exdeft ' + infoFlag + '" href="javascript:void(0)" onclick="info(\'' + row.workId + '\')"><i class="fa fa-search"></i>查看</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /*包含记录数据列表-详细*/
+        function info(workId) {
+            var url = prefix + '/info/' + workId;
+            $.modal.openTab("查看记录数据", url);
+        }
+    </script>
+</body>
+</html>

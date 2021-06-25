@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('【请填写功能名称】列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>接口名称：</label>
+                                <input type="text" name="aName"/>
+                            </li>
+                            <li>
+                                <label>接口地址：</label>
+                                <input type="text" name="aAddress"/>
+                            </li>
+                            <li class="select-time" style="display:flex;">
+                                <label>创建时间：</label>
+                                <div class="start_time">
+                                    <input type = "text" class = "time-input" id = "startTime" placeholder = "开始时间" name = "params[beginTime]" />
+                                    <span class = "glyphicon glyphicon-calendar"></span>
+                                </div>
+                                <span>-</span>
+                                <div class = "start_time">
+                                    <input type = "text" class = "time-input" id = "endTime" placeholder = "结束时间" name = "params[endTime]" />
+                                    <span class = "glyphicon glyphicon-calendar"></span>
+                                </div>
+
+                            </li>
+                            <li>
+                                <a class="btn btn-success btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-default btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:api:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:api:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:api:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-primary" onclick="$.table.exportExcel()" shiro:hasPermission="system:api:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:api:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:api:remove')}]];
+        var prefix = ctx + "system/api";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "接口信息",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'aId', 
+                    title: 'apiID',
+                    visible: false
+                },
+                {
+                    field: 'aName', 
+                    title: '接口名称'
+                },
+                {
+                    field: 'aAddress', 
+                    title: '接口地址'
+                },
+                {
+                    field: 'aDescription', 
+                    title: '接口备注'
+                },
+                {
+                    field: 'aCreateTime', 
+                    title: '接口创建时间'
+                },
+                {
+                    field: 'aCreateAdmin', 
+                    title: '接口创建人'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.aId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.aId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+html {
+    height: 100%
+}
+
+html body.signin {
+    height: 100%;
+    position: relative;
+    /*background-color: #fafafa;*/
+    background: linear-gradient(to right, #2A71EF, #79CBF6);
+}
+.signin_body{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    /*bottom: 0;*/
+    width: 1920px;
+    margin: auto;
+    height: 100%;
+
+    color: rgba(255, 255, 255, .95)
+}
+.siginBody{
+    width: 100%;
+    height: 100%;
+    background: url(../img/BGC.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+.signinpanel {
+    width: 1200px;
+    margin: 10% auto 0
+}
+
+.signinpanel .logopanel {
+    float: none;
+    width: auto;
+    padding: 0;
+    background: 0;
+}
+
+.signinpanel .m-b {
+    font-size: 40px;
+    letter-spacing: 2px
+}
+
+.signinpanel .m-b + .m-b {
+    margin-left: 97px;
+}
+
+.col-sm-4 {
+    margin-top: 5%;
+}
+
+.signinpanel .signin-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0
+}
+
+.signinpanel .form-control {
+    display: block;
+    margin-top: 15px;
+    height: 46px
+}
+
+.signinpanel .uname {
+    background: #fff url(../img/user.png) no-repeat 95% center;
+    color: #333
+}
+
+.signinpanel .pword {
+    background: #fff url(../img/locked.png) no-repeat 95% center;
+    color: #333
+}
+
+.signinpanel .code {
+    background: #fff no-repeat 95% center;
+    color: #333;
+    margin: 0 0 15px 0
+}
+
+.signinpanel .btn {
+    margin-top: 15px;
+    height: 40px;
+}
+
+.signinpanel form {
+    background: rgba(255, 255, 255, .2);
+    border: 1px solid rgba(255, 255, 255, .3);
+    -moz-box-shadow: 0 3px 0 rgba(12, 12, 12, .03);
+    -webkit-box-shadow: 0 3px 0 rgba(12, 12, 12, .03);
+    box-shadow: 0 3px 0 rgba(12, 12, 12, .03);
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 30px
+}
+
+.signup-footer {
+    margin: 20px 0;
+    padding-top: 15px
+}
+
+@media screen and (max-width: 768px) {
+    .signinpanel, .signuppanel {
+        margin: 0 auto;
+        width: 420px !important;
+        padding: 20px
+    }
+
+    .signinpanel form {
+        margin-top: 20px
+    }
+
+    .signup-footer, .signuppanel .form-control {
+        margin-bottom: 10px
+    }
+
+    .signup-footer .pull-left, .signup-footer .pull-right {
+        float: none !important;
+        text-align: center
+    }
+
+    .signinpanel .signin-info ul {
+        display: none
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .signinpanel, .signuppanel {
+        margin: 0 20px;
+        width: auto
+    }
+}
+
+.checkbox-custom {
+    position: relative;
+    padding: 0 15px 0 25px;
+    margin-bottom: 7px;
+    display: inline-block
+}
+
+.checkbox-custom input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    z-index: 2;
+    margin: -6px 0 0 0;
+    top: 50%;
+    left: 3px
+}
+
+.checkbox-custom label:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-top: -9px;
+    width: 18px;
+    height: 17px;
+    display: inline-block;
+    border-radius: 2px;
+    border: 1px solid #bbb;
+    background: #fff
+}
+
+.checkbox-custom input[type="checkbox"]:checked + label:after {
+    position: absolute;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    content: "\e013";
+    top: 42%;
+    left: 3px;
+    margin-top: -5px;
+    font-size: 11px;
+    line-height: 1;
+    width: 16px;
+    height: 16px;
+    color: #333
+}
+
+.checkbox-custom label {
+    cursor: pointer;
+    line-height: 1.2;
+    font-weight: normal;
+    margin-bottom: 0;
+    text-align: left
+}
+
+/*适配分辨率*/
+@media screen and (min-width: 3870px) {
+    body {
+        font-size: 35px;
+    }
+
+    .signinpanel {
+        width: 60%;
+        margin: 13% auto 0;
+    }
+
+    .signinpanel .m-b {
+        font-size: 92px;
+    }
+
+    .signinpanel .m-b + .m-b {
+        margin-left: 208px;
+    }
+
+    .signinpanel form {
+        padding: 60px;
+    }
+
+    h4 {
+        font-size: 66px;
+    }
+
+    .signinpanel .uname,
+    .signinpanel .pword {
+        background-size: 40px;
+    }
+
+    .signinpanel .form-control {
+        margin-top: 40px;
+        height: 92px;
+    }
+
+    .form-control, .single-line {
+        font-size: 40px;
+    }
+
+    .checkbox-custom {
+        margin-bottom: 20px;
+    }
+
+    .m-t {
+        margin-top: 35px;
+    }
+
+    .checkbox-custom input[type="checkbox"] {
+        top: 44%;
+        left: 0px;
+    }
+
+    input[type=checkbox] {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .checkbox-custom label {
+        margin-left: 36px;
+        font-size: 36px;
+    }
+
+    .checkbox-custom label:before {
+        top: 35%;
+        left: 0;
+        margin-top: -14px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .checkbox-custom input[type="checkbox"]:checked + label:after {
+        top: 30%;
+        left: 3px;
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+    }
+
+    .signinpanel .btn {
+        margin-top: 30px;
+        height: 80px;
+        font-size: 34px;
+    }
+}

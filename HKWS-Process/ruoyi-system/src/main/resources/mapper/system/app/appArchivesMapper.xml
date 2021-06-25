@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.appArchivesMapper">
+	<!-- 获取当前普通用户所有事件类型 -->
+	<select id="queryEventType" parameterType="map" resultType="com.ruoyi.system.domain.app.hkEvent">
+		SELECT
+			ec.ec_name  AS eventTypeName,
+			COUNT(1) AS eventCount
+		FROM
+			hk_action_process AS a
+		LEFT JOIN hk_event_info AS b ON a.event_id = b.event_id
+		LEFT JOIN hk_EClassification ec on ec.ec_name_type = b.component_id
+		LEFT JOIN sys_user AS u ON u.user_id = a.handler_user_id
+		WHERE
+			a.handler_user_id = #{userId}
+			and a.return_flag = 0
+		AND b.create_time  between #{lastDay} and #{nowDay}
+		GROUP BY
+			ec.ec_name
+
+
+
+	</select>
+	<!-- 获取当前管理员所有事件类型 -->
+	<select id="appAdminEventType" parameterType="map" resultType="com.ruoyi.system.domain.app.hkEvent">
+		SELECT
+			b.event_type_name AS eventTypeName,
+			COUNT(1) AS eventCount
+		FROM
+			hk_action_process AS a
+		LEFT JOIN hk_event_info AS b ON a.event_id = b.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND b.create_time  between #{lastDay} and #{nowDay}
+		GROUP BY
+			b.event_type_name
+	</select>
+
+	<!-- 获取管理员查看用户待处理所有的事件 -->
+	<select id="AdminEventType" parameterType="map" resultType="com.ruoyi.system.domain.app.hkAdminEvent">
+		SELECT
+		u.user_name as userName,
+		count(1) as pengNum
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		and NOW() &lt; e.time_out
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		AND e.create_time   between #{lastDay} and #{nowDay}
+		GROUP BY u.user_name
+
+	</select>
+
+
+	<!-- 获取管理员查看用户已逾期所有的事件 -->
+	<select id="AdminOverEvent" parameterType="map" resultType="com.ruoyi.system.domain.app.hkAdminEvent">
+		SELECT
+		u.user_name as userName,
+		count(1) as overNum
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		and NOW() &gt; e.time_out
+		AND (e.event_alert_status = 3 or e.event_alert_status = 5)
+		AND e.create_time   between #{lastDay} and #{nowDay}
+		GROUP BY u.user_name
+	</select>
+
+	<!-- 获取管理员查看用户已完成所有的事件 -->
+	<select id="AdminCompkleteEvent" parameterType="map" resultType="com.ruoyi.system.domain.app.hkAdminEvent">
+		SELECT
+		u.user_name as userName,
+		count(1) as completeCount
+		FROM
+		hk_action_process a
+		LEFT JOIN hk_event_info e ON a.event_id = e.event_id
+		LEFT JOIN sys_user u ON u.user_id = a.handler_user_id
+		WHERE
+		u.dept_id = (select b.dept_id from sys_user b where b.user_id=#{userId})
+		AND e.event_alert_status = 6
+		AND e.create_time  between #{lastDay} and #{nowDay}
+		GROUP BY u.user_name
+	</select>
+
+	<select id="allEventType"  resultType="com.ruoyi.system.domain.app.hkEvent">
+		SELECT
+		e.ec_name as eventTypeName
+		FROM
+		hk_EClassification e
+	</select>
+
+
+</mapper> 

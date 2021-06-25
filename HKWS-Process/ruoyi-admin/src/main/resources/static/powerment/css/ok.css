@@ -1,0 +1,141 @@
+select {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+.line-blue {
+    color: #0070cc;
+    margin: 0 0.15vh;
+}
+.line-red {
+    color: #f56c6c;
+    margin: 0 0.15vh;
+}
+.line-greey {
+    color: #999 !important;
+}
+.end {
+    width: 100%;
+    margin: 0 auto;
+    background-color: #fff;
+    overflow-y: scroll;
+}
+.end_title {
+    line-height: 5vh;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px dashed #eaeefb;
+    margin-bottom: 16px;
+}
+.right-content-c {
+    padding-top: 1vh;
+    /* height: 53vh;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none; */
+}
+
+.end::-webkit-scrollbar,
+.detail-text::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+}
+.right-content-c-line {
+    padding-bottom: 1vh;
+    border-bottom: 1px dashed #eaeefb;
+}
+.right-content h5 {
+    font-size: 16px;
+    margin: 1vh 0 2vh 0;
+}
+.right-content p {
+    text-indent: 2em;
+    color: #333;
+    line-height: 5vh;
+}
+.left_line p {
+    line-height: 3vh;
+    text-indent: 2.5em;
+}
+.left_line h5 {
+    font-size: 14px;
+    text-indent: 1.5em;
+}
+.left_line .left_line-box h5{
+    border: none;
+    margin-top: 0;
+}
+.right-content-c-line img {
+    width: 100%;
+    height: 28vh;
+}
+.left_line {
+    /*border-left: 2px solid #0070cc;*/
+    margin-left: 2vw;
+    margin-top: 3vh;
+    position: relative;
+}
+.left_line-l{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    bottom: 0;
+    background-color: #999;
+}
+.left_line-title {
+    color: #333;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.left_line-data {
+    color: #999;
+    font-size: 12px;
+}
+.end_pic {
+    vertical-align: top;
+}
+.end_pic img {
+    width: 18vh;
+    height: 10vh;
+    margin: 0 0.5vh;
+}
+.left_line-box {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.left_line .left_line-box:nth-last-child(1){
+    padding: 0;
+}
+.left_line .left_line-box:nth-last-child(1) h5{
+    margin: 0;
+}
+.left_box-active{
+    border-left: 2px solid #0070cc;
+}
+.line-circle {
+    position: absolute;
+    left: -11px;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 25px;
+    background-color: #fff;
+}
+
+.circle {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #0070cc;
+}
+.circles {
+    background-color: #999;
+}
+.circler {
+    background-color: #d93026;
+}

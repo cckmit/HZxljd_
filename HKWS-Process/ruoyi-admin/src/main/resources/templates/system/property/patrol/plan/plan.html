@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业-巡更计划列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>巡更计划名称：</label>
+                            <input type="text" name="planName" placeholder="请输入巡更计划名称查询"/>
+                        </li>
+                        <li>
+                            <label>描述：</label>
+                            <input type="text" name="planRemark" placeholder="请输入描述查询"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary" onclick="$.operate.add()" shiro:hasPermission="system/property/patrol:plan:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system/property/patrol:plan:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-primary multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system/property/patrol:plan:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system/property/patrol:plan:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system/property/patrol:plan:remove')}]];
+    var prefix = ctx + "system/property/patrol/plan";
+    //数据字典
+    var planStatus = [[${@dict.getType('property_patrol_status')}]]; //巡更计划状态
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/detail/{id}",
+            modalName: "物业-巡更计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'planId',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'planName',
+                    title: '巡更计划名称'
+                },
+                {
+                    field: 'path.pathName',
+                    title: '巡更路线',
+                    align: 'center',
+                    formatter:function(value, row, index){
+                        if(row.path.delFlag == 0){
+                            return value;
+                        }
+                    }
+                },
+                {
+                    field: 'planStartTime',
+                    title: '生效开始时间'
+                },
+                {
+                    field: 'planEndTime',
+                    title: '生效结束时间'
+                },
+                {
+                    field: 'planCycle',
+                    title: '巡更周期(天/组)',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'planCycleTiming',
+                    title: '巡更时间',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return $.table.tooltip(value, 7);
+                    }
+                },
+                {
+                    field: 'planRemark',
+                    title: '描述',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 7);
+                    }
+                },
+                {
+                    field: 'planStatus',
+                    title: '巡更计划状态',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return $.table.selectDictLabel(planStatus, value)
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="exdeft" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.planId + '\')"><i class="fa fa-search"></i>查看</a>&nbsp;');
+                        actions.push('<a class="exdeft' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.planId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="exdeft' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.planId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

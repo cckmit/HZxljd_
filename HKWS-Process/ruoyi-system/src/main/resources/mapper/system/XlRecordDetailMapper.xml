@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.XlRecordDetailMapper">
+    
+    <resultMap type="XlRecordDetail" id="XlRecordDetailResult">
+        <result property="id"    column="id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="describes"    column="describes"    />
+        <result property="result"    column="result"    />
+        <result property="suggestion"    column="suggestion"    />
+        <result property="picture"    column="picture"    />
+        <result property="feedback"    column="feedback"    />
+        <result property="createDate"    column="create_date"    />
+    </resultMap>
+
+    <sql id="selectXlRecordDetailVo">
+        select id, record_id, describes, result, suggestion, picture, feedback, create_date from xl_record_detail
+    </sql>
+
+    <select id="selectXlRecordDetailList" parameterType="XlRecordDetail" resultMap="XlRecordDetailResult">
+        <include refid="selectXlRecordDetailVo"/>
+        <where>  
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="describes != null  and describes != ''"> and describes = #{describes}</if>
+            <if test="result != null  and result != ''"> and result = #{result}</if>
+            <if test="suggestion != null  and suggestion != ''"> and suggestion = #{suggestion}</if>
+            <if test="picture != null  and picture != ''"> and picture = #{picture}</if>
+            <if test="feedback != null  and feedback != ''"> and feedback = #{feedback}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectXlRecordDetailById" parameterType="Long" resultMap="XlRecordDetailResult">
+        <include refid="selectXlRecordDetailVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertXlRecordDetail" parameterType="XlRecordDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into xl_record_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null ">record_id,</if>
+            <if test="describes != null  and describes != ''">describes,</if>
+            <if test="result != null  and result != ''">result,</if>
+            <if test="suggestion != null  and suggestion != ''">suggestion,</if>
+            <if test="picture != null  and picture != ''">picture,</if>
+            <if test="feedback != null  and feedback != ''">feedback,</if>
+            <if test="createDate != null ">create_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null ">#{recordId},</if>
+            <if test="describes != null  and describes != ''">#{describes},</if>
+            <if test="result != null  and result != ''">#{result},</if>
+            <if test="suggestion != null  and suggestion != ''">#{suggestion},</if>
+            <if test="picture != null  and picture != ''">#{picture},</if>
+            <if test="feedback != null  and feedback != ''">#{feedback},</if>
+            <if test="createDate != null ">#{createDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateXlRecordDetail" parameterType="XlRecordDetail">
+        update xl_record_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null ">record_id = #{recordId},</if>
+            <if test="describes != null  and describes != ''">describes = #{describes},</if>
+            <if test="result != null  and result != ''">result = #{result},</if>
+            <if test="suggestion != null  and suggestion != ''">suggestion = #{suggestion},</if>
+            <if test="picture != null  and picture != ''">picture = #{picture},</if>
+            <if test="feedback != null  and feedback != ''">feedback = #{feedback},</if>
+            <if test="createDate != null ">create_date = #{createDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteXlRecordDetailById" parameterType="Long">
+        delete from xl_record_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteXlRecordDetailByIds" parameterType="String">
+        delete from xl_record_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

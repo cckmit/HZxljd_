@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/public.css}" rel="stylesheet"/>
+    <style>
+        body,
+        html,
+        #container {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+
+        .input-event {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border-radius: .25rem;
+            width: 20rem;
+            border-width: 0;
+            box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+            position: absolute;
+            z-index: 9999;
+            top: 1rem;
+            left: 1rem;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 0.75rem 1.25rem;
+        }
+
+        #tips {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .input-button{
+            width:100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        #centerPointInput{
+            width: 350px;
+            height: 34px;
+            border: 1px solid #ebebeb;
+            padding: 0 10px;
+        }
+        #centerPointInput:focus{
+            outline: none;
+        }
+        label{
+            max-width: 100px;
+        }
+    </style>
+    <script src="https://api.map.baidu.com/api?v=3.0&ak=OQzFXHaXlNEZTmwvbEHQMB5h2iHaEr4W"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+
+</head>
+<body class="gray-bg">
+<div class="input-event" style="width:450px;">
+    <h4 id="tips"></h4>
+    <div>
+        <div class="input-item">
+            <div class="input-button">
+                <!--<button class="btn btn-middle btn-default" onclick="view()">坐标明细</button>-->
+                <button class="btn btn-middle btn-primary" onclick="save()">保存网格</button>
+                <button class="btn btn-middle btn-Danger" id="delBtn" onclick="deletePolygon()">删除网格</button><br />
+            </div>
+
+            中心点：<input type="text" placeholder="点击地图设置区域中心" id="centerPointInput" readonly>
+        </div>
+    </div>
+</div>
+<div class="container-div" id="container"></div>
+
+<script th:inline="javascript">
+    //获取页面参数
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    //当前地区对象id
+    let regionId = [[${regionId}]];
+    console.log("当前区域id:  " + regionId)
+
+    //当前地区地图标记点集合
+    let mapCover = [[${mapCover}]];
+    console.log('mapCover', mapCover)
+
+    //区域中心点回显
+    if (mapCover && mapCover.centerPoint){
+        $('#centerPointInput').val(mapCover.centerPoint)
+    }
+
+    //当前地区兄弟节点地区地图标记点集合
+    let brotherMapCoverList = [[${brotherMapCoverList}]]
+
+    //当前地区父节点地区地图覆盖物
+    let parentMapCover = [[${parentMapCover}]]
+    // console.log('parentMapCover', parentMapCover)
+
+    //当前地区堂兄弟节点地区覆盖物集合
+    let cousinMapCoverList = [[${cousinMapCoverList}]]
+    console.log(cousinMapCoverList)
+
+
+    //默认中心经纬度。119.989472,30.237869
+    let lng = 119.989472;
+    let lat = 30.237869;
+
+    //如果有父级区域.且父级区域中包含中心点,则赋值中心点为地图中心
+    if (parentMapCover && parentMapCover.centerPoint) {
+        let center = JSON.parse(parentMapCover.centerPoint);
+        lng = center[0]
+        lat = center[1]
+    }
+    //取本级中心点
+    else if (mapCover && mapCover.centerPoint) {
+        let center = JSON.parse(mapCover.centerPoint);
+        lng = center[0]
+        lat = center[1]
+    }
+
+    //地图实例化
+    //TODO 此处后续需加一判断地图无法加载时,提示需要链接外网.js不往下执行
+    let colors = [
+        '#0000ff', '#02a7f0', '#01a63a', '#d9001b',
+        '#70b603', '#8b741a',
+
+    ]
+    let backgroundColors = [
+        '#8080ff', '#81d3f8', '#38b051', '#ec808d',
+        '#caf982', '#facd91',
+    ]
+
+    //地图实例化相关
+    let map = new BMap.Map('container', {enableMapClick:false});
+    let point = new BMap.Point(lng, lat);
+    map.centerAndZoom(point, 16);
+    map.enableScrollWheelZoom(true);
+
+
+    //当前区域覆盖物标记点回显相关
+    let polygon1;//覆盖物
+    let label1;//覆盖物文字
+    if (mapCover) {
+        $('#tips').text('网格已存在,可直接修改')
+
+        //如果覆盖物存在,解析点位
+        let markerPoints = JSON.parse(mapCover.markerPoints)
+        let settings = {
+            strokeColor: "#e2a8a8",    //边线颜色。
+            fillColor: "#e2a8a8",      //填充颜色。当参数为空时，圆形将没有填充效果。
+            strokeWeight: 2,       //边线的宽度，以像素为单位。
+            strokeOpacity: 0.6,    //边线透明度，取值范围0 - 1。
+            fillOpacity: 0.5,      //填充的透明度，取值范围0 - 1。
+            strokeStyle: 'solid' //边线的样式，solid或dashed。
+        }
+        let points = []
+        for (let i = 0; i < markerPoints.length; i++) {
+            points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+        }
+        polygon1 = new BMap.Polygon(points, settings)
+
+
+    } else {
+        $('#delBtn').hide()
+        $('#tips').text('请操作初始化模板编辑网格点')
+
+        //初始化一个基本面
+        polygon1 = new BMap.Polygon([
+            new BMap.Point(lng - 0.004, lat + 0.002),
+            new BMap.Point(lng + 0.004, lat + 0.002),
+            new BMap.Point(lng + 0.004, lat - 0.002),
+            new BMap.Point(lng - 0.004, lat - 0.002),
+        ], {
+            strokeColor: "#e2a8a8",    //边线颜色。
+            fillColor: "#e2a8a8",      //填充颜色。当参数为空时，圆形将没有填充效果。
+            strokeWeight: 2,       //边线的宽度，以像素为单位。
+            strokeOpacity: 0.6,    //边线透明度，取值范围0 - 1。
+            fillOpacity: 0.5,      //填充的透明度，取值范围0 - 1。
+            strokeStyle: 'solid' //边线的样式，solid或dashed。
+        });
+        let opts = {
+            position: new BMap.Point(lng, lat),    // 指定文本标注所在的地理位置
+            offset: new BMap.Size(-30, 0)    //设置文本偏移量
+        }
+        label1 = new BMap.Label("初始化模板", opts);  // 创建文本标注对象
+        label1.setStyle({
+            color: "#1cc610",
+            backgroundColor: 'transparent',//文本背景色
+            borderColor: 'transparent',//文本框边框色
+            width:'100px',
+            whiteSpace: "normal",//设置文字超出自动换行
+            fontSize: "20px",
+            minHeight: "20px",
+            lineHeight: "1.5",
+            fontFamily: "微软雅黑"
+        });
+
+    }
+    //添加覆盖物到地图
+    map.addOverlay(polygon1);
+    map.addOverlay(label1)
+
+
+    //构造当前地区兄弟节点地区覆盖物
+    if (brotherMapCoverList && brotherMapCoverList.length > 0) {
+        for (let i = 0; i < brotherMapCoverList.length; i++) {
+            let markerPoints = JSON.parse(brotherMapCoverList[i].markerPoints)
+            //获取当前区域中心点
+            let centerPoint = JSON.parse(brotherMapCoverList[i].centerPoint);
+            // console.log(centerPoint)
+            let regionName = brotherMapCoverList[i].parentName;
+            //覆盖物
+            let polygon;
+            //覆盖物文字
+            let label;
+            //覆盖物标记点回显.
+            if (markerPoints && markerPoints.length > 3) {
+                let settings = {
+                    strokeColor: colors[i % 6],    //边线颜色。
+                    fillColor: backgroundColors[i % 6],     //填充颜色。当参数为空时，圆形将没有填充效果。
+                    strokeWeight: 1,       //边线的宽度，以像素为单位。
+                    strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+                    fillOpacity: 0.3,      //填充的透明度，取值范围0 - 1。
+                    strokeStyle: 'solid' //边线的样式，solid或dashed。
+                }
+                let points = []
+                for (let i = 0; i < markerPoints.length; i++) {
+                    points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+                }
+                polygon = new BMap.Polygon(points, settings)
+                //指定文本标注的位置
+                let opts = {
+                    position: new BMap.Point(centerPoint[0], centerPoint[1]), // 指定文本标注所在的地理位置
+                    offset: new BMap.Size(0, 0) // 设置文本偏移量
+                };
+                //构造一个文本标注
+                label = new BMap.Label(regionName, opts);
+                // 自定义文本标注样式
+                label.setStyle({
+                    color: "#000000",
+                    backgroundColor: 'transparent',//文本背景色
+                    borderColor: 'transparent',//文本框边框色
+                    width: '70px',
+                    whiteSpace: "normal",//设置文字超出自动换行
+                    fontSize: "15px",
+                    minHeight: "15px",
+                    lineHeight: "1.5",
+                    fontFamily: "微软雅黑"
+                });
+            }
+            //添加覆盖物到地图
+            map.addOverlay(polygon);
+            //添加文本标注到地图
+            map.addOverlay(label);
+        }
+    }
+
+    //构造当前地区父级地区覆盖物
+    if (parentMapCover) {
+        for (let i = 0; i < brotherMapCoverList.length; i++) {
+        let markerPoints = JSON.parse(parentMapCover.markerPoints)
+        //覆盖物
+        let polygon;
+        //覆盖物文字
+        let label;
+        //覆盖物标记点回显.
+        if (markerPoints && markerPoints.length > 3) {
+            let settings = {
+                strokeColor: colors[i % 6],    //边线颜色。
+                fillColor: backgroundColors[i % 6],      //填充颜色。当参数为空时，圆形将没有填充效果。
+                strokeWeight: 1,       //边线的宽度，以像素为单位。
+                strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+                fillOpacity: 0.3,      //填充的透明度，取值范围0 - 1。
+                strokeStyle: 'solid' //边线的样式，solid或dashed。
+            }
+            let points = []
+            for (let i = 0; i < markerPoints.length; i++) {
+                points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+            }
+            polygon = new BMap.Polygon(points, settings)
+
+        }
+        let opts = {
+            position: new BMap.Point(lng, lat),    // 指定文本标注所在的地理位置
+            offset: new BMap.Size(-250, 0)    //设置文本偏移量
+        }
+        label = new BMap.Label(parentMapCover.parentName, opts);  // 创建文本标注对象
+        label.setStyle({
+            color: "#000000",
+            backgroundColor: 'transparent',//文本背景色
+            borderColor: 'transparent',//文本框边框色
+            width: '100px',
+            whiteSpace: "normal",//设置文字超出自动换行
+            fontSize: "20px",
+            minHeight: "20px",
+            lineHeight: "1.5",
+            fontFamily: "微软雅黑"
+        });
+        //添加父级覆盖物到地图
+        map.addOverlay(polygon);
+        //添加提示
+        map.addOverlay(label)
+    }
+    }
+
+    //构造当前地区堂兄弟节点覆盖物集合
+    if (cousinMapCoverList && cousinMapCoverList.length > 0) {
+        for (let i = 0; i < cousinMapCoverList.length; i++) {
+            let markerPoints = JSON.parse(cousinMapCoverList[i].markerPoints)
+            //获取当前区域中心点
+            let centerPoint = JSON.parse(cousinMapCoverList[i].centerPoint);
+            // console.log(centerPoint)
+            let regionName = cousinMapCoverList[i].parentName;
+            //覆盖物
+            let polygon;
+            //覆盖物文字
+            let label;
+            //覆盖物标记点回显.
+            if (markerPoints && markerPoints.length > 3) {
+                let settings = {
+                    strokeColor: colors[i % 6],    //边线颜色。
+                    fillColor: backgroundColors[i % 6],     //填充颜色。当参数为空时，圆形将没有填充效果。
+                    strokeWeight: 1,       //边线的宽度，以像素为单位。
+                    strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+                    fillOpacity: 0.3,      //填充的透明度，取值范围0 - 1。
+                    strokeStyle: 'solid' //边线的样式，solid或dashed。
+                }
+                let points = []
+                for (let i = 0; i < markerPoints.length; i++) {
+                    points.push(new BMap.Point(markerPoints[i][0], markerPoints[i][1]))
+                }
+                polygon = new BMap.Polygon(points, settings)
+                //指定文本标注的位置
+                let opts = {
+                    position: new BMap.Point(centerPoint[0], centerPoint[1]), // 指定文本标注所在的地理位置
+                    offset: new BMap.Size(0, 0) // 设置文本偏移量
+                };
+                //构造一个文本标注
+                label = new BMap.Label(regionName, opts);
+                // 自定义文本标注样式
+                label.setStyle({
+                    color: "#000000",
+                    backgroundColor: 'transparent',//文本背景色
+                    borderColor: 'transparent',//文本框边框色
+                    width: '70px',
+                    whiteSpace: "normal",//设置文字超出自动换行
+                    fontSize: "15px",
+                    minHeight: "15px",
+                    lineHeight: "1.5",
+                    fontFamily: "微软雅黑"
+                });
+            }
+            //添加覆盖物到地图
+            map.addOverlay(polygon);
+            //添加文本标注到地图
+            map.addOverlay(label);
+        }
+    }
+
+
+    //开启编辑
+    function openEdit() {
+        polygon1.enableEditing();
+    }
+
+    //调用开启编辑模式
+    openEdit();
+
+    //关闭编辑
+    function closeEdit() {
+        polygon1.disableEditing();
+    }
+
+    map.addEventListener('click', function (e) {
+        console.log('地区id：' + [[${regionId}]])
+        console.log('[' + e.point.lng + ',' + e.point.lat + ']');
+        $('#centerPointInput').val('[' + e.point.lng + ',' + e.point.lat + ']')
+    });
+
+    /**
+     * 点击查看按钮
+     */
+    function view() {
+        layer.msg('请按F12查看控制台console栏输出');
+        console.log("%c当前覆盖物共" + polygon1.getPath().length + "个坐标点.详细见下面列表", "color:red");
+        for (let i = 0; i < polygon1.getPath().length; i++) {
+            let path = polygon1.getPath()[i]
+            console.log(path.lng + ', ' + path.lat)
+        }
+    }
+
+    /**
+     * 点击保存按钮
+     */
+    function save() {
+        if (!$('#centerPointInput').val()) {
+            layer.alert('请在地图上点击适当位置设置区域中心点');
+            return
+        }
+        //构造数据提交
+        let markers = []
+        for (let i = 0; i < polygon1.getPath().length; i++) {
+            let path = polygon1.getPath()[i]
+            let item = []
+            item[0] = path.lng
+            item[1] = path.lat
+            markers.push(item)
+        }
+
+        let saveUrl = ctxPath + "system/region/map/save"
+        let param = {
+            'parentId': regionId,
+            'markerPoints': JSON.stringify(markers),
+            'centerPoint': $('#centerPointInput').val()
+        }
+        $.ajax({
+            url: saveUrl,
+            data: JSON.stringify(param),
+            cache: false,
+            dataType: 'json',
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (res) {
+                layer.msg(res.msg);
+                setTimeout(function () {
+                    location.reload()
+                }, 1000)
+
+            },
+            error: function (err) {
+                layer.msg(err);
+            }
+
+        });
+    }
+
+    /**
+     * 删除地图覆盖物
+     */
+    function deletePolygon() {
+        let regionName = mapCover.parentName;
+        layer.confirm('您确定删除【' + regionName + '】的地图点位吗？', {
+            btn: ['确定', '放弃'] //按钮
+        }, function () {
+            let url = ctxPath + "system/region/map/" + regionId
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                type: 'delete',
+                success: function (res) {
+                    layer.msg(res.msg);
+                    setTimeout(function () {
+                        location.reload()
+                    }, 1000)
+                },
+                error: function (err) {
+                    layer.msg(err);
+                }
+            });
+        }, function () {
+
+        });
+
+
+    }
+
+</script>
+
+</body>
+</html>

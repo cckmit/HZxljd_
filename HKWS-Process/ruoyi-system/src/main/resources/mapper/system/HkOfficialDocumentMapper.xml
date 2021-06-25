@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.HkOfficialDocumentMapper">
+    
+    <resultMap type="HkOfficialDocument" id="HkOfficialDocumentResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="publishDept"    column="publish_dept"    />
+        <result property="publishDeptId"    column="publish_dept_id"    />
+        <result property="publicFlag"    column="public_flag"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectHkOfficialDocumentVo">
+        select id, title, content, create_time, publish_dept, publish_dept_id, public_flag, del_flag, update_time, create_by, update_by from hk_official_document
+    </sql>
+
+    <select id="selectHkOfficialDocumentList" parameterType="HkOfficialDocument" resultMap="HkOfficialDocumentResult">
+        <include refid="selectHkOfficialDocumentVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="publishDept != null  and publishDept != ''"> and publish_dept = #{publishDept}</if>
+            <if test="publishDeptId != null "> and publish_dept_id = #{publishDeptId}</if>
+            <if test="publicFlag != null "> and public_flag = #{publicFlag}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectHkOfficialDocumentById" parameterType="Long" resultMap="HkOfficialDocumentResult">
+        <include refid="selectHkOfficialDocumentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHkOfficialDocument" parameterType="HkOfficialDocument" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_official_document
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="publishDept != null  and publishDept != ''">publish_dept,</if>
+            <if test="publishDeptId != null ">publish_dept_id,</if>
+            <if test="publicFlag != null ">public_flag,</if>
+            <if test="delFlag != null ">del_flag,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="publishDept != null  and publishDept != ''">#{publishDept},</if>
+            <if test="publishDeptId != null ">#{publishDeptId},</if>
+            <if test="publicFlag != null ">#{publicFlag},</if>
+            <if test="delFlag != null ">#{delFlag},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHkOfficialDocument" parameterType="HkOfficialDocument">
+        update hk_official_document
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="publishDept != null  and publishDept != ''">publish_dept = #{publishDept},</if>
+            <if test="publishDeptId != null ">publish_dept_id = #{publishDeptId},</if>
+            <if test="publicFlag != null ">public_flag = #{publicFlag},</if>
+            <if test="delFlag != null ">del_flag = #{delFlag},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkOfficialDocumentById" parameterType="Long">
+        delete from hk_official_document where id = #{id}
+    </delete>
+
+    <delete id="deleteHkOfficialDocumentByIds" parameterType="String">
+        delete from hk_official_document where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

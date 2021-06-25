@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('查看网格员--考核细分项')" />
+    <style>
+        table{
+            border: 0.1px solid lightgray;
+            width: 500px;
+            padding-top: 0px;
+            margin-top: 0px;
+        }
+        tr{
+            height: 35px;
+            text-align: left;
+        }
+        td{
+            border: 0.1px solid lightgrey;
+            text-align:left;
+            padding:4px;
+        }
+    </style>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-subdivide-edit" th:object="${xlSubdivide}">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">细分项名称：</label>
+            <div class="form-control-static" th:text="*{subdivideName}"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属考核项：</label>
+            <div class="form-control-static" th:text="${xlSubdivide.xlAssessmentItems.assessmentName}"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">分值：</label>
+            <div class="form-control-static" th:text="*{assessmentScore}"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">考核周期：</label>
+            <div class="form-control-static" th:text="*{assessmentCycle}"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">考核责任单位：</label>
+            <div class="form-control-static" th:text="*{deptNames}"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">工作要求：</label>
+            <textarea class="form-control-static" style="height: 120px; width: 500px; border: solid 0.1px lightgray; padding:4px;" readonly th:text="*{workRequirement}"></textarea>
+        </div>
+        <div></div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">考核数据来源：</label>
+            <textarea class="form-control-static" style="height: 60px; width: 500px; border: solid 0.1px lightgray; padding:4px;" readonly th:text="*{dataSource}"></textarea>
+        </div>
+        <div></div>
+        <div class="form-group" style="margin-bottom: 0px"><label class="col-sm-3 control-label">评   分   项：</label>
+        <table align="left">
+            <tbody id="tbMain"></tbody>  
+        </table> </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var xlScoringItemsList = [[${xlScoringItemsList}]];
+    window.onload = function(){
+        debugger
+        var tbody = document.getElementById('tbMain');
+        console.log(xlScoringItemsList);
+
+        for(var i = 0;i < xlScoringItemsList.length; i++){ //遍历json数据 
+            var trow = getDataRow(xlScoringItemsList[i]); //定义方法,返回tr数据  
+            tbody.appendChild(trow);
+        }
+    }
+
+    function getDataRow(h) {
+        var row = document.createElement('tr'); //创建行  
+
+        var idCell = document.createElement('td'); //创建第一列  
+        idCell.innerHTML = h.describes; //填充数据  
+        row.appendChild(idCell); //加入行  ，下面类似  
+        return row;
+    }
+</script>
+</body>
+</html>

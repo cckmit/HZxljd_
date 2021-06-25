@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('物业-巡更统计列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li class="select-time">
+                            <label>统计日期：</label>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginStatisticDate]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endStatisticDate]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/property/patrol/statistic";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            modalName: "物业-巡更统计",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'statisticId',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'statisticDate',
+                    title: '统计日期'
+                },
+                {
+                    field: 'patrolCount',
+                    title: '巡更任务数'
+                },
+                {
+                    field: 'finishCount',
+                    title: '完成任务数'
+                },
+                {
+                    field: 'unfinishCount',
+                    title: '未完成任务数'
+                },
+                {
+                    field: 'finishRate',
+                    title: '完成率'
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

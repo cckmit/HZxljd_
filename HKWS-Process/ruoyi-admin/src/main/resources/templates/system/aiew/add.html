@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增事件')" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-role-add">
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label is-required">事件编号：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <input class="form-control" type="text" maxlength="32" name="ec_ids" id="ec_ids" required>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">事件分组：</label>
+            <div  class="col-sm-8">
+                <select class="form-control" name="ec_category" id="ec_category" required>
+                    <option value="1003">应急指挥</option>
+                    <option value="1001">智慧城管</option>
+                    <option value="1002">浙里访</option>
+                    <option value="1004">四平台</option>
+                    <option value="1005">街道内部</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">事件状态码：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" maxlength="50" name="ec_name_type" id="ec_name_type" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">事件类型名称：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" maxlength="50" name="ec_name" id="ec_name" required>
+            </div>
+        </div>
+<!--        <div class="form-group">-->
+<!--            <label class="col-sm-3 control-label">事件状态：</label>-->
+<!--            <div class="col-sm-8">-->
+<!--                <label class="toggle-switch switch-solid">-->
+<!--                    <input type="checkbox" id="ec_type" checked>-->
+<!--                    <span></span>-->
+<!--                </label>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label">事件备注：</label>
+            <div class="col-sm-8">
+                <input id="remark" name="ec_bei" maxlength="120" class="form-control" type="text">
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<script type="text/javascript">
+    // $(function() {
+    //     var url = ctx + "system/menu/roleMenuTreeData";
+    //     var options = {
+    //         id: "menuTrees",
+    //         url: url,
+    //         check: { enable: true },
+    //         expandLevel: 0
+    //     };
+    //     $.tree.init(options);
+    // });
+
+    $("#form-role-add").validate({
+        rules:{
+            onkeyup: false,
+            roleName:{
+                ec_ids: {
+                    url: ctx + "system/eclass/checkRoleNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "ec_name" : function() {
+                            return $.common.trim($("#ec_name").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            // roleKey:{
+            //     remote: {
+            //         url: ctx + "system/role/checkRoleKeyUnique",
+            //         type: "post",
+            //         dataType: "json",
+            //         data: {
+            //             "roleKey" : function() {
+            //                 return $.common.trim($("#roleKey").val());
+            //             }
+            //         },
+            //         dataFilter: function(data, type) {
+            //             return $.validate.unique(data);
+            //         }
+            //     }
+            // },
+            // roleSort:{
+            //     digits:true
+            // },
+        },
+        messages: {
+            "ec_ids": {
+                remote: "角色名称已经存在"
+            },
+            "roleKey": {
+                remote: "角色权限已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            add();
+        }
+    }
+
+    function add() {
+        // var ec_ids = $("input[name='ec_ids']").val();
+        debugger
+        var ec_category = $("#ec_category").val();
+        var ec_name = $("input[name='ec_name']").val();
+        var ec_bei = $("input[name='ec_bei']").val();
+        var ec_name_type = $("input[name='ec_name_type']").val();
+        var ec_type = $("input[id='ec_type']").is(':checked') == true ? 0 : 1;
+        $.ajax({
+            cache : true,
+            type : "POST",
+            url : ctx + "system/eclass/add",
+            data : {
+                // "ec_ids": ec_ids,
+                "ec_name": ec_name,
+                "ec_bei": ec_bei,
+                "ec_type": ec_type,
+                "ec_category":ec_category,
+                "ec_name_type":ec_name_type
+            },
+            async : false,
+            error : function(request) {
+                $.modal.alertError("系统错误");
+            },
+            success : function(data) {
+                $.operate.successCallback(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

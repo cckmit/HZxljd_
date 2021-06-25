@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ding.HkDingUserMapper">
+
+    <resultMap type="HkDingUser" id="HkDingUserResult">
+        <result property="id" column="id"/>
+        <result property="dingUserId" column="ding_user_id"/>
+        <result property="sysUserId" column="sys_user_id"/>
+        <result property="dingUserInfo" column="ding_user_info"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="sysUserName" column="sys_user_name"/>
+    </resultMap>
+
+    <sql id="selectHkDingUserVo">
+        select id, ding_user_id, sys_user_id, ding_user_info, create_time, update_time, sys_user_name from hk_ding_user
+    </sql>
+
+    <select id="selectHkDingUserList" parameterType="HkDingUser" resultMap="HkDingUserResult">
+        <include refid="selectHkDingUserVo"/>
+        <where>
+            <if test="dingUserId != null  and dingUserId != ''">and ding_user_id = #{dingUserId}</if>
+            <if test="sysUserId != null ">and sys_user_id = #{sysUserId}</if>
+            <if test="dingUserInfo != null  and dingUserInfo != ''">and ding_user_info = #{dingUserInfo}</if>
+            <if test="sysUserName != null  and sysUserName != ''">and sys_user_name like concat('%', #{sysUserName},
+                '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectHkDingUserById" parameterType="Long" resultMap="HkDingUserResult">
+        <include refid="selectHkDingUserVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectHkDingUserByDingUserId" parameterType="string" resultMap="HkDingUserResult">
+        <include refid="selectHkDingUserVo"/>
+        where ding_user_id = #{dingUserId}
+    </select>
+
+    <select id="selectHkDingUserBySysUserId" resultMap="HkDingUserResult" parameterType="long">
+        <include refid="selectHkDingUserVo"/>
+        where sys_user_id = #{sysUserId}
+    </select>
+
+    <insert id="insertHkDingUser" parameterType="HkDingUser" useGeneratedKeys="true" keyProperty="id">
+        insert into hk_ding_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dingUserId != null  and dingUserId != ''">ding_user_id,</if>
+            <if test="sysUserId != null ">sys_user_id,</if>
+            <if test="dingUserInfo != null  and dingUserInfo != ''">ding_user_info,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="sysUserName != null  and sysUserName != ''">sys_user_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dingUserId != null  and dingUserId != ''">#{dingUserId},</if>
+            <if test="sysUserId != null ">#{sysUserId},</if>
+            <if test="dingUserInfo != null  and dingUserInfo != ''">#{dingUserInfo},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="sysUserName != null  and sysUserName != ''">#{sysUserName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHkDingUser" parameterType="HkDingUser">
+        update hk_ding_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dingUserId != null  and dingUserId != ''">ding_user_id = #{dingUserId},</if>
+            <if test="sysUserId != null ">sys_user_id = #{sysUserId},</if>
+            <if test="dingUserInfo != null  and dingUserInfo != ''">ding_user_info = #{dingUserInfo},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="sysUserName != null  and sysUserName != ''">sys_user_name = #{sysUserName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHkDingUserById" parameterType="Long">
+        delete from hk_ding_user where id = #{id}
+    </delete>
+
+    <delete id="deleteHkDingUserByIds" parameterType="String">
+        delete from hk_ding_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteHkDingUserBySysUserIdAndDingUserId" parameterType="HkDingUser">
+        delete from hk_ding_user where ding_user_id = #{dingUserId} and sys_user_id = #{sysUserId}
+    </delete>
+
+</mapper>

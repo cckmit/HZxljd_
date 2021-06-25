@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增网格员--检查项信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-checkItems-add">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">检查项描述：</label>
+                <div class="col-sm-8">
+                <textarea type="text" name="checkName" class="form-control" placeholder="请输入描述内容" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">事件类型：</label>
+                <div class="col-sm-8">
+                    <select name="eclassCode" id="eclassCode" class="form-control select-list" required>
+                        <option th:each="eclass:${list}" th:value="${eclass.ec_name_type}" th:text="${eclass.ec_name}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/checkItems"
+        $("#form-checkItems-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-checkItems-add').serialize());
+            }
+        }
+
+    </script>
+</body>
+</html>

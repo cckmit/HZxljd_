@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.property.XlPropertyPatrolSignMapper">
+
+    <resultMap type="XlPropertyPatrolSign" id="XlPropertyPatrolSignResult">
+        <result property="signId"    column="sign_id"    />
+        <result property="recordId"    column="record_id"    />
+        <result property="pointName"    column="point_name"    />
+        <result property="patrolTime"    column="patrol_time"    />
+        <result property="patrolStatus"    column="patrol_status"    />
+        <result property="remark"    column="remark"    />
+        <result property="image"    column="image"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="patrolPropertyId"    column="patrol_property_id"    />
+        <result property="patrolProperty"    column="patrol_property"    />
+        <association property="xlPropertyPatrolRecord"    column="record_id" javaType="XlPropertyPatrolRecord" resultMap="xlPropertyPatrolRecord" />
+    </resultMap>
+
+    	<resultMap id="xlPropertyPatrolRecord" type="XlPropertyPatrolRecord">
+			<result property="userName"    column="user_name"    />
+		</resultMap>
+
+    <sql id="selectXlPropertyPatrolSignVo">
+          select sign_id, record_id, point_name, patrol_time, patrol_status, remark, image, create_by, create_time, update_by, update_time, patrol_property_id, patrol_property from xl_property_patrol_sign
+    </sql>
+
+    <select id="selectXlPropertyPatrolSignList" parameterType="XlPropertyPatrolSign" resultMap="XlPropertyPatrolSignResult">
+        <include refid="selectXlPropertyPatrolSignVo"/>
+        <where>
+            <if test="recordId != null "> and record_id = #{recordId}</if>
+            <if test="pointName != null  and pointName != ''"> and point_name like concat('%', #{pointName}, '%')</if>
+            <if test="patrolTime != null "> and patrol_time = #{patrolTime}</if>
+            <if test="patrolStatus != null "> and patrol_status = #{patrolStatus}</if>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="patrolPropertyId != null "> and patrol_property_id = #{patrolPropertyId}</if>
+            <if test="patrolProperty != null  and patrolProperty != ''"> and patrol_property = #{patrolProperty}</if>
+        </where>
+    </select>
+
+    <select id="selectXlPropertyPatrolSignById" parameterType="Long" resultMap="XlPropertyPatrolSignResult">
+        <include refid="selectXlPropertyPatrolSignVo"/>
+        where sign_id = #{signId}
+    </select>
+
+    <insert id="insertXlPropertyPatrolSign" parameterType="XlPropertyPatrolSign" useGeneratedKeys="true" keyProperty="signId">
+        insert into xl_property_patrol_sign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null ">record_id,</if>
+            <if test="pointName != null  and pointName != ''">point_name,</if>
+            <if test="patrolTime != null ">patrol_time,</if>
+            <if test="patrolStatus != null ">patrol_status,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="image != null  and image != ''">image,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null ">#{recordId},</if>
+            <if test="pointName != null  and pointName != ''">#{pointName},</if>
+            <if test="patrolTime != null ">#{patrolTime},</if>
+            <if test="patrolStatus != null ">#{patrolStatus},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="image != null  and image != ''">#{image},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateXlPropertyPatrolSign" parameterType="XlPropertyPatrolSign">
+        update xl_property_patrol_sign
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordId != null ">record_id = #{recordId},</if>
+            <if test="pointName != null  and pointName != ''">point_name = #{pointName},</if>
+            <if test="patrolTime != null ">patrol_time = #{patrolTime},</if>
+            <if test="patrolStatus != null ">patrol_status = #{patrolStatus},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="image != null  and image != ''">image = #{image},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where sign_id = #{signId}
+    </update>
+
+    <delete id="deleteXlPropertyPatrolSignById" parameterType="Long">
+        delete from xl_property_patrol_sign where sign_id = #{signId}
+    </delete>
+
+    <delete id="deleteXlPropertyPatrolSignByIds" parameterType="String">
+        delete from xl_property_patrol_sign where sign_id in
+        <foreach item="signId" collection="array" open="(" separator="," close=")">
+            #{signId}
+        </foreach>
+    </delete>
+    <select id="selectByPatrolProperty" resultMap="XlPropertyPatrolSignResult">
+            SELECT sign_id, a.record_id, point_name, a.patrol_time, patrol_status, remark,
+             image, a.create_by, a.create_time, a.update_by, a.update_time,
+              patrol_property_id, patrol_property
+            ,b.`user_name`
+            FROM `xl_property_patrol_sign` a LEFT JOIN `xl_property_patrol_record` b
+            ON a.`record_id`=b.`record_id`
+            where 1=1
+                 <choose>
+            <when test="patrolPropertyId != null and patrolPropertyId!= ''">
+              and patrol_property_id = #{patrolPropertyId}
+            </when>
+            <when test="patrolProperty != null and patrolProperty!= ''">
+              and patrol_property = #{patrolProperty}
+            </when>
+            <otherwise>
+                and patrol_property_id = null
+            </otherwise>
+        </choose>
+     </select>
+</mapper>

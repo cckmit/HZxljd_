@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增事件信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-xleventinfo-add">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">事件标题：</label>
+                <div class="col-sm-8">
+                    <input name="eventTitle" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label  is-required">事件发生地址：</label>
+                <div class="col-sm-8">
+                    <input name="eventAddress" class="form-control is-required" type="text" required>
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label">发生地经度：</label>
+                <div class="col-sm-8">
+                    <input name="longitude" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">发生地纬度：</label>
+                <div class="col-sm-8">
+                    <input name="latitude" class="form-control" type="text">
+                </div>
+            </div>-->
+           <!-- <div class="form-group">
+                <label class="col-sm-3 control-label">事件风险等级：</label>
+                <div class="col-sm-8">
+                    <input name="riskLevel" class="form-control" type="text">
+                </div>
+            </div>-->
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label">事件图片地址：</label>
+                <div class="col-sm-8">
+                    <textarea name="eventThumbnailImage" class="form-control"></textarea>
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label  is-required">事件等级名称：</label>
+                <div class="col-sm-8">
+                    <input name="riskLevelName" class="form-control is-required" type="text" required>
+                </div>
+            </div>
+           <!-- <div class="form-group">
+                <label class="col-sm-3 control-label">经纬度范围：</label>
+                <div class="col-sm-8">
+                    <textarea name="geometry" class="form-control"></textarea>
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">责任主体：</label>
+                <div class="col-sm-8">
+                    <input name="responsibilitySubject" class="form-control" type="text">
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label">事件发生的区域名称(网格社区)：</label>
+                <div class="col-sm-8">
+                    <input name="regionName" class="form-control" type="text">
+                </div>
+            </div>-->
+            <!--<div class="form-group">
+                <label class="col-sm-3 control-label">场所名称(涉及主体)：</label>
+                <div class="col-sm-8">
+                    <input name="placeName" class="form-control" type="text">
+                </div>
+            </div>-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/eventDeal"
+        $("#form-xleventinfo-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-xleventinfo-add').serialize());
+            }
+        }
+
+        $("input[name='eventProcessTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='eventOverTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='timeOut']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='assignTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='dispatchEventTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

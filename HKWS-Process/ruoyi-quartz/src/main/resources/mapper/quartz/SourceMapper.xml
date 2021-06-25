@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.quartz.mapper.SourceMapper">
+    
+    
+    <resultMap type="Source" id="HkSourceResult">
+        <result property="id"    column="id"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="sourceName"    column="source_name"    />
+        <result property="sourceAccess"    column="source_access"    />
+        <result property="dataType" column="data_type"/>
+        <result property="sourceAddress"    column="source_address"    />
+        <result property="sourceSynchronize"    column="source_synchronize"    />
+        <result property="sourceSynRateVal" column="source_syn_rate_val"/>
+        <result property="sourceHost"    column="source_host"    />
+        <result property="sourcePort"    column="source_port"    />
+        <result property="sourceUsername"    column="source_username"    />
+        <result property="sourcePassword"    column="source_password"    />
+        <result property="sourceDbName"    column="source_db_name"    />
+        <result property="sourceTableName"    column="source_table_name"    />
+        <result property="sourceRemarks"    column="source_remarks"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="sourceStatus"    column="source_status"    />
+        <result property="sourceTransfer"    column="source_transfer"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateUser"    column="update_user"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="jobId"    column="job_id"    />
+        <result property="jobGroup"    column="job_group"    />
+        <result property="status"    column="status"    />
+        <result property="lastUpdateTime" column="last_update_time"/>
+    </resultMap>
+    
+    <!--查询数据源 -->
+    <select id="querySourceInfo" parameterType="Source" resultMap="HkSourceResult">
+        SELECT
+        s.id,
+        s.uuid,
+        s.source_name,
+        s.source_access,
+        s.source_synchronize,
+        s.source_transfer,
+        s.source_syn_rate_val,
+        s.create_user,
+        s.source_status,
+        s.create_date,
+        s.is_delete,
+        s.last_update_time,
+        j.job_id,
+        j.job_group,
+        j.status
+        FROM
+        hk_source s
+        LEFT JOIN sys_job j ON j.source_id= s.uuid
+        <where>
+            <if test="sourceStatus !=null">
+                and s.source_status = #{sourceStatus}
+            </if>
+            <if test="sourceAccess !=null and sourceAccess != ''">
+                and s.source_access LIKE CONCAT('%',#{sourceAccess},'%')
+            </if>
+            <if test="sourceName !=null and sourceName != ''">
+                and s.source_name LIKE CONCAT('%',#{sourceName},'%')
+            </if>
+            <if test="uuid !=null and uuid != ''">
+                and s.uuid LIKE CONCAT('%',#{uuid},'%')
+            </if>
+            <if test="createUser !=null and createUser != ''">
+                and s.create_user LIKE CONCAT('%',#{createUser},'%')
+            </if>
+            and s.is_delete =0
+            order by id desc
+        </where>
+
+    </select>
+    <!--添加数据源 -->
+    <insert id="addHkSource" parameterType="Source">
+        INSERT INTO hk_source (
+        `uuid`,
+        `source_name`,
+        `source_access`,
+        `data_type`,
+        `source_address`,
+        `source_synchronize`,
+        `source_syn_rate_val`,
+        `source_host`,
+        `source_port`,
+        `source_username`,
+        `source_password`,
+        `source_db_name`,
+        `source_table_name`,
+        `source_remarks`,
+        `create_user`,
+        `create_date`
+        )
+        VALUES
+        (
+        #{uuid},
+        #{sourceName},
+        #{sourceAccess},
+        #{dataType},
+        #{sourceAddress},
+        #{sourceSynchronize},
+        #{sourceSynRateVal},
+        #{sourceHost},
+        #{sourcePort},
+        #{sourceUsername},
+        #{sourcePassword},
+        #{sourceDbName},
+        #{sourceTableName},
+        #{sourceRemarks},
+        #{createUser},
+        NOW()
+        );
+    </insert>
+    <!--根据id查询信息 -->
+    <select id="findHkSource" parameterType="int" resultMap="HkSourceResult">
+        SELECT
+        id,
+        uuid,
+        source_name,
+        source_access,
+        data_type,
+        source_address,
+        source_host,
+        source_port,
+        source_username,
+        source_password,
+        source_db_name,
+        source_table_name,
+        source_remarks,
+        source_synchronize,
+        source_syn_rate_val,
+        source_transfer,
+        create_user,
+        source_status,
+        create_date,
+        update_user,
+        last_update_time
+        FROM
+        hk_source
+        WHERE
+        id=#{id}
+         AND
+         is_delete =0
+    </select>
+    <!--编辑数据源 -->
+    <update id="updateHkSource" parameterType="Source">
+    UPDATE hk_source
+    SET
+    source_name = #{sourceName},
+    source_access = #{sourceAccess},
+    data_type = #{dataType},
+    source_address = #{sourceAddress},
+    source_synchronize = #{sourceSynchronize},
+    source_syn_rate_val =#{sourceSynRateVal} ,
+    source_host = #{sourceHost},
+    source_port = #{sourcePort},
+    source_username = #{sourceUsername},
+    source_password = #{sourcePassword},
+    source_db_name =#{sourceDbName},
+    source_table_name=#{sourceTableName},
+    source_remarks = #{sourceRemarks},
+    update_user = #{updateUser},
+    update_date = NOW(),
+    last_update_time = NOW()
+    WHERE
+    id = #{id}
+    </update>
+    <!--批量删除数据源 -->
+    <update id="deleteHkSource" parameterType="String">
+        update hk_source set is_delete=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!--校验数据源 -->
+    <select id="findHkSourceName" resultType="int" parameterType="Source">
+        select count(1) from  hk_source
+        where  source_name= #{sourceName}
+        <if test="id!=null and id!=''" >
+            and id !=#{id}
+        </if>
+        and is_delete=0
+    </select>
+    <!--获取api地址 -->
+    <select id="findHkAddress" parameterType="String" resultMap="HkSourceResult">
+        SELECT
+        id,
+        uuid,
+        source_name,
+        source_access,
+        data_type,
+        source_address,
+        source_host,
+        source_port,
+        source_username,
+        source_password,
+        source_db_name,
+        source_table_name,
+        source_remarks,
+        source_synchronize,
+        source_syn_rate_val,
+        source_transfer,
+        create_user,
+        source_status,
+        create_date,
+        last_update_time
+        FROM
+        hk_source
+        WHERE
+        source_name=#{params}
+         AND
+         is_delete =0
+    </select>
+
+    <insert id="insertSource" parameterType="Source">
+        INSERT INTO hk_source (
+        `uuid`,
+        `source_name`,
+        `source_access`,
+        `data_type`,
+        `source_address`,
+        `source_synchronize`,
+        `source_syn_rate_val`,
+        `source_host`,
+        `source_port`,
+        `source_username`,
+        `source_password`,
+        `source_db_name`,
+        `source_table_name`,
+        `source_remarks`,
+        `create_user`,
+        `create_date`,
+        `last_update_time`
+        )
+        VALUES
+        (
+        #{uuid},
+        #{sourceName},
+        #{sourceAccess},
+        #{dataType},
+        #{sourceAddress},
+        #{sourceSynchronize},
+        #{sourceSynRateVal},
+        #{sourceHost},
+        #{sourcePort},
+        #{sourceUsername},
+        #{sourcePassword},
+        #{sourceDbName},
+        #{sourceTableName},
+        #{sourceRemarks},
+        #{createUser},
+        NOW(),
+        NOW()
+        );
+    </insert>
+
+</mapper>
